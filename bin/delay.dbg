@@ -1,0 +1,59 @@
+
+ 
+  ; export symbols
+        XDEF initTimer,set_delay,delay_500ms;
+        XREF TC1,TCTL1,TCTL2,TIOS,TSCR1,TSCR2,TFLG1
+.data: SECTION
+  COUNT: DC.B 1;
+.const: SECTION
+
+.init: SECTION
+
+  initTimer:
+    BSET TCTL1,#$00; Disconnect Timer from Outputs
+    BSET TCTL2,#$00; Disconnect Timer from Outputs
+
+    BSET TIOS,#$03;Channel 1,2 as Output compare
+
+    BSET TSCR2,#$07 ; 128 Prescaler for Clock
+
+    BSET TC1,#$00;
+    RTS;
+
+
+
+  set_delay:
+    STAB COUNT;
+    JSR start_delay;
+    RTS
+
+  start_delay:
+    LDAB COUNT;
+    CMPB #$00;
+    BLS RETURN;
+    JSR delay_125ms;
+    DECB;
+    STAB COUNT;
+    BRA start_delay;
+
+
+  delay_125ms:
+    MOVW #$B71B,TC1 ;Add 46875, which with 128 Prescaler gives 125ms delay 
+    BSET TSCR1,#$80 ;  Timer Enable full function / Start timer
+    JSR check_interrupt_flag;
+    BSET TSCR1,#$00 ; Disable Timer again;
+    RTS
+  check_interrupt_flag:
+    BRCLR TFLG1,#$01,check_interrupt_flag;
+    RTS;
+    
+  delay_500ms:
+    LDAB #4
+    JSR set_delay;
+    RTS;
+  RETURN:
+    RTS
+
+
+
+
