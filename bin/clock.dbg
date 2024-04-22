@@ -14,7 +14,7 @@
 ; export symbols
     XREF decToASCII;
     XDEF tick,setClock,addSecond,addMinute,addHour;
-    XREF PIFP,toggleLED,displayText;
+    XREF PIFP,toggleLED,displayText,setMode;
   
         
 .data:  SECTION
@@ -23,7 +23,8 @@ MINUTES:  DS.B 1
 HOURS:    DS.B 1
 Hour12Format: DS.B 1
 OUTPUTSTRING: DS.B 11
-ASCIIBuffer: DS.B 7 
+ASCIIBuffer: DS.B 7
+ 
  
  
 .init: SECTION
@@ -31,10 +32,13 @@ ASCIIBuffer: DS.B 7
     MOVB #30,SECONDS;
     MOVB #59,MINUTES;
     MOVB #23,HOURS;
+    MOVB #$01,Hour12Format
     RTS
-
+  cancelTick:
+    RTI;
   tick:
    MOVB #$02,PIFP;Reset Interrupt Flag
+   BRSET setMode,#$01,cancelTick;
    LDAB #$01;
    JSR toggleLED;
    
@@ -77,15 +81,13 @@ ASCIIBuffer: DS.B 7
     BRA chooseFormat;
     RTS;  
   setupText:
-    ;Set Format Symbols     
-   MOVB #$3A,OUTPUTSTRING+2; ":"
-   MOVB #$3A,OUTPUTSTRING+5;
    LDAA #$00
    ;Setup Hours
    LDX #ASCIIBuffer
    LDAB HOURS;
    JSR decToASCII;
-   MOVW ASCIIBuffer+4,OUTPUTSTRING;    
+   MOVW ASCIIBuffer+4,OUTPUTSTRING;
+   skipToMinutes:    
    ;Setup Minutes
    LDX #ASCIIBuffer
    LDAB MINUTES;
@@ -96,6 +98,9 @@ ASCIIBuffer: DS.B 7
    LDAB SECONDS;
    JSR decToASCII;
    MOVW ASCIIBuffer+4,OUTPUTSTRING+6
+   ;Set Format Symbols     
+   MOVB #$3A,OUTPUTSTRING+2; ":"
+   MOVB #$3A,OUTPUTSTRING+5;
    ;Move Outputstring Pointer to X   
    LDX #OUTPUTSTRING
    RTS;    
@@ -115,20 +120,35 @@ ASCIIBuffer: DS.B 7
   setAM:
     MOVW #$616D,OUTPUTSTRING+8; setAM
     LDAB HOURS;
+    LDX #ASCIIBuffer
     CMPB #$0;
     BNE continue12AM;
     LDAB #12;
+    JSR decToASCII;
+    MOVW ASCIIBuffer+4,OUTPUTSTRING;
+    JSR skipToMinutes;
+    RTS;
     continue12AM:
-    BRA setupText;
+    JSR decToASCII;
+    MOVW ASCIIBuffer+4,OUTPUTSTRING;
+    JSR skipToMinutes;
+    RTS
   setPM:
      MOVW #$506D,OUTPUTSTRING+8; setPM
      LDAB HOURS;
      CMPB #12
+     LDX #ASCIIBuffer
      BNE continue12PM;
-     BRA setupText;
+     JSR decToASCII;
+     MOVW ASCIIBuffer+4,OUTPUTSTRING;
+     JSR skipToMinutes;
+     RTS
      continue12PM:
      SUBB #12;
-     BRA setupText;
+     JSR decToASCII;
+     MOVW ASCIIBuffer+4,OUTPUTSTRING;
+     JSR skipToMinutes;
+     RTS
 
  
  

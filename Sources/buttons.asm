@@ -15,6 +15,7 @@
         XDEF buttonHandle
         XREF PIFH,TC0,TFLG1,PPSH,TCNT;
         XREF addSecond,addMinute,addHour
+        XDEF setMode;
 
 .data: SECTION
   setMode: DS.B 1
