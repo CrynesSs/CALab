@@ -29,7 +29,7 @@ ASCIIBuffer: DS.B 7
  
 .init: SECTION
   setClock:
-    MOVB #30,SECONDS;
+    MOVB #58,SECONDS;
     MOVB #59,MINUTES;
     MOVB #23,HOURS;
     MOVB #$01,Hour12Format
@@ -136,8 +136,8 @@ ASCIIBuffer: DS.B 7
   setPM:
      MOVW #$506D,OUTPUTSTRING+8; setPM
      LDAB HOURS;
-     CMPB #12
      LDX #ASCIIBuffer
+     CMPB #12
      BNE continue12PM;
      JSR decToASCII;
      MOVW ASCIIBuffer+4,OUTPUTSTRING;
