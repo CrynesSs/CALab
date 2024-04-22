@@ -18,11 +18,14 @@
     
 .init: SECTION
   handlePWMITR:
+    ;This is the check for the 1s pwm timer
     BRSET PIFP,#$02,handleClockTick;
     continueInterruptHandle:
+    ;This is the check for the 10s pwm timer
     BRSET PIFP,#$20,swapNames;
     RTI;
   handleClockTick:
+    ;Jump to Clock Subroutine
     JSR tick;
     BRA continueInterruptHandle;
   swapNames:

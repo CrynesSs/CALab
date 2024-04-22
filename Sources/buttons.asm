@@ -30,7 +30,7 @@
   
   normalModeInterrupt:
     ;Ignore all Interrupts except button 0
-    BRCLR PIFH,#$01,cleanFlags;
+    BRCLR PIFH,#$00,cleanFlags;
     ;Clear Button 1 Interrupt Flag
     MOVB #$01,PIFH;
     BRSET PPSH,#$01,buttonJustPressedInterrupt;
@@ -44,13 +44,13 @@
     ;Setup Timer so we can track how long the button was pressed for
     LDD TCNT;
     SUBD #1;
-    ;Clear the Flag if it is already set
-    MOVB #$01,TFLG1;
+    ;Clear the Timer Flag if it is already set
+    MOVB #$00,TFLG1;
     STD TC0;
     RTI
         
   buttonJustReleasedInterrupt:
-    BRSET TFLG1,#$01,buttonWasTooLateReleased;
+    BRSET TFLG1,#$00,buttonWasTooLateReleased;
     ;Toggle Mode
     LDAB setMode;
     EORB #$01;
@@ -58,6 +58,8 @@
     
     
   buttonWasTooLateReleased:
+     ;Clear the Flag
+     MOVB #$00,TFLG1;
      ;toggle Input Edge on button 
      LDAB PPSH;
      EORB #$01;
@@ -79,14 +81,19 @@
      BRSET PPSH,#$08,jmpToHour;
      
      RTI;
+     ;TODO Add Hours/Min/Sec independent from Rollover
   jmpToSecond:
     JSR addSecond;
+    MOVB #$01,PIFH;
     BRA rtsFromSecond;
   jmpToMinute:
     JSR addMinute;
+    MOVB #$02,PIFH;
     BRA rtsFromMinute;
   jmpToHour:
     JSR addHour;
+    MOVB #$04,PIFH;
+    BRA 
   cleanFlags:
     MOVB #$0F,PIFH;
     RTI;  

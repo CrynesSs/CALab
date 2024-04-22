@@ -60,10 +60,12 @@ Entry:
         JSR delay_10ms;
 
         JSR initLED;
-        JSR setupPWM;
-        JSR initLCD;
         JSR setClock;
+        JSR initLCD;
+        JSR setupPWM;
         
+        
+        ;Enables Interrupts on Port H which is probably the buttons connections
         MOVB #$00,DDRH
         MOVB #$0F,PPSH  
         MOVB #$0F,PIEH 
