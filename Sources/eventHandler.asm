@@ -13,7 +13,7 @@
 
 ; export symbols
     XDEF handlePWMITR;
-    XREF tick,PIFP
+    XREF tick,PIFP,displayNames,changeName;
     
     
 .init: SECTION
@@ -23,11 +23,17 @@
     continueInterruptHandle:
     ;This is the check for the 10s pwm timer
     BRSET PIFP,#$20,swapNames;
+    continueInterruptHandle2:
+    BRSET PIFP,#$07,displayName;
+    continueInterruptHandle3:
     RTI;
   handleClockTick:
     ;Jump to Clock Subroutine
     JSR tick;
     BRA continueInterruptHandle;
   swapNames:
-    MOVB #$20,PIFP;Reset Interrupt Flag
-    RTI;TODO implement Swapnames Logic in new File
+    JSR changeName;
+    BRA continueInterruptHandle2
+  displayName:
+    JSR displayNames;
+    BRA continueInterruptHandle3;
