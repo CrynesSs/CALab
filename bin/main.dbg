@@ -15,7 +15,7 @@
         XDEF Entry, main
         XDEF PORTB, DDRB, DDRJ, PTJ, DDRP, PTP
         XDEF TC1,TCTL1,TCTL2,TIOS,TSCR1,TSCR2,TFLG1
-        XDEF PWME,PWMPOL,PWMCTL,PWMCLK,PWMPRCLK,PWMCAE,PWMSCLA,PWMSCLB,PWMPER0,PWMPER1,PWMDTY0,PWMDTY1,PIEP,PPSP,PIFP
+        XDEF PWME,PWMPOL,PWMCTL,PWMCLK,PWMPRCLK,PWMCAE,PWMSCLA,PWMSCLB,PWMPER0,PWMPER1,PWMDTY0,PWMDTY1,PWMPER4,PWMPER5,PWMDTY4,PWMDTY5,PIEP,PPSP,PIFP
         XDEF PIFH,TC0,TFLG1,PPSH,TCNT;
 ; import symbols
         XREF __SEG_END_SSTACK           ; End of stack
@@ -27,7 +27,7 @@
         XREF initLCD,writeLine;
         XREF setupPWM;
         XREF delay_10ms
-        XREF tick,setClock;
+        XREF handlePWMITR,setClock;
         XREF buttonHandle;
         
 ; include derivative specific macros
@@ -12844,7 +12844,7 @@ mNVFSEC_KEYEN:      equ    %10000000
 
 .vect:SECTION
   ORG $FF8E
-  DC.W tick
+  DC.W handlePWMITR
   ORG $FFCC
   DC.W buttonHandle
 

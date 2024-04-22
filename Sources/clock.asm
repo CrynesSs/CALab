@@ -35,17 +35,16 @@ ASCIIBuffer: DS.B 7
     MOVB #$01,Hour12Format
     RTS
   cancelTick:
-    RTI;
+    RTS;
   tick:
    MOVB #$02,PIFP;Reset Interrupt Flag
    BRSET setMode,#$01,cancelTick;
    LDAB #$01;
    JSR toggleLED;
-   
    JSR addSecond;
    JSR chooseFormat;
    ;JSR displayText; TODO implement Method for displayign TEXT
-   RTI;
+   RTS;
   addSecond:
     LDAB SECONDS;
     CMPB #59
