@@ -14,6 +14,7 @@
 ; export symbols
     XREF decToASCII;
     XDEF tick,setClock,addSecond,addMinute,addHour;
+    XDEF addSecondsSet,addMinutesSet,addHourSet;
     XREF PIFP,toggleLED,displayText,setMode;
   
         
@@ -48,7 +49,7 @@ ASCIIBuffer: DS.B 7
   addSecond:
     LDAB SECONDS;
     CMPB #59
-    BEQ rollOverSecondsSet;
+    BEQ rollOverSecondsNormal;
     INCB;
     STAB SECONDS;
     BRA chooseFormat;
@@ -56,7 +57,7 @@ ASCIIBuffer: DS.B 7
   addMinute:
     LDAB MINUTES;
     CMPB #59
-    BEQ rollOverMinutesSet;
+    BEQ rollOverMinutesNormal;
     INCB;
     STAB MINUTES;
     BRA chooseFormat;
@@ -64,18 +65,18 @@ ASCIIBuffer: DS.B 7
   addHour:
     LDAB HOURS;
     CMPB #23;
-    BEQ rollOverHoursSet;
+    BEQ rollOverHoursNormal;
     INCB;
     STAB HOURS;
     BRA chooseFormat;
     RTS
-  rollOverSecondsSet:
+  rollOverSecondsNormal:
     MOVB #$00,SECONDS;
     BRA addMinute;
-  rollOverMinutesSet:
+  rollOverMinutesNormal:
     MOVB #$00,MINUTES;
     BRA addHour;
-  rollOverHoursSet:
+  rollOverHoursNormal:
     MOVB #00,HOURS;
     BRA chooseFormat;
     RTS;  
@@ -148,6 +149,36 @@ ASCIIBuffer: DS.B 7
      MOVW ASCIIBuffer+4,OUTPUTSTRING;
      JSR skipToMinutes;
      RTS
+  addHourSet:
+    LDAB HOURS;
+    CMPB #12;
+    BEQ rollOverHours;
+    INCB;
+    STAB HOURS;
+    RTS;
+    rollOverHours:
+    MOVB #$00,HOURS;
+    RTS;
+  addMinutesSet:
+    LDAB MINUTES;
+    CMPB #59;
+    BEQ rollOverMinutes;
+    INCB;
+    STAB MINUTES;
+    RTS;
+    rollOverMinutes:
+    MOVB #$00,MINUTES;
+    RTS;
+  addSecondsSet:
+    LDAB SECONDS;
+    CMPB #59;
+    BEQ rollOverSeconds;
+    INCB;
+    STAB SECONDS;
+    RTS;
+    rollOverSeconds:
+    MOVB #$00,SECONDS;
+    RTS;    
 
  
  

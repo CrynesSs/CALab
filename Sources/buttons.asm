@@ -14,7 +14,7 @@
 ; export symbols
         XDEF buttonHandle
         XREF PIFH,TC0,TFLG1,PPSH,TCNT;
-        XREF addSecond,addMinute,addHour
+        XREF addSecondsSet,addMinutesSet,addHourSet
         XDEF setMode;
 
 .data: SECTION
@@ -79,21 +79,21 @@
      rtsFromMinute:
      ;check Button 4
      BRSET PPSH,#$08,jmpToHour;
-     
+     rtsFromHour:
      RTI;
      ;TODO Add Hours/Min/Sec independent from Rollover
   jmpToSecond:
-    JSR addSecond;
-    MOVB #$01,PIFH;
+    JSR addSecondsSet;
+    MOVB #$02,PIFH;
     BRA rtsFromSecond;
   jmpToMinute:
-    JSR addMinute;
-    MOVB #$02,PIFH;
+    JSR addMinutesSet;
+    MOVB #$04,PIFH;
     BRA rtsFromMinute;
   jmpToHour:
-    JSR addHour;
-    MOVB #$04,PIFH;
-    BRA 
+    JSR addHourSet;
+    MOVB #$08,PIFH;
+    BRA rtsFromHour; 
   cleanFlags:
     MOVB #$0F,PIFH;
     RTI;  
