@@ -34,10 +34,11 @@
   MOVB #$FF,DDRP;Set Port P as Output
   ;Port P Interrupt Enable on Pin 1,3,5
   MOVB #$2A,PIEP
-  ;Trigger on pos. Edge of P1
-  MOVB #$2A,PPSP; 
-  ;PWM Enable for 0,1 and 4,5
-  MOVB #$3F,PWME;
+  ;Trigger on pos. Edge of P1,Trigger on Falling Edge
+  MOVB #$20,PPSP; 
+  
+  
+  
   ;PWM Polarity
   MOVB #$00,PWMPOL
   ;PWM Clock Select : B/SB,B/SB,A/SA,A/SA,B/SB,B/SB,A/SA,A/SA
@@ -69,12 +70,13 @@
   MOVB #$0E,PWMDTY4 ;High Byte of Duty Count
   MOVB #$A6,PWMDTY5 ;Low Byte of Duty Count
   ;In Total 20% Duty Time of left aligned PWM Signal with 1875 Countdown with 12800 prescaler = One Edge every 24.000.000 Cycles = 1s
-  ;Output Channel is PWM5
+  ;Output Channel is PWM5 - 10s Timer
   ;Move Number from nameChanger into PWMER2 to start switching frames.
-  MOVW #MAGIC_NUMBER_1,PWMPER2;
-  MOVW #MAGIC_NUMBER_PWMDTY1,PWMDTY2
+  ;MOVW MAGIC_NUMBER_1,PWMPER2;
+  ;MOVW MAGIC_NUMBER_PWMDTY1,PWMDTY2
 
-
+  ;PWM Enable for 0,1 and 4,5
+  MOVB #$3F,PWME;
 
 
   RTS

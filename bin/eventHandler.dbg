@@ -24,7 +24,7 @@
     ;This is the check for the 10s pwm timer
     BRSET PIFP,#$20,swapNames;
     continueInterruptHandle2:
-    BRSET PIFP,#$07,displayName;
+    BRSET PIFP,#$08,displayName;
     continueInterruptHandle3:
     RTI;
   handleClockTick:

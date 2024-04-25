@@ -15,8 +15,11 @@ const char NAME_1[]  = "Julian Warttmann © IT WS2021/2022";
 const char NAME_2[]  = "Nikolai Glock © IT WS2021/2022";
 
 void displayNames(void){
-    if(FRAME_BUFFER >=17)return;
+    if(FRAMECOUNT >=17)return;
     FRAMECOUNT++;
-    unsigned char buffer[16] = ACTIVE_NAME ? NAME_1[FRAMECOUNT] : NAME_2[FRAMECOUNT];  
+    unsigned char buffer[16] = ACTIVE_NAME ? NAME_1[FRAMECOUNT] : NAME_2[FRAMECOUNT]; 
+         
+}
+void changeNames(void){
     
 }

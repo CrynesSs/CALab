@@ -30,6 +30,7 @@
         XREF delay_10ms
         XREF handlePWMITR,setClock;
         XREF buttonHandle;
+        XREF initNamechanger;
         
 ; include derivative specific macros
         INCLUDE 'mc9s12dp256.inc'
@@ -12865,9 +12866,12 @@ Entry:
         JSR delay_10ms;
 
         JSR initLED;
-        JSR setClock;
         JSR initLCD;
+        JSR initNamechanger;
+        JSR setClock;
+        
         JSR setupPWM;
+        
         
         
         ;Enables Interrupts on Port H which is probably the buttons connections
