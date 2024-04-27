@@ -6,10 +6,7 @@
 #pragma LINK_INFO DERIVATIVE "mc9s12dp256b"
 
 void setPWMRegister(unsigned short PWMPERREG,unsigned short PWMDTYREG,unsigned short PWMPERVAL,unsigned short PWMDTYVAL){
-    asm {
-        MOVW PWMPERVAL,PWMPERREG;
-        MOVW PWMDTYVAL,PWMDTYREG;
-    }
+    
 }
 
 void setupPWM(void){

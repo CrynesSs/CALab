@@ -1,6 +1,6 @@
 
-        XDEF displayNames,changeName,MAGIC_NUMBER_1,MAGIC_NUMBER_2,MAGIC_NUMBER_PWMDTY1,initNamechanger
-        XREF PIFP,PWMPER2,PWMDTY2
+        XDEF setupNames,changeName,MAGIC_NUMBER_1,MAGIC_NUMBER_2,MAGIC_NUMBER_PWMDTY1,initNamechanger,FRAME_BUFFER
+        XREF PIFP,PWMPER2,PWMDTY2,PWME,writeLine
 
 
 
@@ -25,15 +25,14 @@
       MOVB #$00,FRAMECOUNT;
       MOVB #$01,ACTIVE_NAME;
       RTS;
-    displayNames:
-        MOVB #$08,PIFP;Reset Interrupt Flag
+    setupNames:
         LDAB ACTIVE_NAME;
         CMPB #0;
         BEQ handleName1;
         BRA handleName2;
     handleName1:
         LDAA FRAMECOUNT;
-        CMPB #17;
+        CMPA #17;
         BEQ skipInc1;
         INCA;
         skipInc1:
@@ -42,8 +41,7 @@
         ABX;
         LDY #FRAME_BUFFER;
         LDAB #16 ; Needs to get 16 chars out of it
-        BRA fameLoop
-
+        BRA fameLoop;
     handleName2:
         LDAA FRAMECOUNT;
         CMPA #14;
@@ -65,9 +63,9 @@
         BNE fameLoop;
         STAA FRAMECOUNT;
         MOVB #$00,FRAME_BUFFER+16
+        JSR displayNames;
         RTS;
     changeName:
-        MOVB #$20,PIFP;Reset Interrupt Flag
         LDAB ACTIVE_NAME;
         CMPB #$0;
         BEQ changeToName2
@@ -78,6 +76,7 @@
         MOVB #$00,FRAMECOUNT
         MOVW MAGIC_NUMBER_1,PWMPER2;
         MOVW MAGIC_NUMBER_PWMDTY1,PWMDTY2
+        MOVB #$3F,PWME;
         RTS;
     changeToName2:        
         EORB #$01;
@@ -85,8 +84,13 @@
         MOVB #$00,FRAMECOUNT
         MOVW MAGIC_NUMBER_2,PWMPER2;
         MOVW MAGIC_NUMBER_PWMDTY2,PWMDTY2
+        MOVB #$3F,PWME;
         RTS;
-
+    displayNames:
+      LDX #FRAME_BUFFER;
+      LDAB #0;
+      JSR writeLine;
+      RTS;
         
         
 

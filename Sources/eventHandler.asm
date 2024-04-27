@@ -13,7 +13,8 @@
 
 ; export symbols
     XDEF handlePWMITR;
-    XREF tick,PIFP,displayNames,changeName;
+    XREF tick,PIFP,setupNames,changeName,displayTemperatureAndTime,writeLine;
+    XREF FRAME_BUFFER,LINE_BUFFER;
     
     
 .init: SECTION
@@ -29,11 +30,15 @@
     RTI;
   handleClockTick:
     ;Jump to Clock Subroutine
+    MOVB #$02,PIFP;Reset Interrupt Flag
     JSR tick;
+    JSR displayTemperatureAndTime;
     BRA continueInterruptHandle;
   swapNames:
+    MOVB #$20,PIFP;Reset Interrupt Flag
     JSR changeName;
     BRA continueInterruptHandle2
   displayName:
-    JSR displayNames;
+    MOVB #$08,PIFP;Reset Interrupt Flag
+    JSR setupNames;
     BRA continueInterruptHandle3;

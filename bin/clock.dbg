@@ -15,7 +15,8 @@
     XREF decToASCII;
     XDEF tick,setClock,addSecond,addMinute,addHour;
     XDEF addSecondsSet,addMinutesSet,addHourSet;
-    XREF PIFP,toggleLED,displayText,setMode;
+    XDEF OUTPUTSTRING;
+    XREF PIFP,toggleLED,setMode;
   
         
 .data:  SECTION
@@ -38,7 +39,10 @@ ASCIIBuffer: DS.B 7
   cancelTick:
     RTS;
   tick:
-   MOVB #$02,PIFP;Reset Interrupt Flag
+   ;pshd
+   ;pshx
+   ;pshy
+    
    BRSET setMode,#$01,cancelTick;
    LDAB #$01;
    JSR toggleLED;
@@ -101,8 +105,11 @@ ASCIIBuffer: DS.B 7
    ;Set Format Symbols     
    MOVB #$3A,OUTPUTSTRING+2; ":"
    MOVB #$3A,OUTPUTSTRING+5;
-   ;Move Outputstring Pointer to X   
-   LDX #OUTPUTSTRING
+   
+   ;puld
+   ;pulx
+   ;puly
+   
    RTS;    
   chooseFormat:
     LDAB Hour12Format;

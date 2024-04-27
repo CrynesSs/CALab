@@ -34,13 +34,13 @@
   MOVB #$FF,DDRP;Set Port P as Output
   ;Port P Interrupt Enable on Pin 1,3,5
   MOVB #$2A,PIEP
-  ;Trigger on pos. Edge of P1,Trigger on Falling Edge
-  MOVB #$20,PPSP; 
+  ;Trigger on pos. Edge of P1,Trigger on RISING EDGE if SET
+  MOVB #$0A,PPSP; 
   
   
   
-  ;PWM Polarity
-  MOVB #$00,PWMPOL
+  ;PWM Polarity, Polarity so that the Duty Cycle starts with a rising edge.and is shorter overall
+  MOVB #$FF,PWMPOL
   ;PWM Clock Select : B/SB,B/SB,A/SA,A/SA,B/SB,B/SB,A/SA,A/SA
   MOVB #$FF,PWMCLK ;Select SA for Channels 0,1/4,5 and SB for Channels 2,3/7,8
   ;PWM Prescale Clock Select 4bit B , 4bit A
@@ -54,7 +54,10 @@
   ;PWM Scale B for SB SB=B/(2*PWMSCLB)
   MOVB #$01,PWMSCLB ;PWM Scale 1, Total Prescale = 128*2*1=256
   ;PWM Channel Period Register Period=Clock * RegisterValue, Each Channel has its own Register
-  ;Magic Number here is 1875 which is 0x0753 ;;Sidenote:technically devisable by 3 and could use 1 register instead of connected registers, but currently not needed
+  ;Magic Number here is 1875 which is 0x0753 ;;Sidenote:technically devisable by 3 and could use 1
+  ;RESPONSIBLE FOR MAKING CLOCK TICK
+  ;register instead of connected registers, but currently not needed
+  setup1sTimer:
   MOVB #$07,PWMPER0 ;High Byte of 16 bit count
   MOVB #$53,PWMPER1 ;Low Byte of 16 bit count
   ;PWM Duty Register Uptime is Uptime=([PWMPER-PWMDTY]/PWMPER)*100%
@@ -64,19 +67,25 @@
   ;In Total 20% Duty Time of left aligned PWM Signal with 1875 Countdown with 12800 prescaler = One Edge every 24.000.000 Cycles = 1s
   ;Output Channel is PWM1
   ;Magic Number here is 18750 which is 0x493E
+  setup10sTimer:
+  ;RESPONSIBLE FOR MAKING NAME CHANGE
   MOVB #$49,PWMPER4
   MOVB #$3E,PWMPER5
-  ;20% Duty Cycle magic Number is 3750 which is 0x0EA6 
-  MOVB #$0E,PWMDTY4 ;High Byte of Duty Count
-  MOVB #$A6,PWMDTY5 ;Low Byte of Duty Count
-  ;In Total 20% Duty Time of left aligned PWM Signal with 1875 Countdown with 12800 prescaler = One Edge every 24.000.000 Cycles = 1s
+  ;1/5 Duty Cycle magic Number is EA6 which is 0x0EA6
+  ;This edge repeates every 10s no matter what the dty is, But the first wrong interrupt is thrown earlier 
+  ;Try with dif Number MOVB #$0E,PWMDTY4 ;High Byte of Duty Count
+  ;Try with dif Number MOVB #$A6,PWMDTY5 ;Low Byte of Duty Count
+   MOVB #$00,PWMDTY4 ;High Byte of Duty Count
+   MOVB #$06,PWMDTY5 ;Low Byte of Duty Count
+  ;In Total 20% Duty Time of left aligned PWM Signal with 18750 Countdown with 12800 prescaler = One Edge every 240.000.000 Cycles = 10s
   ;Output Channel is PWM5 - 10s Timer
   ;Move Number from nameChanger into PWMER2 to start switching frames.
+  ;RESPONSIBLE FOR MAKING FRAMES
   ;MOVW MAGIC_NUMBER_1,PWMPER2;
   ;MOVW MAGIC_NUMBER_PWMDTY1,PWMDTY2
 
   ;PWM Enable for 0,1 and 4,5
-  MOVB #$3F,PWME;
+  MOVB #$33,PWME;
 
 
   RTS
