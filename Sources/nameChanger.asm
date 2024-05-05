@@ -11,7 +11,7 @@
   .const:SECTION
   NAME1: DC.B "Julian Warttmann © IT WS2021/2022" ;33Chars,10s display period. Max 16 chars at once. to display all,[0,15]->[17,32],17*shifts in 10s so 10s/18 = 555ms => 
   ;18frames a 555ms and 10ms at the end waiting for change. One Change every 2,666,666 * 5 clock cycles = 13,333,330Cycles Better Number here is 13,333,248 as devisable by 256,52083*256, In Total 239,998,464/240,000,000 Cycles used for Frames. Last Frame overhang is only 1536Cycles = 0.000064S = 0.064ms = 64us
-  NAME2: DC.B "Nikolai Glock © IT WS2021/2022";30chars,10s display period. Max 16 chars at once. to display all,[0,15]->[13,28],14*shifts in 10s, so 10s/15, circa 666ms=>
+  NAME2: DC.B "Nicolai Glock © IT WS2021/2022";30chars,10s display period. Max 16 chars at once. to display all,[0,15]->[13,28],14*shifts in 10s, so 10s/15, circa 666ms=>
   ;15Frames a 666ms and 10ms at the end waiting for change. One Change every 2,666,666 * 6 clock cycles = 15,999,996Cycles,exact Number here is 16,000,000 Cycles without rounding errors 16,000,000 we keep as 256 * 62,500 is 16M This is exact. No overhang
   MAGIC_NUMBER_1: DC.W $CB73 ;52083
   MAGIC_NUMBER_2: DC.W $F424 ;62500

@@ -16,7 +16,7 @@
     XDEF tick,setClock,addSecond,addMinute,addHour;
     XDEF addSecondsSet,addMinutesSet,addHourSet;
     XDEF OUTPUTSTRING;
-    XREF PIFP,toggleLED,setMode;
+    XREF PIFP,toggleLED,setMode,PTH,displayTemperatureAndTime;
   
         
 .data:  SECTION
@@ -44,7 +44,7 @@ ASCIIBuffer: DS.B 7
    ;pshy
     
    BRSET setMode,#$01,cancelTick;
-   LDAB #$01;
+   LDAB #$01
    JSR toggleLED;
    JSR addSecond;
    JSR chooseFormat;
@@ -162,30 +162,35 @@ ASCIIBuffer: DS.B 7
     BEQ rollOverHours;
     INCB;
     STAB HOURS;
+    BRA displayNewTime;
     RTS;
     rollOverHours:
     MOVB #$00,HOURS;
-    RTS;
+    BRA displayNewTime;
   addMinutesSet:
     LDAB MINUTES;
     CMPB #59;
     BEQ rollOverMinutes;
     INCB;
     STAB MINUTES;
-    RTS;
+    BRA displayNewTime;
     rollOverMinutes:
     MOVB #$00,MINUTES;
-    RTS;
+    BRA displayNewTime;
   addSecondsSet:
     LDAB SECONDS;
     CMPB #59;
     BEQ rollOverSeconds;
     INCB;
     STAB SECONDS;
-    RTS;
+    BRA displayNewTime;
     rollOverSeconds:
     MOVB #$00,SECONDS;
-    RTS;    
+    BRA displayNewTime; 
+  displayNewTime:
+    JSR chooseFormat;
+    JSR displayTemperatureAndTime;
+    RTS;   
 
  
  

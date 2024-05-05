@@ -1,16 +1,33 @@
-;   Labor 1 - Vorbereitungsaufgabe 2.4
-;   Convert a zero-terminated ASCIIZ string to lower characters
-;   Main program
-;
-;   Computerarchitektur
-;   (C) 2019-2022 J. Friedrich, W. Zimmermann, R. Keller
-;   Hochschule Esslingen
-;
-;   Author:   R. Keller, Jul 4, 2019
-;            (based on code provided by J. Friedrich, W. Zimmermann)
-;   Modified: -
-;
+    XDEF initThermo
+    XDEF updateThermo
+    XDEF temp
+    
+    XREF initADC
+    XREF convertADC
+     
+    INCLUDE 'mc9s12dp256.inc'
+.data: SECTION
+temp: ds.b 7 ;
 
-; export symbols
-        
+
 .init: SECTION
+
+initThermo:
+  JSR initADC  
+  rts
+  
+
+
+updateThermo: ;
+  PSHB
+  PSHY
+  PSHX
+  
+  LDY #temp
+  JSR convertADC
+
+  PULX
+  PULY
+  PULB
+ 
+  rts

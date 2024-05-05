@@ -10,7 +10,7 @@
 ;            (based on code provided by J. Friedrich, W. Zimmermann)
 ;   Modified: -
 ;
-   XREF OUTPUTSTRING,writeLine;
+   XREF OUTPUTSTRING,writeLine,temp;
    XDEF displayTemperatureAndTime,LINE_BUFFER;
 ; export symbols
 .data: SECTION
@@ -68,12 +68,13 @@
   displayTemperatureAndTime:
     LDX #OUTPUTSTRING;
     ;LDY #TEMPERATUREOUTPUT; TODO
-    MOVB #$32,DUMMY_TEMP;
-    MOVB #$35,DUMMY_TEMP+1;
-    MOVB #$6F,DUMMY_TEMP+2
-    MOVB #$43,DUMMY_TEMP+3;
-    MOVB #$00,DUMMY_TEMP+4;
-    LDY #DUMMY_TEMP
+    ;MOVB #$32,DUMMY_TEMP;
+    ;MOVB #$35,DUMMY_TEMP+1;
+    ;MOVB #$6F,DUMMY_TEMP+2
+    ;MOVB #$43,DUMMY_TEMP+3;
+    ;MOVB #$00,DUMMY_TEMP+4;
+    ;LDY #DUMMY_TEMP
+    LDY #temp
     JSR concat2StringsString1LeftBoundedString2RightBoundedForNiceDisplayIGuess;
     LDAB #1;
     LDX #LINE_BUFFER;

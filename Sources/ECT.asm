@@ -13,7 +13,7 @@
 
 ; export symbols
     XDEF setupTimer
-    XREF TIOS,TCTL4,TIE,ICPAR,DDRT,TFLG1,TCTL1,TCTL2,TSCR1,TSCR2,TCTL3
+    XREF TIOS,TCTL4,TIE,ICPAR,DDRT,TFLG1,TCTL1,TCTL2,TSCR1,TSCR2,TCTL3,MCCTL,MCCNT
 ; RAM: Variable data section
 .data: SECTION
 ; ROM: Constant data
@@ -31,8 +31,13 @@
     ;Disable Input Capture
     MOVB #$00,TCTL3
     MOVB #$00,TCTL4
-    
+    ;128 Prescaler of Timer
     MOVB #$07,TSCR2;
+    ;Init the Modulo down counter with 16 bit prescaler enabled for the 5ms polling.
+    ;MOVB #$A7,MCCTL;
+    ;Set the Modulo count down timer to 7500 with 16 bit prescale this gives 120.000cycles or 5ms
+    ;MOVW #$1D4C,MCCNT
+    RTS;
     
     
     

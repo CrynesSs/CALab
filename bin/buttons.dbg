@@ -13,26 +13,39 @@
 
 ; export symbols
         XDEF buttonHandle
-        XREF PIFH,TC0,TFLG1,PPSH,TCNT;
-        XREF addSecondsSet,addMinutesSet,addHourSet
-        XDEF setMode;
+        XREF PIFH,TC0,TFLG1,PPSH,TCNT,PIEH,DDRH,PTH,PTH_PTH0,PERH;
+        XREF addSecondsSet,addMinutesSet,addHourSet,toggleLED
+        XDEF setMode,initButtonState;
 
 .data: SECTION
-  setMode: DS.B 1
-  setModeTimerStarted: DS.B 1
+  setMode: DC.B 1
+  setModeTimerStarted: DC.B 1
         
 .init: SECTION
+  initButtonState:
+    MOVB #$00,setMode
+    MOVB #$00, setModeTimerStarted
+    ;Enables Interrupts on Port H which is probably the buttons connections
+    MOVB #$00,DDRH
+        ;Port H Polarity Register,set active Edge to Rising
+    MOVB #$00,PPSH
+        ;Port H Interrupt Enable. Enable Interrupts for Port H  
+    MOVB #$FF,PIEH 
+    MOVB #$FF,PERH;
+    RTS;
+
+
   buttonHandle:
     LDAB setMode;
-    CMPA #$0;
+    CMPB #$00;
     BEQ normalModeInterrupt;
     BRA setModeInterrupt;
   
   normalModeInterrupt:
-    ;Ignore all Interrupts except button 0
-    BRCLR PIFH,#$00,cleanFlags;
+    ;Ignore all Interrupts except button 0,Default State PortH is FF. If pressed FE. So 11111110. 
+    BRSET PTH,#$01,cleanFlags;
     ;Clear Button 1 Interrupt Flag
-    MOVB #$01,PIFH;
+    ;MOVB #$01,PIFH;
     BRSET PPSH,#$01,buttonJustPressedInterrupt;
     BRSET PPSH,#$00,buttonJustReleasedInterrupt;
     
@@ -45,18 +58,19 @@
     LDD TCNT;
     SUBD #1;
     ;Clear the Timer Flag if it is already set
-    MOVB #$00,TFLG1;
+    MOVB #$01,TFLG1;
     STD TC0;
     RTI
         
   buttonJustReleasedInterrupt:
-    BRSET TFLG1,#$00,buttonWasTooLateReleased;
+    BRSET TFLG1,#$01,buttonWasTooLateReleased;
     ;Toggle Mode
     LDAB setMode;
     EORB #$01;
     STAB setMode;
-    
-    
+    LDAB #$80;
+    JSR toggleLED;
+    RTI;  
   buttonWasTooLateReleased:
      ;Clear the Flag
      MOVB #$00,TFLG1;
@@ -68,18 +82,20 @@
   
        
   setModeInterrupt:
-     ;Check Button 1
-     BRSET PPSH,#$01,buttonJustPressedInterrupt;
-     BRSET PPSH,#$00,buttonJustReleasedInterrupt;
+     
      ;Check Button 2
-     BRSET PPSH, #$02,jmpToSecond;
+     BRCLR PTH, #$02,jmpToSecond;
      rtsFromSecond:
      ;check Button 3
-     BRSET PPSH,#$04,jmpToMinute;
+     BRCLR PTH,#$04,jmpToMinute;
      rtsFromMinute:
      ;check Button 4
-     BRSET PPSH,#$08,jmpToHour;
+     BRCLR PTH,#$08,jmpToHour;
      rtsFromHour:
+     ;Check Button 1
+     BRSET PTH,#$01,cleanFlags;
+     BRSET PPSH,#$01,buttonJustPressedInterrupt;
+     BRSET PPSH,#$00,buttonJustReleasedInterrupt;
      RTI;
      ;TODO Add Hours/Min/Sec independent from Rollover
   jmpToSecond:

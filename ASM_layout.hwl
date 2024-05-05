@@ -12,6 +12,13 @@ OPEN data 0 42 60 28
 Data < attributes SCOPE global,COMPLEMENT None,FORMAT Symb,MODE automatic,UPDATERATE 10,NAMEWIDTH 16
 OPEN command 0 70 60 30
 Command < attributes CACHESIZE 1000
+OPEN io_led 53 82 10 12
+IO_Led< PORT 1
+IO_Led< DDR 3
+OPEN push_buttons 53 82 10 12
+
+OPEN LCD 53 82 10 12
+LCD < LCDPORT "0x32" "0x00"
 bckcolor 50331647
 font 'Courier New' 9 BLACK
 AUTOSIZE on
