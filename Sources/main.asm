@@ -63,7 +63,7 @@ Entry:
         
         JSR delay_10ms;
         JSR delay_10ms;
-
+        ;Call all relevant init functions
         JSR initLED;
         JSR initLCD;
         JSR initNamechanger;

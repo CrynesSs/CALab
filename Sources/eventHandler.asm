@@ -19,6 +19,8 @@
     
     
 .init: SECTION
+;**************************************************************
+; Interrupt handler for the PWM module Interrupts that are used as timers here
   handlePWMITR:
     ;This is the check for the 1s pwm timer
     BRSET PIFP,#$02,handleClockTick;
@@ -29,6 +31,7 @@
     BRSET PIFP,#$08,displayName;
     continueInterruptHandle3:
     RTI;
+;**************************************************************    
   handleClockTick:
     ;Jump to Clock Subroutine
     MOVB #$02,PIFP;Reset Interrupt Flag
@@ -36,10 +39,12 @@
     JSR updateThermo;
     JSR displayTemperatureAndTime;
     BRA continueInterruptHandle;
+;**************************************************************
   swapNames:
     MOVB #$20,PIFP;Reset Interrupt Flag
     JSR changeName;
     BRA continueInterruptHandle2
+;**************************************************************
   displayName:
     MOVB #$08,PIFP;Reset Interrupt Flag
     JSR setupNames;

@@ -21,76 +21,102 @@
 
 
 .init: SECTION
-    initNamechanger:
-      MOVB #$00,FRAMECOUNT;
-      MOVB #$01,ACTIVE_NAME;
-      RTS;
-    setupNames:
-        LDAB ACTIVE_NAME;
-        CMPB #0;
-        BEQ handleName1;
-        BRA handleName2;
-    handleName1:
-        LDAA FRAMECOUNT;
-        CMPA #17;
-        BEQ skipInc1;
-        INCA;
-        skipInc1:
-        LDAB FRAMECOUNT;
-        LDX #NAME1
-        ABX;
-        LDY #FRAME_BUFFER;
-        LDAB #16 ; Needs to get 16 chars out of it
-        BRA fameLoop;
-    handleName2:
-        LDAA FRAMECOUNT;
-        CMPA #14;
-        BEQ skipInc2;
-        INCA;
-        skipInc2:
-        LDAB FRAMECOUNT;
-        LDX #NAME2
-        ABX;
-        LDY #FRAME_BUFFER;
-        LDAB #16 ; Needs to get 16 chars out of it
-        BRA fameLoop;
-    fameLoop:
-        DECB;
-        MOVB X,0,Y
-        INY;
-        INX;
-        CMPB #0;
-        BNE fameLoop;
-        STAA FRAMECOUNT;
-        MOVB #$00,FRAME_BUFFER+16
-        JSR displayNames;
-        RTS;
-    changeName:
-        LDAB ACTIVE_NAME;
-        CMPB #$0;
-        BEQ changeToName2
-        BRA changeToName1
-    changeToName1:
-        EORB #$01;
-        STAB ACTIVE_NAME;
-        MOVB #$00,FRAMECOUNT
-        MOVW MAGIC_NUMBER_1,PWMPER2;
-        MOVW MAGIC_NUMBER_PWMDTY1,PWMDTY2
-        MOVB #$3F,PWME;
-        RTS;
-    changeToName2:        
-        EORB #$01;
-        STAB ACTIVE_NAME;
-        MOVB #$00,FRAMECOUNT
-        MOVW MAGIC_NUMBER_2,PWMPER2;
-        MOVW MAGIC_NUMBER_PWMDTY2,PWMDTY2
-        MOVB #$3F,PWME;
-        RTS;
-    displayNames:
-      LDX #FRAME_BUFFER;
-      LDAB #0;
-      JSR writeLine;
-      RTS;
+;**************************************************************
+; Init the starting Values for the Variables
+; Parameter: -
+; Return:    -
+  initNamechanger:
+    MOVB #$00,FRAMECOUNT;
+    MOVB #$01,ACTIVE_NAME;
+    RTS;
+;**************************************************************
+; Decide which name has to be displayed on screen at this moment
+; Parameter: ACTIVE_NAME - (Byte) - Decides which name is active
+; Return:    -
+  setupNames:
+    LDAB ACTIVE_NAME;
+    CMPB #0;
+    BEQ handleName1;
+    BRA handleName2;
+;**************************************************************
+; Decide which name has to be displayed on screen at this moment
+; Parameter: FRAME_COUNT - (Byte) - Frame we are currently on
+; Return:    -
+  handleName1:
+    ;Load FRAME_COUNT into Register A
+    LDAA FRAMECOUNT;
+    CMPA #17;
+    ;Stop increasing Frames beyond 17, as that would overflow the string
+    BEQ skipInc1;
+    INCA;
+    skipInc1:
+    LDAB FRAMECOUNT;
+    LDX #NAME1
+    ABX;
+    LDY #FRAME_BUFFER;
+    LDAB #16 ; Needs to get 16 chars out of it
+    BRA fameLoop;
+;**************************************************************
+  handleName2:
+    LDAA FRAMECOUNT;
+    CMPA #14;
+    BEQ skipInc2;
+    INCA;
+    skipInc2:
+    LDAB FRAMECOUNT;
+    LDX #NAME2
+    ABX;
+    LDY #FRAME_BUFFER;
+    LDAB #16 ; Needs to get 16 chars out of it
+    BRA fameLoop;
+;**************************************************************
+; Copy Characters into FRAME_BUFFER
+; Parameter: 
+;     b - (Byte) - Number of characters that should be copied
+;     x - (Word / Char *) - Address of char to copy
+;     y - (Word / Char *) - Address of copy destination
+; Return:    -
+  fameLoop:
+    DECB;
+    MOVB X,0,Y
+    INY;
+    INX;
+    CMPB #0;
+    BNE fameLoop;
+    STAA FRAMECOUNT;
+    MOVB #$00,FRAME_BUFFER+16
+    JSR displayNames;
+    RTS;
+;**************************************************************
+  changeName:
+    LDAB ACTIVE_NAME;
+    CMPB #$0;
+    BEQ changeToName2
+    BRA changeToName1
+;**************************************************************
+  changeToName1:
+    EORB #$01;
+    STAB ACTIVE_NAME;
+    MOVB #$00,FRAMECOUNT
+    MOVW MAGIC_NUMBER_1,PWMPER2;
+    MOVW MAGIC_NUMBER_PWMDTY1,PWMDTY2
+    MOVB #$3F,PWME;
+    RTS;
+;**************************************************************
+  changeToName2:        
+    EORB #$01;
+    STAB ACTIVE_NAME;
+    MOVB #$00,FRAMECOUNT
+    MOVW MAGIC_NUMBER_2,PWMPER2;
+    MOVW MAGIC_NUMBER_PWMDTY2,PWMDTY2
+    MOVB #$3F,PWME;
+    RTS;
+;**************************************************************
+  displayNames:
+    LDX #FRAME_BUFFER;
+    LDAB #0;
+    JSR writeLine;
+    RTS;
         
         
 

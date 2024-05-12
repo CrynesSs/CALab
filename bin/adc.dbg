@@ -12846,7 +12846,7 @@ initADC:
   
 
 
-; Public interface function: convertADC ... Convert analog values 0...1023 into the corresponding temperature -30°C .. 70°C
+; Public interface function: convertADC ... Convert analog values 0...1023 into the corresponding temperature -30ï¿½C .. 70ï¿½C
 ; string to LCD 
 ; Parameter:
 ; Y ... pointer points to adress of result string
@@ -12860,7 +12860,7 @@ convertADC:
 wait1:
 ;Wait for End of Conversion (EOC), busy waiting:
   BRCLR ATD0STAT0, #$80, wait1
-  LDD ATD0DR0 ; Read conversion result à D  
+  LDD ATD0DR0 ; Read conversion result ï¿½ D  
 
 
 
@@ -12901,7 +12901,7 @@ wait1:
   
   
   
-formatString: ;results in a string with the format: [SIGN][digit][digit]['C']['°'][0]
+formatString: ;results in a string with the format: [SIGN][digit][digit]['C']['ï¿½'][0]
 
   LDAA #' '  
   STAA 1, Y+

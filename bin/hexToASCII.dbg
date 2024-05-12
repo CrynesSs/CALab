@@ -24,10 +24,14 @@ WORD: DC.W 1
 H2A: DC.B "0123456789ABCDEF"
 ; ROM: Code section
 .init: SECTION
-
+;**************************************************************
+; Convert Hexdacimal Number to ASCII Character Representation
+; Parameter: 
+;     d - (Word) - The hexadmical number to convert
+;     x - (Word) - Address of the copy destination
 hexToASCII:
-   
    STD WORD;
+   ; 0x in the first 2 characters of the Result String
    MOVW #$3078,0,X;
    MOVB #0,6,X;
   ;Ersten 2 Buchstaben
@@ -74,7 +78,6 @@ hexToASCII:
   ABY;
   ;Move the Byte from Y to the correct Position in X
   MOVB Y,2,X;
-  
   RTS
 
   

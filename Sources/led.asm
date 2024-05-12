@@ -16,19 +16,36 @@
         XREF DDRB,PORTB,DDRJ,PTJ
  
 .init: SECTION
+;**************************************************************
+; Init the LED Component
+; Parameter: -
+; Return:    -
 initLED:
-  BSET    DDRJ, #2
-  BCLR    PTJ,  #2
-  MOVB #$FF,DDRB;
-  MOVB #$00,PORTB;
-  RTS;
+    BSET    DDRJ, #2
+    BCLR    PTJ,  #2
+    MOVB #$FF,DDRB;
+    MOVB #$00,PORTB;
+    RTS;
+;**************************************************************
+; Set the LED to a predefined value.
+; Parameter: b - (Byte) - Putting value into PORTB
+; Return:    -
 setLED:
-  STAB PORTB;
-  RTS
+    STAB PORTB;
+    RTS
+;**************************************************************
+; Get the current LED state
+; Parameter: -
+; Return:    b - (Byte) - Value of PORTB
 getLED:
-  LDAB PORTB;
-  RTS
+    LDAB PORTB;
+    RTS
+;**************************************************************
+; Toggle specified LEDs. 1 = Toggle, 0 = NoToggle
+; Parameter: b - (Byte) - The LEDs to toggle
+; Return:    -
 toggleLED:
-  EORB PORTB;
-  STAB PORTB;
-  RTS;
+    EORB PORTB;
+    STAB PORTB;
+    RTS;
+;**************************************************************  

@@ -14,7 +14,7 @@
 ; export symbols
     XREF decToASCII;
     XDEF tick,setClock,addSecond,addMinute,addHour;
-    XDEF addSecondsSet,addMinutesSet,addHourSet;
+    XDEF addSecondsSet,addMinutesSet,addHoursSet;
     XDEF OUTPUTSTRING;
     XREF PIFP,toggleLED,setMode,PTH,displayTemperatureAndTime;
   
@@ -156,9 +156,9 @@ ASCIIBuffer: DS.B 7
      MOVW ASCIIBuffer+4,OUTPUTSTRING;
      JSR skipToMinutes;
      RTS
-  addHourSet:
+  addHoursSet:
     LDAB HOURS;
-    CMPB #12;
+    CMPB #23;
     BEQ rollOverHours;
     INCB;
     STAB HOURS;

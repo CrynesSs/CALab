@@ -12,12 +12,14 @@
 ;
 
 ; export symbols
-        XDEF buttonHandle
-        XREF PIFH,TC0,TFLG1,PPSH,TCNT,PIEH,DDRH,PTH,PTH_PTH0,PERH;
-        XREF addSecondsSet,addMinutesSet,addHourSet,toggleLED
+        XREF PIFH,TFLG1,PPSH,TCNT,PIEH,DDRH,PTH,PTH_PTH0,PERH;
+        XREF addSecondsSet,addMinutesSet,addHoursSet,toggleLED
         XDEF setMode,initButtonState;
+        XREF TC0,TC1,TC2,TC3,TC4,TC5,TC6,TC7
 
 .data: SECTION
+  buttonPressedEval: DC.B 1
+  buttonReleasedEval: DC.B 1
   setMode: DC.B 1
   setModeTimerStarted: DC.B 1
         
@@ -33,83 +35,187 @@
     MOVB #$FF,PIEH 
     MOVB #$FF,PERH;
     RTS;
-
-
-  buttonHandle:
-    LDAB setMode;
-    CMPB #$00;
-    BEQ normalModeInterrupt;
-    BRA setModeInterrupt;
   
-  normalModeInterrupt:
-    ;Ignore all Interrupts except button 0,Default State PortH is FF. If pressed FE. So 11111110. 
-    BRSET PTH,#$01,cleanFlags;
-    ;Clear Button 1 Interrupt Flag
-    ;MOVB #$01,PIFH;
-    BRSET PPSH,#$01,buttonJustPressedInterrupt;
-    BRSET PPSH,#$00,buttonJustReleasedInterrupt;
-    
-  buttonJustPressedInterrupt:
-    ;toggle Input Edge on button
-    LDAB PPSH;
-    EORB #$01;
-    STAB PPSH;
-    ;Setup Timer so we can track how long the button was pressed for
-    LDD TCNT;
-    SUBD #1;
-    ;Clear the Timer Flag if it is already set
-    MOVB #$01,TFLG1;
-    STD TC0;
-    RTI
-        
-  buttonJustReleasedInterrupt:
-    BRSET TFLG1,#$01,buttonWasTooLateReleased;
-    ;Toggle Mode
-    LDAB setMode;
-    EORB #$01;
-    STAB setMode;
-    LDAB #$80;
-    JSR toggleLED;
-    RTI;  
-  buttonWasTooLateReleased:
-     ;Clear the Flag
-     MOVB #$00,TFLG1;
-     ;toggle Input Edge on button 
-     LDAB PPSH;
-     EORB #$01;
-     STAB PPSH;
-     RTI
+  evaluateButtons:
+  ;PIFH_PIFH0 & PPSH_PPSH0 -> Button just pressed
+  ;PIFH_PIFH0 & !PPSH_PPSH0 -> Button just released
+  ;!PIFH_PIFH0 & (PPSH_PPSH0 | !PPSH_PPSH0) -> NoHandle
+  LDAA PIFH;
+  ANDA PPSH;
+  STAA buttonPressedEval;
+  ;Quasi Not Gate
+  LDAB PPSH;
+  EORB #$FF;
+  ANDB PIFH;
+  STAB buttonReleasedEval;
+  ;Eval
+  continueEvalBT:
+  BRSET buttonPressedEval,#$01,handleBt1;
+  BRSET buttonReleasedEval,#$01,handleBt1;
+  ;return if not in set Mode as button 2 in normal mode should not do anything
+  LDAB setMode;
+  BITB #$01;
+  BNE notInSetMode;
+  BRSET buttonPressedEval,#$02,handleBt2;
+  BRSET buttonPressedEval,#$04,handleBt3;
+  BRSET buttonPressedEval,#$08,handleBt4;
+  BRSET buttonReleasedEval,#$02,handleBt2;
+  BRSET buttonReleasedEval,#$04,handleBt3;
+  BRSET buttonReleasedEval,#$08,handleBt4;
+  notInSetMode:
+  RTI;
+  handleBt1:
+  JSR logicBT1;
+  BRA continueEvalBT;
+  handleBt2:
+  JSR logicBT2;
+  BRA continueEvalBT;
+  handleBt3:
+  JSR logicBT3;
+  BRA continueEvalBT;
+  handleBt4:
+  JSR logicBT4;
+  BRA continueEvalBT; 
   
-       
-  setModeInterrupt:
-     
-     ;Check Button 2
-     BRCLR PTH, #$02,jmpToSecond;
-     rtsFromSecond:
-     ;check Button 3
-     BRCLR PTH,#$04,jmpToMinute;
-     rtsFromMinute:
-     ;check Button 4
-     BRCLR PTH,#$08,jmpToHour;
-     rtsFromHour:
-     ;Check Button 1
-     BRSET PTH,#$01,cleanFlags;
-     BRSET PPSH,#$01,buttonJustPressedInterrupt;
-     BRSET PPSH,#$00,buttonJustReleasedInterrupt;
-     RTI;
-     ;TODO Add Hours/Min/Sec independent from Rollover
-  jmpToSecond:
-    JSR addSecondsSet;
-    MOVB #$02,PIFH;
-    BRA rtsFromSecond;
-  jmpToMinute:
-    JSR addMinutesSet;
-    MOVB #$04,PIFH;
-    BRA rtsFromMinute;
-  jmpToHour:
-    JSR addHourSet;
-    MOVB #$08,PIFH;
-    BRA rtsFromHour; 
-  cleanFlags:
-    MOVB #$0F,PIFH;
-    RTI;  
+  logicBT1:
+  ;Change Register Polarity to catch opposite edge next time. Dual Edge button Detection
+  LDAB PPSH;
+  EORB #$01;
+  STAB PPSH;
+  BRSET buttonReleasedEval,#$01,released1;
+  ;Handler here if button was pressed
+  ;Clear the bit of buttonPressedEval so the handler knows we dealt with it.
+  LDAB buttonPressedEval;
+  ANDB #$FE;
+  STAB buttonPressedEval;
+  ;Minimum 50ms of pressed, so the flag gets set after 50ms, so we can ignore buttons that are pushed very short
+  LDD TCNT
+  ADDD #$0EA6
+  STD TC1;
+  ;Maximum time we can measuere. This should give around 350ms of max button push length
+  LDD TCNT;
+  SUBD #1;
+  STD TC0;
+  BRA continueEval;
+  released1:
+  ;Reset bit in buttonReleasedEval
+  LDAB buttonReleasedEval;
+  ANDB #$FE;
+  STAB buttonReleasedEval; 
+  ;handle here if button was released
+  LDAB TFLG1;
+  LSRB;
+  ANDB TFLG1;
+  BITA #$01;
+  BNE continueEval;
+  LDAB setMode;
+  EORB #$01;
+  STAB setMode;
+  LDAB #$80;
+  JSR toggleLED;
+  RTS
+  
+  logicBT2:
+  ;Change Register Polarity to catch opposite edge next time. Dual Edge button Detection
+  LDAB PPSH;
+  EORB #$02;
+  STAB PPSH;
+  BRSET buttonReleasedEval,#$02,released2;
+  ;Handler here if button was pressed
+  ;Clear the bit of buttonPressedEval so the handler knows we dealt with it.
+  LDAB buttonPressedEval;
+  ANDB #$FD;
+  STAB buttonPressedEval;
+  ;Minimum 50ms of pressed, so the flag gets set after 50ms, so we can ignore buttons that are pushed very short
+  LDD TCNT
+  ADDD #$0EA6
+  STD TC3;
+  ;Maximum time we can measuere. This should give around 350ms of max button push length
+  LDD TCNT;
+  SUBD #1;
+  STD TC2;
+  BRA continueEval;
+  released2:
+  ;Reset bit in buttonReleasedEval
+  LDAB buttonReleasedEval;
+  ANDB #$FD;
+  STAB buttonReleasedEval; 
+  ;handle here if button was released
+  LDAB TFLG1;
+  LSRB;
+  ANDB TFLG1;
+  BITA #$04;
+  BNE continueEval;
+  JSR addSecondsSet;
+  RTS;
+  
+  continueEval:
+  RTS;
+  
+  logicBT3:
+  ;Change Register Polarity to catch opposite edge next time. Dual Edge button Detection
+  LDAB PPSH;
+  EORB #$04;
+  STAB PPSH;
+  BRSET buttonReleasedEval,#$04,released3;
+  ;Handler here if button was pressed
+  ;Clear the bit of buttonPressedEval so the handler knows we dealt with it.
+  LDAB buttonPressedEval;
+  ANDB #$FB;
+  STAB buttonPressedEval;
+  ;Minimum 50ms of pressed, so the flag gets set after 50ms, so we can ignore buttons that are pushed very short
+  LDD TCNT
+  ADDD #$0EA6
+  STD TC5;
+  ;Maximum time we can measuere. This should give around 350ms of max button push length
+  LDD TCNT;
+  SUBD #1;
+  STD TC4;
+  BRA continueEval;
+  released3:
+  ;Reset bit in buttonReleasedEval
+  LDAB buttonReleasedEval;
+  ANDB #$FB;
+  STAB buttonReleasedEval; 
+  ;handle here if button was released
+  LDAB TFLG1;
+  LSRB;
+  ANDB TFLG1;
+  BITA #$10;
+  BNE continueEval;
+  JSR addMinutesSet;
+  RTS
+  
+  logicBT4:
+  ;Change Register Polarity to catch opposite edge next time. Dual Edge button Detection
+  LDAB PPSH;
+  EORB #$08;
+  STAB PPSH;
+  BRSET buttonReleasedEval,#$08,released4;
+  ;Handler here if button was pressed
+  ;Clear the bit of buttonPressedEval so the handler knows we dealt with it.
+  LDAB buttonPressedEval;
+  ANDB #$F7;
+  STAB buttonPressedEval;
+  ;Minimum 50ms of pressed, so the flag gets set after 50ms, so we can ignore buttons that are pushed very short
+  LDD TCNT
+  ADDD #$0EA6
+  STD TC7;
+  ;Maximum time we can measuere. This should give around 350ms of max button push length
+  LDD TCNT;
+  SUBD #1;
+  STD TC6;
+  BRA continueEval;
+  released4:
+  ;Reset bit in buttonReleasedEval
+  LDAB buttonReleasedEval;
+  ANDB #$F7;
+  STAB buttonReleasedEval; 
+  ;handle here if button was released
+  LDAB TFLG1;
+  LSRB;
+  ANDB TFLG1;
+  BITA #$40;
+  BNE continueEval;
+  JSR addHoursSet;
+  RTS; 

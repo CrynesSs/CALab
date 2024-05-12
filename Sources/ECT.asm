@@ -34,9 +34,9 @@
     ;128 Prescaler of Timer
     MOVB #$07,TSCR2;
     ;Init the Modulo down counter with 16 bit prescaler enabled for the 5ms polling.
-    ;MOVB #$A7,MCCTL;
+    MOVB #$C7,MCCTL;
     ;Set the Modulo count down timer to 7500 with 16 bit prescale this gives 120.000cycles or 5ms
-    ;MOVW #$1D4C,MCCNT
+    MOVW #$1D4C,MCCNT
     RTS;
     
     
