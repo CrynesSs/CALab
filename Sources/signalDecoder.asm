@@ -2,7 +2,7 @@
 
 
    XREF PTH
-   XDEF signalDecoderControl,init_intervals
+   XDEF signalDecoderControl,init_intervals,testFunction
 
 
 .data: SECTION
@@ -18,6 +18,9 @@ STREAM_POSITION: DC.B 1;
 
 VALID_MINUTES: DC.B 1;
 VALID_HOURS: DC.B 1
+VALID_DAYS: DC.B 1
+DAY_OF_WEEK_AND_MONTH: DC.B 1
+YEAR: DC.B 1
 
 TEMP: DC.B 1;
 
@@ -61,12 +64,24 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     
     LDAB WAIT_FOR_DATA;
     CMPB #$01;
-    BEQ checkDataBuffer;
+    BEQ jmpDataBuffer;
     
     LDAB TOTAL_POLLS;
     CMPB #200;
     BEQ evalWindow;
     RTI;
+    
+    testFunction:
+    MOVW #$0000,DATA_STREAM;
+    MOVW #$1F0F,DATA_STREAM+2;
+    MOVW #$102C,DATA_STREAM+4;
+    MOVW #$0040,DATA_STREAM+6;
+    JSR evalBits;
+    
+    
+    jmpDataBuffer:
+    JSR checkDataBuffer;
+    
     
     evalWindow:
     LDAB HIGHS;
@@ -88,24 +103,24 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     resetToDefault:
     MOVB #$00,STOP_BIT_FOUND;
     JSR resetInterval;
-    
-    pollSignal:
-    ;Load the PTH Register to get the bit we are interested in
-    LDAA PTH;
-    ;Isolate the Bit we want to check;
-    ANDA #$01;
-    ;Check if bit is set
-    CMPA #$01;
-    BNE continue;
-    addHigh:
-    LDAB HIGHS;
-    INCB;
-    STAB HIGHS;
-    continue:
+
+    checkForStopBit:
     LDAB TOTAL_POLLS;
-    INCB;
-    STAB TOTAL_POLLS;
-    RTS;
+    CMPB #200;
+    ;Return if the total number of polls is less than 200;
+    BNE returnFromStopBit;
+    LDAB HIGHS;
+    CMPB CONF_STOP;
+    ;Throw away the interval if the confidence threshhold is not met
+    BLT jmpResetInterval;
+    MOVB #$01,STOP_BIT_FOUND;
+    MOVB #$01,WAIT_FOR_DATA;
+    MOVW #$0000,DATA_BUFFER;
+    returnFromStopBit:
+    RTI;
+    
+    jmpResetInterval:
+    JSR resetInterval;
     
     ;Responsible for filling the Data Buffer
     returnFromDecoder:
@@ -117,22 +132,7 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     XGDX;
     STD DATA_BUFFER;
     RTI;
-    
-    checkForStopBit:
-    LDAB TOTAL_POLLS;
-    CMPB #200;
-    ;Return if the total number of polls is less than 200;
-    BNE returnFromStopBit;
-    LDAB HIGHS;
-    CMPB CONF_STOP;
-    ;Throw away the interval if the confidence threshhold is not met
-    BLT resetInterval;
-    MOVB #$01,STOP_BIT_FOUND;
-    MOVB #$01,WAIT_FOR_DATA;
-    MOVW #$0000,DATA_BUFFER;
-    returnFromStopBit:
-    RTI;
-    
+
     checkDataBuffer:
     LDAB TOTAL_POLLS;
     CMPB #16;
@@ -175,6 +175,23 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     STD DATA_BUFFER;
     RTI;
     
+    pollSignal:
+    ;Load the PTH Register to get the bit we are interested in
+    LDAA PTH;
+    ;Isolate the Bit we want to check;
+    ANDA #$01;
+    ;Check if bit is set
+    CMPA #$01;
+    BNE continue;
+    addHigh:
+    LDAB HIGHS;
+    INCB;
+    STAB HIGHS;
+    continue:
+    LDAB TOTAL_POLLS;
+    INCB;
+    STAB TOTAL_POLLS;
+    RTS;
     
     
     startIntervals:
@@ -219,12 +236,17 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     
     ;TODO
     evalBits:
+    JSR checkDateParity;
     JSR evalMinutes;
     JSR evalHours;
+    JSR evalDays;
+    JSR evalDayOfWeek
+    JSR evalYear;
+    
     
     
     evalMinutes:
-    LDD DATA_BUFFER+2;
+    LDD DATA_STREAM+2;
     LSRD;
     LSRD;
     LSRD;
@@ -233,7 +255,7 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     CMPB #$01;
     BNE invalidBit;
     ;Load Data again
-    LDD DATA_BUFFER+2;
+    LDD DATA_STREAM+2;
     LSRD;
     LSRD;
     LSRD;
@@ -246,50 +268,73 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     LDD #0;
     XGDX;
     LDD #0;
-    
+    ;Minutes are put in TEMP
+    ;For Test Case F0 -> Expected 4 1's, parity 0;
     LDAA TEMP;
     LDAB TEMP;
     ;Isolate first bit and add to X; If X is even, 0 bit not set => even;
     ;0
+    ANDB #$80;
+    ROLB;
+    ROLB;
     ANDB #$01;
     ABX;
     TAB;
-    LSRB;
+    LSLB;
     ;1
+    ANDB #$80;
+    ROLB;
+    ROLB;
     ANDB #$01;
     ABX;
-    LSRA;
+    LSLA;
     TAB;
-    LSRB;
+    LSLB;
     ;2
+    ANDB #$80;
+    ROLB;
+    ROLB;
     ANDB #$01;
     ABX;
-    LSRA;
+    LSLA;
     TAB;
-    LSRB;
+    LSLB;
     ;3
+    ANDB #$80;
+    ROLB;
+    ROLB;
     ANDB #$01;
     ABX;
-    LSRA;
+    LSLA;
     TAB;
-    LSRB;
+    LSLB;
     ;4
+    ANDB #$80;
+    ROLB;
+    ROLB;
     ANDB #$01;
     ABX;
+    LSLA;
     TAB;
-    LSRA;
-    LSRB;
+    LSLB;
     ;5
+    ANDB #$80;
+    ROLB;
+    ROLB;
     ANDB #$01;
     ABX;
     TAB;
-    LSRB;
+    LSLB;
     ;6
+    ANDB #$80;
+    ROLB;
+    ROLB;
     ANDB #$01;
     ABX;
-    LSRA;
+    LSLA;
     TAB;
-    LSRB;
+    ;PARITY BIT 35
+    LSLB;
     ; Check if Parity Bit is even or ODD;
     CMPB #$00;
     BEQ parity_even_min;
@@ -313,7 +358,7 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     
     
     validBit:
-    LDD DATA_BUFFER+2;
+    LDD DATA_STREAM+2;
     LSRD;
     LSRD;
     LSRD;
@@ -325,13 +370,111 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     ;Load Byte 25-40
     LDD #0;
     XGDX;
-    LDD DATA_BUFFER+3
-    LSRD;
-    LSRD;
-    LSRD;
-    LSRD;
+    LDD DATA_STREAM+3
+    LSLD;
+    LSLD;
+    LSLD;
+    LSLD;
     ;Isolate the first 7 bits in B to get the Hours+Parity
-    ANDB #$7F;
+    ANDA #$FE;
+    TAB;
+    ;Isolate first bit and add to X; If X is even, 0 bit not set => even;
+    ;Isolate first bit and add to X; If X is even, 0 bit not set => even;
+    ;0
+    ANDB #$80;
+    ROLB;
+    ROLB;
+    ANDB #$01;
+    ABX;
+    TAB;
+    LSLB;
+    ;1
+    ANDB #$80;
+    ROLB;
+    ROLB;
+    ANDB #$01;
+    ABX;
+    LSLA;
+    TAB;
+    LSLB;
+    ;2
+    ANDB #$80;
+    ROLB;
+    ROLB;
+    ANDB #$01;
+    ABX;
+    LSLA;
+    TAB;
+    LSLB;
+    ;3
+    ANDB #$80;
+    ROLB;
+    ROLB;
+    ANDB #$01;
+    ABX;
+    LSLA;
+    TAB;
+    LSLB;
+    ;4
+    ANDB #$80;
+    ROLB;
+    ROLB;
+    ANDB #$01;
+    ABX;
+    LSLA;
+    TAB;
+    LSLB;
+    ;5
+    ANDB #$80;
+    ROLB;
+    ROLB;
+    ANDB #$01;
+    ABX;
+    TAB;
+    LSLB;
+    
+    CMPB #$00;
+    BEQ parity_even_hours;
+    BRA parity_odd_hours;
+     
+    parity_even_hours:
+    XGDX;
+    CMPB #$00;
+    BEQ validBitH;
+    CMPB #$04;
+    BEQ validBitH;
+    JSR invalidBit;
+    
+    parity_odd_hours:
+    XGDX;
+    CMPB #$03;
+    BEQ validBitH;
+    CMPB #$07;
+    BEQ validBitH;
+    JSR invalidBit;
+    
+    
+    validBitH:
+    LDD DATA_STREAM+3;
+    LSLD;
+    LSLD;
+    LSLD;
+    LSLD;
+    ANDA #$FE;
+    STAA VALID_HOURS;
+    RTS;
+    
+    
+    checkDateParity:
+    LDD #0
+    XGDX;
+    ;Bit 36-47
+    LDD DATA_STREAM+4
+    LSLD;
+    LSLD;
+    LSLD;
+    LSLD;
+    STAA TEMP;
     TBA;
     ;Isolate first bit and add to X; If X is even, 0 bit not set => even;
     ;0
@@ -360,44 +503,196 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     ;4
     ANDB #$01;
     ABX;
-    TAB;
     LSRA;
+    TAB;
     LSRB;
     ;5
     ANDB #$01;
     ABX;
+    LSRA;
     TAB;
     LSRB;
+    ;6
+    ANDB #$01;
+    ABX;
+    LSRA;
+    TAB;
+    LSRB;
+    ;7
+    ANDB #$01;
+    ABX;
+    LSRA;
+    TAB;
+    LSRB;
+    ;Next bit
+    LDAB TEMP;
+    TBA;
+    ;0
+    ANDB #$01;
+    ABX;
+    TAB;
+    LSRB;
+    ;1
+    ANDB #$01;
+    ABX;
+    LSRA;
+    TAB;
+    LSRB;
+    ;2
+    ANDB #$01;
+    ABX;
+    LSRA;
+    TAB;
+    LSRB;
+    ;3
+    ANDB #$01;
+    ABX;
+    LSRA;
+    TAB;
+    LSRB;
+    ;4
+    ANDB #$01;
+    ABX;
+    LSRA;
+    TAB;
+    LSRB;
+    ;5
+    ANDB #$01;
+    ABX;
+    LSRA;
+    TAB;
+    LSRB;
+    ;6
+    ANDB #$01;
+    ABX;
+    LSRA;
+    TAB;
+    LSRB;
+    ;7
+    ANDB #$01;
+    ABX;
+    LSRA;
+    TAB;
+    LSRB;
+    ;Load bit 48-63
+    LDD DATA_STREAM+6
+    ;Isolate bit 47-58
+    ANDB #$E0;
+    STAB TEMP;
+    TAB;
+    ;Isolate first bit and add to X; If X is even, 0 bit not set => even;
+    ;0
+    ANDB #$01;
+    ABX;
+    TAB;
+    LSRB;
+    ;1
+    ANDB #$01;
+    ABX;
+    LSRA;
+    TAB;
+    LSRB;
+    ;2
+    ANDB #$01;
+    ABX;
+    LSRA;
+    TAB;
+    LSRB;
+    ;3
+    ANDB #$01;
+    ABX;
+    LSRA;
+    TAB;
+    LSRB;
+    ;4
+    ANDB #$01;
+    ABX;
+    LSRA;
+    TAB;
+    LSRB;
+    ;5
+    ANDB #$01;
+    ABX;
+    LSRA;
+    TAB;
+    LSRB;
+    ;6
+    ANDB #$01;
+    ABX;
+    LSRA;
+    TAB;
+    LSRB;
+    ;7
+    ANDB #$01;
+    ABX;
+    LSRA;
+    TAB;
+    LSRB;
+    ;Next bit
+    LDAB TEMP;
+    TBA;
+    ;0
+    ANDB #$80;
+    ROLB;
+    ROLB;
+    ANDB #$01;
+    ABX;
+    TAB;
+    LSLB;
+    ;1 PARITY BIT 58
+    ANDB #$80;
+    ROLB;
+    ROLB;
+    ANDB #$01;
     CMPB #$00;
-    BEQ parity_even_hours;
-    BRA parity_odd_hours;
-     
-    parity_even_hours:
+    BEQ parity_even_date;
+    BRA partiy_odd_date;
+    
+    parity_even_date:
     XGDX;
+    ANDB #$01;
     CMPB #$00;
-    BEQ validBitH;
-    CMPB #$04;
-    BEQ validBitH;
+    BEQ valid_bit_date;
+    JSR invalidBit;
+   
+    
+    
+    partiy_odd_date:
+    XGDX;
+    ANDB #$01;
+    CMPB #$01;
+    BEQ valid_bit_date;
     JSR invalidBit;
     
-    parity_odd_hours:
-    XGDX;
-    CMPB #$03;
-    BEQ validBitH;
-    CMPB #$07;
-    BEQ validBitH;
-    JSR invalidBit;
+    valid_bit_date:
+    RTS; 
     
-    
-    validBitH:
-    LDD DATA_BUFFER+3;
-    LSRD;
-    LSRD;
-    LSRD;
-    LSRD;
-    ANDB #$7F;
-    STAB VALID_HOURS;
+    evalDays:
+    LDD DATA_STREAM+4;
+    LSLD;
+    LSLD;
+    LSLD;
+    ANDA #$FC
+    STAA VALID_DAYS;
     RTS;
+    
+    evalDayOfWeek:
+    LDD DATA_STREAM+5;
+    LSLD;
+    LSLD;
+    STAB DAY_OF_WEEK_AND_MONTH;
+    RTS;
+    
+    evalYear:
+    LDD DATA_STREAM+6;
+    LSLD;
+    LSLD;
+    STAB YEAR;
+    
+    
+    
+    
+    
     
     
     

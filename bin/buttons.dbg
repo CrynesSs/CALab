@@ -14,7 +14,7 @@
 ; export symbols
         XREF PIFH,TFLG1,PPSH,TCNT,PIEH,DDRH,PTH,PTH_PTH0,PERH;
         XREF addSecondsSet,addMinutesSet,addHoursSet,toggleLED
-        XDEF setMode,initButtonState;
+        XDEF setMode,initButtonState,evaluateButtons;
         XREF TC0,TC1,TC2,TC3,TC4,TC5,TC6,TC7
 
 .data: SECTION
