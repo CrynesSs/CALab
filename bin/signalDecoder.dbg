@@ -1,7 +1,7 @@
 
 
 
-   XREF PTH
+   XREF PTH,MINUTES,SECONDS,HOURS
    XDEF signalDecoderControl,init_intervals,testFunction
 
 
@@ -242,6 +242,8 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     JSR evalDays;
     JSR evalDayOfWeek
     JSR evalYear;
+    JSR putCorrectDateAndTime;
+    RTI;
     
     
     
@@ -690,6 +692,62 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     STAB YEAR;
     
     
+    putCorrectDateAndTime:
+    JSR convertMinutes;
+    
+    
+    convertMinutes:
+    LDAA VALID_MINUTES;
+    ROLA;
+    ROLA;                                    
+    LSRD;
+    
+    LSLA;
+    ROLA;
+    LSRD;
+    
+    LSLA;
+    ROLA;
+    LSRD;
+    
+    LSLA;
+    ROLA;
+    LSRD;
+    
+    LSRB;
+    LSRB;
+    LSRB;
+    LSRB;
+    
+    ;After this first 4 Bits in A are now final 4 bits in B;
+    LDAA VALID_MINUTES;
+    LSRA;
+    ANDA #$01;
+    CMPA #$01;
+    BNE cont1;
+    ADDB #40;
+    cont1:
+    LDAA VALID_MINUTES;
+    LSRA;
+    ANDA #$02;
+    CMPA #$02;
+    BNE cont2;
+    ADDB #20;
+    cont2:
+    LDAA VALID_MINUTES;
+    LSRA;
+    ANDA #$04;
+    CMPA #$04;
+    BNE cont3;
+    ADDB #10;
+    cont3:
+    STAB MINUTES;
+    
+    
+    
+    
+    
+   
     
     
     

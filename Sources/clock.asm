@@ -15,7 +15,7 @@
     XREF decToASCII;
     XDEF tick,setClock,addSecond,addMinute,addHour;
     XDEF addSecondsSet,addMinutesSet,addHoursSet;
-    XDEF OUTPUTSTRING;
+    XDEF OUTPUTSTRING,MINUTES,SECONDS,HOURS;
     XREF PIFP,toggleLED,setMode,PTH,displayTemperatureAndTime;
   
         
