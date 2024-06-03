@@ -13,7 +13,7 @@
 
 ; export symbols
         XDEF Entry, main
-        XDEF PORTB, DDRB, DDRJ, PTJ, DDRP, PTP,PTH,DDRH,PPSH,PIEH,PTH_PTH0,PERH
+        XDEF PORTB, DDRB, DDRJ, PTJ, DDRP, PTP,PTH,DDRH,PPSH,PIEH,PTH_PTH0,PERH,MCFLG
         XDEF TC1,TCTL1,TCTL2,TCTL3,TCTL4,TIOS,TSCR1,TSCR2,TFLG1,TIE,TC0,TC1,TC2,TC3,TC4,TC5,TC6,TC7
         XDEF PWME,PWMPOL,PWMCTL,PWMCLK,PWMPRCLK,PWMCAE,PWMSCLA,PWMSCLB,PWMPER0,PWMPER1,PWMDTY0,PWMDTY1,PWMPER4,PWMPER5,PWMDTY4,PWMDTY5,PIEP,PPSP,PIFP
         XDEF PIFH,TC0,TFLG1,PPSH,TCNT,MCCTL,MCCNT;
@@ -26,7 +26,7 @@
         XREF hexToASCII;
         XREF decToASCII;
         XREF initLCD,writeLine;
-        XREF setupPWM;
+        XREF setupPWM,signalDecoderControl,init_intervals;
         XREF delay_10ms
         XREF handlePWMITR,setClock;
         XREF evaluateButtons;
@@ -46,8 +46,12 @@
   ORG $FF8E
   DC.W handlePWMITR;
   
-  ORG $FFCC
-  int25:  DC.W evaluateButtons;
+  ORG $FFCA
+  DC.W signalDecoderControl;
+  ;ORG $FFCC
+  ;int25:  DC.W evaluateButtons;
+  
+ 
 
 
 
@@ -65,14 +69,14 @@ Entry:
         JSR delay_10ms;
         JSR delay_10ms;
         ;Call all relevant init functions
-        JSR testFunction;
-        
+        ;JSR testFunction;
+        JSR init_intervals;
         JSR initLED;
         JSR initLCD;
-        JSR initNamechanger;
+        ;JSR initNamechanger;
         JSR initADC;
         JSR setClock;
-        JSR initButtonState;
+        ;JSR initButtonState;
         JSR setupPWM;
         JSR setupTimer;
         

@@ -35,6 +35,7 @@
 ; Return: -
 ; Registers: Unchanged (when function returns
 initADC:
+  MOVB #$00,temp;
   MOVB #$C0, ATD0CTL2 ; Enable ATD, no interrupt
   MOVB #$08, ATD0CTL3 ; Single conversion only
   MOVB #$05, ATD0CTL4 ; 10 bit, 2 MHz ATD0 clock

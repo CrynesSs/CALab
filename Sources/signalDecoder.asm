@@ -1,8 +1,8 @@
 
 
 
-   XREF PTH,MINUTES,SECONDS,HOURS
-   XDEF signalDecoderControl,init_intervals,testFunction
+   XREF PTH,MINUTES,SECONDS,HOURS,MCFLG
+   XDEF signalDecoderControl,init_intervals,testFunction,signalDecoderControl
 
 
 .data: SECTION
@@ -44,17 +44,29 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     MOVW #$A997,CONF_I1;
     
     MOVW #$0000,DATA_BUFFER;
+    MOVB #$00,HIGHS;
+    MOVB #$00,TOTAL_POLLS;
+    MOVB #$00,STOP_BIT_FOUND;
+    MOVB #$00,WAIT_FOR_DATA;
+    MOVB #$00,STREAM_POSITION;
+    MOVW #$0000,DATA_STREAM;
+    MOVW #$0000,DATA_STREAM+2;
+    MOVW #$0000,DATA_STREAM+4;
+    MOVW #$0000,DATA_STREAM+6;
     RTS;
     
     validOne:
-    LDAB #$00;
-    JSR putBit;
-    
-    validZero:
     LDAB #$01;
     JSR putBit;
+    RTI;
+    
+    validZero:
+    LDAB #$00;
+    JSR putBit;
+    RTI;
     
     signalDecoderControl:
+    MOVB #$80,MCFLG;
     ;If the Number of Total Polls is less than 200, we need to continue polling. 
     JSR pollSignal;
     
@@ -76,32 +88,41 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     MOVW #$1F0F,DATA_STREAM+2;
     MOVW #$102C,DATA_STREAM+4;
     MOVW #$0040,DATA_STREAM+6;
+    
     JSR evalBits;
     
     
     jmpDataBuffer:
     JSR checkDataBuffer;
+    RTI;
     
     
     evalWindow:
     LDAB HIGHS;
     ;Check if Highs are outside lowest Count;
     CMPB CONF_I1+1;
-    BLT resetToDefault;
+    BLO resetToDefault;
     CMPB CONF_I1;
     BLE validOne;
     CMPB CONF_I0+1;
-    BLT resetToDefault;
+    BLO resetToDefault;
     CMPB CONF_I0;
     BLE validZero;
     CMPB CONF_STOP;
-    BLT resetToDefault;
+    BLO resetToDefault;
     ;Valid Stop Bit here
-    MOVB #$01,WAIT_FOR_DATA;
+    MOVB #$01,WAIT_FOR_DATA;  
     JSR evalBits;
+    RTI;
     
     resetToDefault:
     MOVB #$00,STOP_BIT_FOUND;
+    MOVW #$0000,DATA_STREAM;
+    MOVW #$0000,DATA_STREAM+2;
+    MOVW #$0000,DATA_STREAM+4;
+    MOVW #$0000,DATA_STREAM+6;
+    MOVB #$00,STREAM_POSITION;
+    
     JSR resetInterval;
 
     checkForStopBit:
@@ -112,31 +133,34 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     LDAB HIGHS;
     CMPB CONF_STOP;
     ;Throw away the interval if the confidence threshhold is not met
-    BLT jmpResetInterval;
+    BLO jmpResetInterval;
     MOVB #$01,STOP_BIT_FOUND;
     MOVB #$01,WAIT_FOR_DATA;
+    MOVB #$00,TOTAL_POLLS;
     MOVW #$0000,DATA_BUFFER;
     returnFromStopBit:
     RTI;
     
     jmpResetInterval:
     JSR resetInterval;
+    RTI;
     
     ;Responsible for filling the Data Buffer
     returnFromDecoder:
     LDD DATA_BUFFER;
+    LSLD;
     XGDX;
     LDAB PTH;
     ANDB #$01;
     ABX;
     XGDX;
     STD DATA_BUFFER;
-    RTI;
+    RTS;
 
     checkDataBuffer:
     LDAB TOTAL_POLLS;
     CMPB #16;
-    BLT returnFromDecoder;
+    BLO returnFromDecoder;
     ;Count of 1s in Y
     LDD #$0000;
     XGDY;
@@ -161,19 +185,19 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     ;Number of Highs from Data Buffer.
     finished_counting:
     XGDY;
-    ;If we get 11/16 lows, we can assume, that a Data Bit has started.
+    ;If we get 12/16 lows, we can assume, that a Data Bit has started.
     CPD #5;
-    BHI startIntervals;
-    ;Push out one Bit to the right and continue looking;
+    BLO startIntervals;
+    ;Push out one Bit to the left and continue looking;
     LDD DATA_BUFFER;
     LSLD;
     XGDX;
     LDAB PTH;
-    ANDA #$01;
+    ANDB #$01;
     ABX;
     XGDX;
     STD DATA_BUFFER;
-    RTI;
+    RTS;
     
     pollSignal:
     ;Load the PTH Register to get the bit we are interested in
@@ -195,16 +219,16 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     
     
     startIntervals:
-    STD HIGHS;
+    STAB HIGHS;
     MOVB #$10,TOTAL_POLLS;
     MOVB #$00,WAIT_FOR_DATA;
-    RTI;
+    RTS;
     
     
     resetInterval:
     MOVB #$00,HIGHS;
     MOVB #$00,TOTAL_POLLS;
-    RTI; 
+    RTS; 
     
     
     
@@ -212,12 +236,13 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     STAB TEMP; 
     LDD #8;
     XGDX;
-    LDD STREAM_POSITION;
+    LDAA #0;
+    LDAB STREAM_POSITION;
     IDIV;
     LDY #DATA_STREAM
+    XGDX;
     ABY;
     XGDX;
-    ANDA #$00;
     LDAA TEMP;
     shift_loop:
     CMPB #$00;
@@ -227,8 +252,15 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     BRA shift_loop;
     
     continuePutting:
+    LDAB Y;
     ABA;
     STAA Y;
+    
+    LDAB STREAM_POSITION;
+    INCB;
+    CMPB #60;
+    BHI invalidBit;
+    STAB STREAM_POSITION;:
     BRA resetInterval;
     
     invalidBit:
@@ -243,7 +275,7 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     JSR evalDayOfWeek
     JSR evalYear;
     JSR putCorrectDateAndTime;
-    RTI;
+    RTS;
     
     
     
@@ -690,35 +722,39 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     LSLD;
     LSLD;
     STAB YEAR;
-    
+    RTS;
     
     putCorrectDateAndTime:
     JSR convertMinutes;
+    JSR convertHours;
     
     
     convertMinutes:
+    LDAB #0;
     LDAA VALID_MINUTES;
-    ROLA;
-    ROLA;                                    
-    LSRD;
-    
-    LSLA;
-    ROLA;
-    LSRD;
-    
-    LSLA;
-    ROLA;
-    LSRD;
-    
-    LSLA;
-    ROLA;
-    LSRD;
-    
-    LSRB;
-    LSRB;
-    LSRB;
-    LSRB;
-    
+    ANDA #$80;
+    CMPA #$80;
+    BNE cont4;
+    ADDB #1;
+    cont4:
+    LDAA VALID_MINUTES;
+    ANDA #$40;  
+    CMPA #$40;
+    BNE cont5;
+    ADDB #2
+    cont5:
+    LDAA VALID_MINUTES;
+    ANDA #$20;
+    CMPA #$20;
+    BNE cont6;
+    ADDB #4;
+    cont6:
+    LDAA VALID_MINUTES;
+    ANDA #$10;
+    CMPA #$10;
+    BNE cont7;
+    ADDB #8;
+    cont7:     
     ;After this first 4 Bits in A are now final 4 bits in B;
     LDAA VALID_MINUTES;
     LSRA;
@@ -742,7 +778,48 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     ADDB #10;
     cont3:
     STAB MINUTES;
+    RTS;
     
+    convertHours:
+    LDAB #0;
+    LDAA VALID_HOURS;
+    ANDA #$80;
+    CMPA #$80;
+    BNE cont4H;
+    ADDB #1;
+    cont4H:
+    LDAA VALID_HOURS;
+    ANDA #$40;  
+    CMPA #$40;
+    BNE cont5H;
+    ADDB #2
+    cont5H:
+    LDAA VALID_HOURS;
+    ANDA #$20;
+    CMPA #$20;
+    BNE cont6H;
+    ADDB #4;
+    cont6H:
+    LDAA VALID_HOURS;
+    ANDA #$10;
+    CMPA #$10;
+    BNE cont7H;
+    ADDB #8;
+    cont7H:
+    LDAA VALID_HOURS;
+    ANDA #$08;
+    CMPA #$08;
+    BNE cont8H;
+    ADDB #10;
+    cont8H:
+    LDAA VALID_HOURS;
+    ANDA #$04;
+    CMPA #$04;
+    BNE cont9H;
+    ADDB #20;
+    cont9H:
+    STAB HOURS;
+    RTS;
     
     
     

@@ -21,7 +21,6 @@ clock.asm.o                             Model: SMALL,         Lang: Assembler
 buttons.asm.o                           Model: SMALL,         Lang: Assembler
 ECT.asm.o                               Model: SMALL,         Lang: Assembler
 eventHandler.asm.o                      Model: SMALL,         Lang: Assembler
-nameChanger.asm.o                       Model: SMALL,         Lang: Assembler
 helperFunctions.asm.o                   Model: SMALL,         Lang: Assembler
 adc.asm.o                               Model: SMALL,         Lang: Assembler
 thermo.asm.o                            Model: SMALL,         Lang: Assembler
@@ -36,17 +35,17 @@ Entry point: 0xC000 (Entry)
 SECTION-ALLOCATION SECTION
 Section Name                    Size  Type     From       To       Segment
 ---------------------------------------------------------------------------------------------
-.init                           2599     R     0xC000     0xCA26   ROM_C000
-.data                            111   R/W     0x1000     0x106E   RAM
+.init                           2704     R     0xC000     0xCA8F   ROM_C000
+.data                             92   R/W     0x1000     0x105B   RAM
 main.asm__ORG00001                 2     R     0xFF8E     0xFF8F   .absSeg0
-main.asm__ORG00002                 2     R     0xFFCC     0xFFCD   .absSeg1
-.const                            80     R     0xCA27     0xCA76   ROM_C000
-.stack                           256   R/W     0x106F     0x116E   RAM
+main.asm__ORG00002                 2     R     0xFFCA     0xFFCB   .absSeg1
+.const                             9     R     0xCA90     0xCA98   ROM_C000
+.stack                           256   R/W     0x105C     0x115B   RAM
 .vectSeg2_vect                     2     R     0xFFFE     0xFFFF   .vectSeg2
 
 Summary of section sizes per section type:
-READ_ONLY (R):         A7D (dec:     2685)
-READ_WRITE (R/W):      16F (dec:      367)
+READ_ONLY (R):         A9F (dec:     2719)
+READ_WRITE (R/W):      15C (dec:      348)
 
 *********************************************************************************************
 VECTOR-ALLOCATION SECTION
@@ -60,14 +59,14 @@ OBJECT-ALLOCATION SECTION
 ---------------------------------------------------------------------------------------------
 MODULE:                 -- main.asm.o --
 - PROCEDURES:
-     Entry                                     C000      28      40       0   .init       
+     Entry                                     C000      22      34       0   .init       
      main                                      C000       0       0       0   .init       
-     BUSY                                      C028       2       2       0   .init       
+     BUSY                                      C022       2       2       0   .init       
 - VARIABLES:
      VAR00001                                  FF8E       2       2       0   .text       
-     int25                                     FFCC       2       2       0   .text       
+     VAR00002                                  FFCA       2       2       0   .text       
 - LABELS:
-     __SEG_END_SSTACK                          116F       0       0       1               
+     __SEG_END_SSTACK                          115C       0       0       1               
      PTH_PTH0                                     0       0       0       0   .text       
      PORTB                                        1       0       0       5   .text       
      DDRB                                         3       0       0       1   .text       
@@ -90,8 +89,9 @@ MODULE:                 -- main.asm.o --
      TC6                                         5C       0       0       1   .text       
      TC7                                         5E       0       0       1   .text       
      MCCTL                                       66       0       0       1   .text       
+     MCFLG                                       67       0       0       1   .text       
      MCCNT                                       76       0       0       1   .text       
-     PWME                                        A0       0       0       3   .text       
+     PWME                                        A0       0       0       1   .text       
      PWMPOL                                      A1       0       0       1   .text       
      PWMCLK                                      A2       0       0       1   .text       
      PWMPRCLK                                    A3       0       0       1   .text       
@@ -101,12 +101,12 @@ MODULE:                 -- main.asm.o --
      PWMSCLB                                     A9       0       0       1   .text       
      PWMPER0                                     B4       0       0       1   .text       
      PWMPER1                                     B5       0       0       1   .text       
-     PWMPER2                                     B6       0       0       2   .text       
+     PWMPER2                                     B6       0       0       0   .text       
      PWMPER4                                     B8       0       0       1   .text       
      PWMPER5                                     B9       0       0       1   .text       
      PWMDTY0                                     BC       0       0       1   .text       
      PWMDTY1                                     BD       0       0       1   .text       
-     PWMDTY2                                     BE       0       0       2   .text       
+     PWMDTY2                                     BE       0       0       0   .text       
      PWMDTY4                                     C0       0       0       1   .text       
      PWMDTY5                                     C1       0       0       1   .text       
      PTP                                        258       0       0       0   .text       
@@ -124,103 +124,103 @@ MODULE:                 -- main.asm.o --
      DDRJ                                       26A       0       0       1   .text       
 MODULE:                 -- led.asm.o --
 - PROCEDURES:
-     initLED                                   C02A      13      19       1   .init       
-     setLED                                    C03D       4       4       0   .init       
-     getLED                                    C041       4       4       0   .init       
-     toggleLED                                 C045       7       7       2   .init       
+     initLED                                   C024      13      19       1   .init       
+     setLED                                    C037       4       4       0   .init       
+     getLED                                    C03B       4       4       0   .init       
+     toggleLED                                 C03F       7       7       2   .init       
 - VARIABLES:
 MODULE:                 -- decToASCII.asm.o --
 - PROCEDURES:
-     decToASCII                                C04C       8       8       8   .init       
-     startConversion                           C054      45      69       0   .init       
-     flipSign                                  C099       D      13       0   .init       
+     decToASCII                                C046       8       8       8   .init       
+     startConversion                           C04E      45      69       0   .init       
+     flipSign                                  C093       D      13       0   .init       
 - VARIABLES:
 MODULE:                 -- lcd.asm.o --
 - PROCEDURES:
-     initLCD                                   C0A6      27      39       1   .init       
-     inext1                                    C0CD      18      24       0   .init       
-     inext2                                    C0E5       F      15       0   .init       
-     writeLine                                 C0F4       F      15       2   .init       
-     writeLine1                                C103       2       2       0   .init       
-     wDo                                       C105       8       8       0   .init       
-     next                                      C10D       F      15       0   .init       
-     wEnd                                      C11C       3       3       0   .init       
-     fill_w_spaces                             C11F       C      12       0   .init       
-     delay_10ms                                C12B       8       8       3   .init       
-     delay_5ms                                 C133       8       8       2   .init       
-     delay_50us                                C13B       8       8       1   .init       
-     del1                                      C143       6       6       0   .init       
-     sel_data                                  C149       4       4       1   .init       
-     sel_inst                                  C14D       4       4       3   .init       
-     outputByte                                C151       C      12       5   .init       
+     initLCD                                   C0A0      27      39       1   .init       
+     inext1                                    C0C7      18      24       0   .init       
+     inext2                                    C0DF       F      15       0   .init       
+     writeLine                                 C0EE       F      15       1   .init       
+     writeLine1                                C0FD       2       2       0   .init       
+     wDo                                       C0FF       8       8       0   .init       
+     next                                      C107       F      15       0   .init       
+     wEnd                                      C116       3       3       0   .init       
+     fill_w_spaces                             C119       C      12       0   .init       
+     delay_10ms                                C125       8       8       3   .init       
+     delay_5ms                                 C12D       8       8       2   .init       
+     delay_50us                                C135       8       8       1   .init       
+     del1                                      C13D       6       6       0   .init       
+     sel_data                                  C143       4       4       1   .init       
+     sel_inst                                  C147       4       4       3   .init       
+     outputByte                                C14B       C      12       5   .init       
 - VARIABLES:
      VAR00001                                  1000       1       1       2   .data       
      temp1                                     1001       1       1       0   .data       
-     VAR00002                                  CA27       1       1       1   .const      
-     VAR00003                                  CA28       1       1       0   .const      
-     VAR00004                                  CA29       1       1       0   .const      
-     VAR00005                                  CA2A       1       1       0   .const      
-     VAR00006                                  CA2B       1       1       1   .const      
-     VAR00007                                  CA2C       1       1       0   .const      
-     VAR00008                                  CA2D       1       1       0   .const      
-     VAR00009                                  CA2E       1       1       0   .const      
-     VAR00010                                  CA2F       1       1       0   .const      
+     VAR00002                                  CA90       1       1       1   .const      
+     VAR00003                                  CA91       1       1       0   .const      
+     VAR00004                                  CA92       1       1       0   .const      
+     VAR00005                                  CA93       1       1       0   .const      
+     VAR00006                                  CA94       1       1       1   .const      
+     VAR00007                                  CA95       1       1       0   .const      
+     VAR00008                                  CA96       1       1       0   .const      
+     VAR00009                                  CA97       1       1       0   .const      
+     VAR00010                                  CA98       1       1       0   .const      
 MODULE:                 -- PWM.asm.o --
 - PROCEDURES:
-     setupPWM                                  C15D      60      96       1   .init       
+     setupPWM                                  C157      60      96       1   .init       
 - VARIABLES:
 MODULE:                 -- clock.asm.o --
 - PROCEDURES:
-     setClock                                  C1BD      15      21       1   .init       
-     cancelTick                                C1D2       1       1       0   .init       
-     tick                                      C1D3      11      17       1   .init       
-     addSecond                                 C1E4       E      14       1   .init       
-     addMinute                                 C1F2       E      14       0   .init       
-     addHour                                   C200       E      14       0   .init       
-     rollOverSecondsNormal                     C20E       7       7       0   .init       
-     rollOverMinutesNormal                     C215       7       7       0   .init       
-     rollOverHoursNormal                       C21C       8       8       0   .init       
-     setupText                                 C224      11      17       0   .init       
-     skipToMinutes                             C235      29      41       4   .init       
-     chooseFormat                              C25E      14      20       2   .init       
-     handle12HourFormat                        C272       B      11       0   .init       
-     setAM                                     C27D      1F      31       0   .init       
-     continue12AM                              C29C       D      13       0   .init       
-     setPM                                     C2A9      1D      29       0   .init       
-     continue12PM                              C2C6       F      15       0   .init       
-     addHoursSet                               C2D5       E      14       1   .init       
-     rollOverHours                             C2E3       7       7       0   .init       
-     addMinutesSet                             C2EA       D      13       1   .init       
-     rollOverMinutes                           C2F7       7       7       0   .init       
-     addSecondsSet                             C2FE       D      13       1   .init       
-     rollOverSeconds                           C30B       7       7       0   .init       
-     displayNewTime                            C312       7       7       0   .init       
+     setClock                                  C1B7      15      21       1   .init       
+     cancelTick                                C1CC       1       1       0   .init       
+     tick                                      C1CD      11      17       1   .init       
+     addSecond                                 C1DE       E      14       1   .init       
+     addMinute                                 C1EC       E      14       0   .init       
+     addHour                                   C1FA       E      14       0   .init       
+     rollOverSecondsNormal                     C208       7       7       0   .init       
+     rollOverMinutesNormal                     C20F       7       7       0   .init       
+     rollOverHoursNormal                       C216       8       8       0   .init       
+     setupText                                 C21E      11      17       0   .init       
+     skipToMinutes                             C22F      29      41       4   .init       
+     chooseFormat                              C258      14      20       2   .init       
+     handle12HourFormat                        C26C       B      11       0   .init       
+     setAM                                     C277      1F      31       0   .init       
+     continue12AM                              C296       D      13       0   .init       
+     setPM                                     C2A3      1D      29       0   .init       
+     continue12PM                              C2C0       F      15       0   .init       
+     addHoursSet                               C2CF       E      14       1   .init       
+     rollOverHours                             C2DD       7       7       0   .init       
+     addMinutesSet                             C2E4       D      13       1   .init       
+     rollOverMinutes                           C2F1       7       7       0   .init       
+     addSecondsSet                             C2F8       D      13       1   .init       
+     rollOverSeconds                           C305       7       7       0   .init       
+     displayNewTime                            C30C       7       7       0   .init       
 - VARIABLES:
      SECONDS                                   1002       1       1       8   .data       
-     MINUTES                                   1003       1       1       8   .data       
-     HOURS                                     1004       1       1      11   .data       
+     MINUTES                                   1003       1       1       9   .data       
+     HOURS                                     1004       1       1      12   .data       
      Hour12Format                              1005       1       1       2   .data       
      OUTPUTSTRING                              1006       B      11      14   .data       
      ASCIIBuffer                               1011       7       7      12   .data       
 MODULE:                 -- buttons.asm.o --
 - PROCEDURES:
-     initButtonState                           C319      1F      31       1   .init       
-     evaluateButtons                           C338      14      20       1   .init       
-     continueEvalBT                            C34C      2F      47       0   .init       
-     notInSetMode                              C37B       1       1       0   .init       
-     handleBt1                                 C37C       5       5       0   .init       
-     handleBt2                                 C381       5       5       0   .init       
-     handleBt3                                 C386       5       5       0   .init       
-     handleBt4                                 C38B       5       5       0   .init       
-     logicBT1                                  C390      29      41       1   .init       
-     released1                                 C3B9      21      33       0   .init       
-     logicBT2                                  C3DA      29      41       1   .init       
-     released2                                 C403      17      23       0   .init       
-     continueEval                              C41A       1       1       0   .init       
-     logicBT3                                  C41B      29      41       1   .init       
-     released3                                 C444      17      23       0   .init       
-     logicBT4                                  C45B      29      41       1   .init       
-     released4                                 C484      17      23       0   .init       
+     initButtonState                           C313      1F      31       0   .init       
+     evaluateButtons                           C332      14      20       0   .init       
+     continueEvalBT                            C346      2F      47       0   .init       
+     notInSetMode                              C375       1       1       0   .init       
+     handleBt1                                 C376       5       5       0   .init       
+     handleBt2                                 C37B       5       5       0   .init       
+     handleBt3                                 C380       5       5       0   .init       
+     handleBt4                                 C385       5       5       0   .init       
+     logicBT1                                  C38A      29      41       1   .init       
+     released1                                 C3B3      21      33       0   .init       
+     logicBT2                                  C3D4      29      41       1   .init       
+     released2                                 C3FD      17      23       0   .init       
+     continueEval                              C414       1       1       0   .init       
+     logicBT3                                  C415      29      41       1   .init       
+     released3                                 C43E      17      23       0   .init       
+     logicBT4                                  C455      29      41       1   .init       
+     released4                                 C47E      17      23       0   .init       
 - VARIABLES:
      buttonPressedEval                         1018       1       1      13   .data       
      buttonReleasedEval                        1019       1       1      17   .data       
@@ -228,136 +228,129 @@ MODULE:                 -- buttons.asm.o --
      setModeTimerStarted                       101B       1       1       1   .data       
 MODULE:                 -- ECT.asm.o --
 - PROCEDURES:
-     setupTimer                                C49B      34      52       1   .init       
+     setupTimer                                C495      34      52       1   .init       
 - VARIABLES:
 MODULE:                 -- eventHandler.asm.o --
 - PROCEDURES:
-     handlePWMITR                              C4CF       5       5       1   .init       
-     continueInterruptHandle                   C4D4       5       5       0   .init       
-     continueInterruptHandle2                  C4D9       5       5       0   .init       
-     continueInterruptHandle3                  C4DE       1       1       0   .init       
-     handleClockTick                           C4DF      10      16       0   .init       
-     swapNames                                 C4EF       A      10       0   .init       
-     displayName                               C4F9       A      10       0   .init       
+     handlePWMITR                              C4C9       5       5       1   .init       
+     continueInterruptHandle                   C4CE       5       5       0   .init       
+     continueInterruptHandle2                  C4D3       5       5       0   .init       
+     continueInterruptHandle3                  C4D8       1       1       0   .init       
+     handleClockTick                           C4D9       D      13       0   .init       
+     swapNames                                 C4E6       7       7       0   .init       
+     displayName                               C4ED       7       7       0   .init       
 - VARIABLES:
-MODULE:                 -- nameChanger.asm.o --
-- PROCEDURES:
-     initNamechanger                           C503       B      11       1   .init       
-     setupNames                                C50E       9       9       1   .init       
-     handleName1                               C517       8       8       0   .init       
-     skipInc1                                  C51F       F      15       0   .init       
-     handleName2                               C52E       8       8       0   .init       
-     skipInc2                                  C536       F      15       0   .init       
-     fameLoop                                  C545      17      23       0   .init       
-     changeName                                C55C       9       9       1   .init       
-     changeToName1                             C565      1C      28       0   .init       
-     changeToName2                             C581      1C      28       0   .init       
-     displayNames                              C59D       9       9       1   .init       
-- VARIABLES:
-     FRAMECOUNT                                101C       1       1       8   .data       
-     ACTIVE_NAME                               101D       1       1       5   .data       
-     FRAME_BUFFER                              101E      11      17       4   .data       
-     NAME1                                     CA30      21      33       1   .const      
-     NAME2                                     CA51      1E      30       1   .const      
-     MAGIC_NUMBER_1                            CA6F       2       2       1   .const      
-     MAGIC_NUMBER_2                            CA71       2       2       1   .const      
-     MAGIC_NUMBER_PWMDTY1                      CA73       2       2       1   .const      
-     MAGIC_NUMBER_PWMDTY2                      CA75       2       2       1   .const      
 MODULE:                 -- helperFunctions.asm.o --
 - PROCEDURES:
-     concat2StringsString1LeftBoundedString2RightBoundedForNiceDisplayIGuess       C5A6       5       5       1   .init       
-     copySpaces                                C5AB      10      16       0   .init       
-     start                                     C5BB       3       3       0   .init       
-     moveFirstString                           C5BE       E      14       0   .init       
-     startSecondString                         C5CC       3       3       0   .init       
-     findEnd                                   C5CF       9       9       0   .init       
-     copySecondString                          C5D8       7       7       0   .init       
-     cpyLoop                                   C5DF       D      13       0   .init       
-     finish                                    C5EC       1       1       0   .init       
-     displayTemperatureAndTime                 C5ED      12      18       2   .init       
+     concat2StringsString1LeftBoundedString2RightBoundedForNiceDisplayIGuess       C4F4       5       5       1   .init       
+     copySpaces                                C4F9      10      16       0   .init       
+     start                                     C509       3       3       0   .init       
+     moveFirstString                           C50C       E      14       0   .init       
+     startSecondString                         C51A       3       3       0   .init       
+     findEnd                                   C51D       9       9       0   .init       
+     copySecondString                          C526       7       7       0   .init       
+     cpyLoop                                   C52D       D      13       0   .init       
+     finish                                    C53A       1       1       0   .init       
+     displayTemperatureAndTime                 C53B      12      18       2   .init       
 - VARIABLES:
-     LINE_BUFFER                               102F      11      17       4   .data       
-     SECOND_STRING_ADR                         1040       2       2       3   .data       
-     DUMMY_TEMP                                1042       5       5       0   .data       
+     LINE_BUFFER                               101C      11      17       4   .data       
+     SECOND_STRING_ADR                         102D       2       2       3   .data       
+     DUMMY_TEMP                                102F       5       5       0   .data       
 MODULE:                 -- adc.asm.o --
 - PROCEDURES:
-     initADC                                   C5FF      10      16       2   .init       
-     convertADC                                C60F       5       5       1   .init       
-     wait1                                     C614      28      40       0   .init       
-     formatString                              C63C      1D      29       1   .init       
+     initADC                                   C54D      15      21       2   .init       
+     convertADC                                C562       5       5       1   .init       
+     wait1                                     C567      28      40       0   .init       
+     formatString                              C58F      1D      29       1   .init       
 - VARIABLES:
-     degree_string                             1047       7       7       2   .data       
+     degree_string                             1034       7       7       2   .data       
 MODULE:                 -- thermo.asm.o --
 - PROCEDURES:
-     initThermo                                C659       4       4       0   .init       
-     updateThermo                              C65D       D      13       1   .init       
+     initThermo                                C5AC       4       4       0   .init       
+     updateThermo                              C5B0       D      13       0   .init       
 - VARIABLES:
-     temp                                      104E       7       7       3   .data       
+     temp                                      103B       7       7       4   .data       
 MODULE:                 -- signalDecoder.asm.o --
 - PROCEDURES:
-     init_intervals                            C66A      18      24       0   .init       
-     validOne                                  C682       5       5       0   .init       
-     validZero                                 C687       5       5       0   .init       
-     signalDecoderControl                      C68C      19      25       0   .init       
-     testFunction                              C6A5      1B      27       1   .init       
-     jmpDataBuffer                             C6C0       3       3       0   .init       
-     evalWindow                                C6C3      24      36       0   .init       
-     resetToDefault                            C6E7       8       8       1   .init       
-     checkForStopBit                           C6EF      1F      31       0   .init       
-     returnFromStopBit                         C70E       1       1       0   .init       
-     jmpResetInterval                          C70F       3       3       0   .init       
-     returnFromDecoder                         C712      12      18       0   .init       
-     checkDataBuffer                           C724      11      17       1   .init       
-     count_loop                                C735       A      10       0   .init       
-     continueDataBufferCheck                   C73F       C      12       0   .init       
-     finished_counting                         C74B      1A      26       0   .init       
-     pollSignal                                C765      10      16       1   .init       
-     continue                                  C775       8       8       0   .init       
-     startIntervals                            C77D       E      14       0   .init       
-     resetInterval                             C78B       B      11       2   .init       
-     putBit                                    C796      19      25       2   .init       
-     shift_loop                                C7AF       8       8       0   .init       
-     continuePutting                           C7B7       6       6       0   .init       
-     invalidBit                                C7BD       3       3       6   .init       
-     evalBits                                  C7C0      12      18       2   .init       
-     evalMinutes                               C7D2      81     129       1   .init       
-     parity_even_min                           C853       D      13       0   .init       
-     parity_odd_min                            C860       D      13       0   .init       
-     validBit                                  C86D       A      10       0   .init       
-     evalHours                                 C877      5C      92       1   .init       
-     parity_even_hours                         C8D3       D      13       0   .init       
-     parity_odd_hours                          C8E0       D      13       0   .init       
-     validBitH                                 C8ED       D      13       0   .init       
-     checkDateParity                           C8FA      F9     249       1   .init       
-     parity_even_date                          C9F3       B      11       0   .init       
-     partiy_odd_date                           C9FE       B      11       0   .init       
-     valid_bit_date                            CA09       1       1       0   .init       
-     evalDays                                  CA0A       C      12       1   .init       
-     evalDayOfWeek                             CA16       9       9       1   .init       
-     evalYear                                  CA1F       8       8       1   .init       
+     init_intervals                            C5BD      49      73       1   .init       
+     validOne                                  C606       6       6       0   .init       
+     validZero                                 C60C       6       6       0   .init       
+     signalDecoderControl                      C612      1E      30       1   .init       
+     testFunction                              C630      1B      27       0   .init       
+     jmpDataBuffer                             C64B       4       4       0   .init       
+     evalWindow                                C64F      25      37       0   .init       
+     resetToDefault                            C674      25      37       1   .init       
+     checkForStopBit                           C699      24      36       0   .init       
+     returnFromStopBit                         C6BD       1       1       0   .init       
+     jmpResetInterval                          C6BE       4       4       0   .init       
+     returnFromDecoder                         C6C2      13      19       0   .init       
+     checkDataBuffer                           C6D5      11      17       1   .init       
+     count_loop                                C6E6       A      10       0   .init       
+     continueDataBufferCheck                   C6F0       C      12       0   .init       
+     finished_counting                         C6FC      1A      26       0   .init       
+     pollSignal                                C716      10      16       1   .init       
+     continue                                  C726       8       8       0   .init       
+     startIntervals                            C72E       E      14       0   .init       
+     resetInterval                             C73C       B      11       2   .init       
+     putBit                                    C747      1B      27       2   .init       
+     shift_loop                                C762       8       8       0   .init       
+     continuePutting                           C76A      13      19       0   .init       
+     invalidBit                                C77D       3       3       6   .init       
+     evalBits                                  C780      16      22       2   .init       
+     evalMinutes                               C796      81     129       1   .init       
+     parity_even_min                           C817       D      13       0   .init       
+     parity_odd_min                            C824       D      13       0   .init       
+     validBit                                  C831       A      10       0   .init       
+     evalHours                                 C83B      5C      92       1   .init       
+     parity_even_hours                         C897       D      13       0   .init       
+     parity_odd_hours                          C8A4       D      13       0   .init       
+     validBitH                                 C8B1       D      13       0   .init       
+     checkDateParity                           C8BE      F9     249       1   .init       
+     parity_even_date                          C9B7       B      11       0   .init       
+     partiy_odd_date                           C9C2       B      11       0   .init       
+     valid_bit_date                            C9CD       1       1       0   .init       
+     evalDays                                  C9CE       C      12       1   .init       
+     evalDayOfWeek                             C9DA       9       9       1   .init       
+     evalYear                                  C9E3       9       9       1   .init       
+     putCorrectDateAndTime                     C9EC       6       6       1   .init       
+     convertMinutes                            C9F2       D      13       1   .init       
+     cont4                                     C9FF       B      11       0   .init       
+     cont5                                     CA0A       B      11       0   .init       
+     cont6                                     CA15       B      11       0   .init       
+     cont7                                     CA20       C      12       0   .init       
+     cont1                                     CA2C       C      12       0   .init       
+     cont2                                     CA38       C      12       0   .init       
+     cont3                                     CA44       4       4       0   .init       
+     convertHours                              CA48       D      13       1   .init       
+     cont4H                                    CA55       B      11       0   .init       
+     cont5H                                    CA60       B      11       0   .init       
+     cont6H                                    CA6B       B      11       0   .init       
+     cont7H                                    CA76       B      11       0   .init       
+     cont8H                                    CA81       B      11       0   .init       
+     cont9H                                    CA8C       4       4       0   .init       
 - VARIABLES:
-     HIGHS                                     1055       1       1       6   .data       
-     TOTAL_POLLS                               1056       1       1       7   .data       
-     STOP_BIT_FOUND                            1057       1       1       3   .data       
-     WAIT_FOR_DATA                             1058       1       1       4   .data       
-     DATA_BUFFER                               1059       2       2       8   .data       
-     DATA_STREAM                               105B       8       8      15   .data       
-     STREAM_POSITION                           1063       1       1       1   .data       
-     VALID_MINUTES                             1064       1       1       1   .data       
-     VALID_HOURS                               1065       1       1       1   .data       
-     VALID_DAYS                                1066       1       1       1   .data       
-     DAY_OF_WEEK_AND_MONTH                     1067       1       1       1   .data       
-     YEAR                                      1068       1       1       1   .data       
-     TEMP                                      1069       1       1       9   .data       
-     CONF_STOP                                 106A       1       1       3   .data       
-     CONF_I0                                   106B       2       2       3   .data       
-     CONF_I1                                   106D       2       2       3   .data       
+     HIGHS                                     1042       1       1       7   .data       
+     TOTAL_POLLS                               1043       1       1       9   .data       
+     STOP_BIT_FOUND                            1044       1       1       4   .data       
+     WAIT_FOR_DATA                             1045       1       1       5   .data       
+     DATA_BUFFER                               1046       2       2       8   .data       
+     DATA_STREAM                               1048       8       8      23   .data       
+     STREAM_POSITION                           1050       1       1       5   .data       
+     VALID_MINUTES                             1051       1       1       8   .data       
+     VALID_HOURS                               1052       1       1       7   .data       
+     VALID_DAYS                                1053       1       1       1   .data       
+     DAY_OF_WEEK_AND_MONTH                     1054       1       1       1   .data       
+     YEAR                                      1055       1       1       1   .data       
+     TEMP                                      1056       1       1       9   .data       
+     CONF_STOP                                 1057       1       1       3   .data       
+     CONF_I0                                   1058       2       2       3   .data       
+     CONF_I1                                   105A       2       2       3   .data       
 
 *********************************************************************************************
 MODULE STATISTIC
   Name                                      Data   Code  Const
 ---------------------------------------------------------------------------------------------
-  main.asm.o                                   0     42      4
+  main.asm.o                                   0     36      4
   led.asm.o                                    0     34      0
   decToASCII.asm.o                             0     90      0
   lcd.asm.o                                    2    183      9
@@ -365,12 +358,11 @@ MODULE STATISTIC
   clock.asm.o                                 22    348      0
   buttons.asm.o                                4    386      0
   ECT.asm.o                                    0     52      0
-  eventHandler.asm.o                           0     52      0
-  nameChanger.asm.o                           19    163     71
+  eventHandler.asm.o                           0     43      0
   helperFunctions.asm.o                       24     89      0
-  adc.asm.o                                    7     90      0
+  adc.asm.o                                    7     95      0
   thermo.asm.o                                 7     17      0
-  signalDecoder.asm.o                         26    957      0
+  signalDecoder.asm.o                         26   1235      0
   other                                      256      2      0
 
 *********************************************************************************************
@@ -378,17 +370,17 @@ SECTION USE IN OBJECT-ALLOCATION SECTION
 ---------------------------------------------------------------------------------------------
 SECTION: ".text"
   PTH_PTH0 PORTB DDRB TIOS TCNT TSCR1 TCTL1 TCTL2 TCTL3 TCTL4 TIE TSCR2 TFLG1 
-  TC0 TC1 TC2 TC3 TC4 TC5 TC6 TC7 MCCTL MCCNT PWME PWMPOL PWMCLK PWMPRCLK 
+  TC0 TC1 TC2 TC3 TC4 TC5 TC6 TC7 MCCTL MCFLG MCCNT PWME PWMPOL PWMCLK PWMPRCLK 
   PWMCAE PWMCTL PWMSCLA PWMSCLB PWMPER0 PWMPER1 PWMPER2 PWMPER4 PWMPER5 PWMDTY0 
   PWMDTY1 PWMDTY2 PWMDTY4 PWMDTY5 PTP DDRP PPSP PIEP PIFP PTH DDRH PERH PPSH 
-  PIEH PIFH PTJ DDRJ VAR00001 int25 
+  PIEH PIFH PTJ DDRJ VAR00001 VAR00002 
 SECTION: ".data"
   VAR00001 temp1 SECONDS MINUTES HOURS Hour12Format OUTPUTSTRING ASCIIBuffer 
-  buttonPressedEval buttonReleasedEval setMode setModeTimerStarted FRAMECOUNT 
-  ACTIVE_NAME FRAME_BUFFER LINE_BUFFER SECOND_STRING_ADR DUMMY_TEMP 
-  degree_string temp HIGHS TOTAL_POLLS STOP_BIT_FOUND WAIT_FOR_DATA DATA_BUFFER 
-  DATA_STREAM STREAM_POSITION VALID_MINUTES VALID_HOURS VALID_DAYS 
-  DAY_OF_WEEK_AND_MONTH YEAR TEMP CONF_STOP CONF_I0 CONF_I1 
+  buttonPressedEval buttonReleasedEval setMode setModeTimerStarted LINE_BUFFER 
+  SECOND_STRING_ADR DUMMY_TEMP degree_string temp HIGHS TOTAL_POLLS 
+  STOP_BIT_FOUND WAIT_FOR_DATA DATA_BUFFER DATA_STREAM STREAM_POSITION 
+  VALID_MINUTES VALID_HOURS VALID_DAYS DAY_OF_WEEK_AND_MONTH YEAR TEMP 
+  CONF_STOP CONF_I0 CONF_I1 
 SECTION: ".init"
   main Entry BUSY initLED setLED getLED toggleLED decToASCII startConversion 
   flipSign initLCD inext1 inext2 writeLine writeLine1 wDo next wEnd 
@@ -402,8 +394,7 @@ SECTION: ".init"
   released1 logicBT2 released2 continueEval logicBT3 released3 logicBT4 
   released4 setupTimer handlePWMITR continueInterruptHandle 
   continueInterruptHandle2 continueInterruptHandle3 handleClockTick swapNames 
-  displayName initNamechanger setupNames handleName1 skipInc1 handleName2 
-  skipInc2 fameLoop changeName changeToName1 changeToName2 displayNames 
+  displayName 
   concat2StringsString1LeftBoundedString2RightBoundedForNiceDisplayIGuess 
   copySpaces start moveFirstString startSecondString findEnd copySecondString 
   cpyLoop finish displayTemperatureAndTime initADC convertADC wait1 
@@ -415,11 +406,12 @@ SECTION: ".init"
   continuePutting invalidBit evalBits evalMinutes parity_even_min 
   parity_odd_min validBit evalHours parity_even_hours parity_odd_hours 
   validBitH checkDateParity parity_even_date partiy_odd_date valid_bit_date 
-  evalDays evalDayOfWeek evalYear 
+  evalDays evalDayOfWeek evalYear putCorrectDateAndTime convertMinutes cont4 
+  cont5 cont6 cont7 cont1 cont2 cont3 convertHours cont4H cont5H cont6H cont7H 
+  cont8H cont9H 
 SECTION: ".const"
   VAR00002 VAR00003 VAR00004 VAR00005 VAR00006 VAR00007 VAR00008 VAR00009 
-  VAR00010 NAME1 NAME2 MAGIC_NUMBER_1 MAGIC_NUMBER_2 MAGIC_NUMBER_PWMDTY1 
-  MAGIC_NUMBER_PWMDTY2 
+  VAR00010 
 
 *********************************************************************************************
 OBJECT LIST SORTED BY ADDRESS
@@ -447,8 +439,9 @@ OBJECT LIST SORTED BY ADDRESS
      TC6                                         5C       0       0       1   .text       
      TC7                                         5E       0       0       1   .text       
      MCCTL                                       66       0       0       1   .text       
+     MCFLG                                       67       0       0       1   .text       
      MCCNT                                       76       0       0       1   .text       
-     PWME                                        A0       0       0       3   .text       
+     PWME                                        A0       0       0       1   .text       
      PWMPOL                                      A1       0       0       1   .text       
      PWMCLK                                      A2       0       0       1   .text       
      PWMPRCLK                                    A3       0       0       1   .text       
@@ -458,12 +451,12 @@ OBJECT LIST SORTED BY ADDRESS
      PWMSCLB                                     A9       0       0       1   .text       
      PWMPER0                                     B4       0       0       1   .text       
      PWMPER1                                     B5       0       0       1   .text       
-     PWMPER2                                     B6       0       0       2   .text       
+     PWMPER2                                     B6       0       0       0   .text       
      PWMPER4                                     B8       0       0       1   .text       
      PWMPER5                                     B9       0       0       1   .text       
      PWMDTY0                                     BC       0       0       1   .text       
      PWMDTY1                                     BD       0       0       1   .text       
-     PWMDTY2                                     BE       0       0       2   .text       
+     PWMDTY2                                     BE       0       0       0   .text       
      PWMDTY4                                     C0       0       0       1   .text       
      PWMDTY5                                     C1       0       0       1   .text       
      PTP                                        258       0       0       0   .text       
@@ -482,8 +475,8 @@ OBJECT LIST SORTED BY ADDRESS
      VAR00001                                  1000       1       1       2   .data       
      temp1                                     1001       1       1       0   .data       
      SECONDS                                   1002       1       1       8   .data       
-     MINUTES                                   1003       1       1       8   .data       
-     HOURS                                     1004       1       1      11   .data       
+     MINUTES                                   1003       1       1       9   .data       
+     HOURS                                     1004       1       1      12   .data       
      Hour12Format                              1005       1       1       2   .data       
      OUTPUTSTRING                              1006       B      11      14   .data       
      ASCIIBuffer                               1011       7       7      12   .data       
@@ -491,194 +484,195 @@ OBJECT LIST SORTED BY ADDRESS
      buttonReleasedEval                        1019       1       1      17   .data       
      setMode                                   101A       1       1       5   .data       
      setModeTimerStarted                       101B       1       1       1   .data       
-     FRAMECOUNT                                101C       1       1       8   .data       
-     ACTIVE_NAME                               101D       1       1       5   .data       
-     FRAME_BUFFER                              101E      11      17       4   .data       
-     LINE_BUFFER                               102F      11      17       4   .data       
-     SECOND_STRING_ADR                         1040       2       2       3   .data       
-     DUMMY_TEMP                                1042       5       5       0   .data       
-     degree_string                             1047       7       7       2   .data       
-     temp                                      104E       7       7       3   .data       
-     HIGHS                                     1055       1       1       6   .data       
-     TOTAL_POLLS                               1056       1       1       7   .data       
-     STOP_BIT_FOUND                            1057       1       1       3   .data       
-     WAIT_FOR_DATA                             1058       1       1       4   .data       
-     DATA_BUFFER                               1059       2       2       8   .data       
-     DATA_STREAM                               105B       8       8      15   .data       
-     STREAM_POSITION                           1063       1       1       1   .data       
-     VALID_MINUTES                             1064       1       1       1   .data       
-     VALID_HOURS                               1065       1       1       1   .data       
-     VALID_DAYS                                1066       1       1       1   .data       
-     DAY_OF_WEEK_AND_MONTH                     1067       1       1       1   .data       
-     YEAR                                      1068       1       1       1   .data       
-     TEMP                                      1069       1       1       9   .data       
-     CONF_STOP                                 106A       1       1       3   .data       
-     CONF_I0                                   106B       2       2       3   .data       
-     CONF_I1                                   106D       2       2       3   .data       
+     LINE_BUFFER                               101C      11      17       4   .data       
+     SECOND_STRING_ADR                         102D       2       2       3   .data       
+     DUMMY_TEMP                                102F       5       5       0   .data       
+     degree_string                             1034       7       7       2   .data       
+     temp                                      103B       7       7       4   .data       
+     HIGHS                                     1042       1       1       7   .data       
+     TOTAL_POLLS                               1043       1       1       9   .data       
+     STOP_BIT_FOUND                            1044       1       1       4   .data       
+     WAIT_FOR_DATA                             1045       1       1       5   .data       
+     DATA_BUFFER                               1046       2       2       8   .data       
+     DATA_STREAM                               1048       8       8      23   .data       
+     STREAM_POSITION                           1050       1       1       5   .data       
+     VALID_MINUTES                             1051       1       1       8   .data       
+     VALID_HOURS                               1052       1       1       7   .data       
+     VALID_DAYS                                1053       1       1       1   .data       
+     DAY_OF_WEEK_AND_MONTH                     1054       1       1       1   .data       
+     YEAR                                      1055       1       1       1   .data       
+     TEMP                                      1056       1       1       9   .data       
+     CONF_STOP                                 1057       1       1       3   .data       
+     CONF_I0                                   1058       2       2       3   .data       
+     CONF_I1                                   105A       2       2       3   .data       
      main                                      C000       0       0       0   .init       
-     Entry                                     C000      28      40       0   .init       
-     BUSY                                      C028       2       2       0   .init       
-     initLED                                   C02A      13      19       1   .init       
-     setLED                                    C03D       4       4       0   .init       
-     getLED                                    C041       4       4       0   .init       
-     toggleLED                                 C045       7       7       2   .init       
-     decToASCII                                C04C       8       8       8   .init       
-     startConversion                           C054      45      69       0   .init       
-     flipSign                                  C099       D      13       0   .init       
-     initLCD                                   C0A6      27      39       1   .init       
-     inext1                                    C0CD      18      24       0   .init       
-     inext2                                    C0E5       F      15       0   .init       
-     writeLine                                 C0F4       F      15       2   .init       
-     writeLine1                                C103       2       2       0   .init       
-     wDo                                       C105       8       8       0   .init       
-     next                                      C10D       F      15       0   .init       
-     wEnd                                      C11C       3       3       0   .init       
-     fill_w_spaces                             C11F       C      12       0   .init       
-     delay_10ms                                C12B       8       8       3   .init       
-     delay_5ms                                 C133       8       8       2   .init       
-     delay_50us                                C13B       8       8       1   .init       
-     del1                                      C143       6       6       0   .init       
-     sel_data                                  C149       4       4       1   .init       
-     sel_inst                                  C14D       4       4       3   .init       
-     outputByte                                C151       C      12       5   .init       
-     setupPWM                                  C15D      60      96       1   .init       
-     setClock                                  C1BD      15      21       1   .init       
-     cancelTick                                C1D2       1       1       0   .init       
-     tick                                      C1D3      11      17       1   .init       
-     addSecond                                 C1E4       E      14       1   .init       
-     addMinute                                 C1F2       E      14       0   .init       
-     addHour                                   C200       E      14       0   .init       
-     rollOverSecondsNormal                     C20E       7       7       0   .init       
-     rollOverMinutesNormal                     C215       7       7       0   .init       
-     rollOverHoursNormal                       C21C       8       8       0   .init       
-     setupText                                 C224      11      17       0   .init       
-     skipToMinutes                             C235      29      41       4   .init       
-     chooseFormat                              C25E      14      20       2   .init       
-     handle12HourFormat                        C272       B      11       0   .init       
-     setAM                                     C27D      1F      31       0   .init       
-     continue12AM                              C29C       D      13       0   .init       
-     setPM                                     C2A9      1D      29       0   .init       
-     continue12PM                              C2C6       F      15       0   .init       
-     addHoursSet                               C2D5       E      14       1   .init       
-     rollOverHours                             C2E3       7       7       0   .init       
-     addMinutesSet                             C2EA       D      13       1   .init       
-     rollOverMinutes                           C2F7       7       7       0   .init       
-     addSecondsSet                             C2FE       D      13       1   .init       
-     rollOverSeconds                           C30B       7       7       0   .init       
-     displayNewTime                            C312       7       7       0   .init       
-     initButtonState                           C319      1F      31       1   .init       
-     evaluateButtons                           C338      14      20       1   .init       
-     continueEvalBT                            C34C      2F      47       0   .init       
-     notInSetMode                              C37B       1       1       0   .init       
-     handleBt1                                 C37C       5       5       0   .init       
-     handleBt2                                 C381       5       5       0   .init       
-     handleBt3                                 C386       5       5       0   .init       
-     handleBt4                                 C38B       5       5       0   .init       
-     logicBT1                                  C390      29      41       1   .init       
-     released1                                 C3B9      21      33       0   .init       
-     logicBT2                                  C3DA      29      41       1   .init       
-     released2                                 C403      17      23       0   .init       
-     continueEval                              C41A       1       1       0   .init       
-     logicBT3                                  C41B      29      41       1   .init       
-     released3                                 C444      17      23       0   .init       
-     logicBT4                                  C45B      29      41       1   .init       
-     released4                                 C484      17      23       0   .init       
-     setupTimer                                C49B      34      52       1   .init       
-     handlePWMITR                              C4CF       5       5       1   .init       
-     continueInterruptHandle                   C4D4       5       5       0   .init       
-     continueInterruptHandle2                  C4D9       5       5       0   .init       
-     continueInterruptHandle3                  C4DE       1       1       0   .init       
-     handleClockTick                           C4DF      10      16       0   .init       
-     swapNames                                 C4EF       A      10       0   .init       
-     displayName                               C4F9       A      10       0   .init       
-     initNamechanger                           C503       B      11       1   .init       
-     setupNames                                C50E       9       9       1   .init       
-     handleName1                               C517       8       8       0   .init       
-     skipInc1                                  C51F       F      15       0   .init       
-     handleName2                               C52E       8       8       0   .init       
-     skipInc2                                  C536       F      15       0   .init       
-     fameLoop                                  C545      17      23       0   .init       
-     changeName                                C55C       9       9       1   .init       
-     changeToName1                             C565      1C      28       0   .init       
-     changeToName2                             C581      1C      28       0   .init       
-     displayNames                              C59D       9       9       1   .init       
-     concat2StringsString1LeftBoundedString2RightBoundedForNiceDisplayIGuess       C5A6       5       5       1   .init       
-     copySpaces                                C5AB      10      16       0   .init       
-     start                                     C5BB       3       3       0   .init       
-     moveFirstString                           C5BE       E      14       0   .init       
-     startSecondString                         C5CC       3       3       0   .init       
-     findEnd                                   C5CF       9       9       0   .init       
-     copySecondString                          C5D8       7       7       0   .init       
-     cpyLoop                                   C5DF       D      13       0   .init       
-     finish                                    C5EC       1       1       0   .init       
-     displayTemperatureAndTime                 C5ED      12      18       2   .init       
-     initADC                                   C5FF      10      16       2   .init       
-     convertADC                                C60F       5       5       1   .init       
-     wait1                                     C614      28      40       0   .init       
-     formatString                              C63C      1D      29       1   .init       
-     initThermo                                C659       4       4       0   .init       
-     updateThermo                              C65D       D      13       1   .init       
-     init_intervals                            C66A      18      24       0   .init       
-     validOne                                  C682       5       5       0   .init       
-     validZero                                 C687       5       5       0   .init       
-     signalDecoderControl                      C68C      19      25       0   .init       
-     testFunction                              C6A5      1B      27       1   .init       
-     jmpDataBuffer                             C6C0       3       3       0   .init       
-     evalWindow                                C6C3      24      36       0   .init       
-     resetToDefault                            C6E7       8       8       1   .init       
-     checkForStopBit                           C6EF      1F      31       0   .init       
-     returnFromStopBit                         C70E       1       1       0   .init       
-     jmpResetInterval                          C70F       3       3       0   .init       
-     returnFromDecoder                         C712      12      18       0   .init       
-     checkDataBuffer                           C724      11      17       1   .init       
-     count_loop                                C735       A      10       0   .init       
-     continueDataBufferCheck                   C73F       C      12       0   .init       
-     finished_counting                         C74B      1A      26       0   .init       
-     pollSignal                                C765      10      16       1   .init       
-     continue                                  C775       8       8       0   .init       
-     startIntervals                            C77D       E      14       0   .init       
-     resetInterval                             C78B       B      11       2   .init       
-     putBit                                    C796      19      25       2   .init       
-     shift_loop                                C7AF       8       8       0   .init       
-     continuePutting                           C7B7       6       6       0   .init       
-     invalidBit                                C7BD       3       3       6   .init       
-     evalBits                                  C7C0      12      18       2   .init       
-     evalMinutes                               C7D2      81     129       1   .init       
-     parity_even_min                           C853       D      13       0   .init       
-     parity_odd_min                            C860       D      13       0   .init       
-     validBit                                  C86D       A      10       0   .init       
-     evalHours                                 C877      5C      92       1   .init       
-     parity_even_hours                         C8D3       D      13       0   .init       
-     parity_odd_hours                          C8E0       D      13       0   .init       
-     validBitH                                 C8ED       D      13       0   .init       
-     checkDateParity                           C8FA      F9     249       1   .init       
-     parity_even_date                          C9F3       B      11       0   .init       
-     partiy_odd_date                           C9FE       B      11       0   .init       
-     valid_bit_date                            CA09       1       1       0   .init       
-     evalDays                                  CA0A       C      12       1   .init       
-     evalDayOfWeek                             CA16       9       9       1   .init       
-     evalYear                                  CA1F       8       8       1   .init       
-     VAR00002                                  CA27       1       1       1   .const      
-     VAR00003                                  CA28       1       1       0   .const      
-     VAR00004                                  CA29       1       1       0   .const      
-     VAR00005                                  CA2A       1       1       0   .const      
-     VAR00006                                  CA2B       1       1       1   .const      
-     VAR00007                                  CA2C       1       1       0   .const      
-     VAR00008                                  CA2D       1       1       0   .const      
-     VAR00009                                  CA2E       1       1       0   .const      
-     VAR00010                                  CA2F       1       1       0   .const      
-     NAME1                                     CA30      21      33       1   .const      
-     NAME2                                     CA51      1E      30       1   .const      
-     MAGIC_NUMBER_1                            CA6F       2       2       1   .const      
-     MAGIC_NUMBER_2                            CA71       2       2       1   .const      
-     MAGIC_NUMBER_PWMDTY1                      CA73       2       2       1   .const      
-     MAGIC_NUMBER_PWMDTY2                      CA75       2       2       1   .const      
+     Entry                                     C000      22      34       0   .init       
+     BUSY                                      C022       2       2       0   .init       
+     initLED                                   C024      13      19       1   .init       
+     setLED                                    C037       4       4       0   .init       
+     getLED                                    C03B       4       4       0   .init       
+     toggleLED                                 C03F       7       7       2   .init       
+     decToASCII                                C046       8       8       8   .init       
+     startConversion                           C04E      45      69       0   .init       
+     flipSign                                  C093       D      13       0   .init       
+     initLCD                                   C0A0      27      39       1   .init       
+     inext1                                    C0C7      18      24       0   .init       
+     inext2                                    C0DF       F      15       0   .init       
+     writeLine                                 C0EE       F      15       1   .init       
+     writeLine1                                C0FD       2       2       0   .init       
+     wDo                                       C0FF       8       8       0   .init       
+     next                                      C107       F      15       0   .init       
+     wEnd                                      C116       3       3       0   .init       
+     fill_w_spaces                             C119       C      12       0   .init       
+     delay_10ms                                C125       8       8       3   .init       
+     delay_5ms                                 C12D       8       8       2   .init       
+     delay_50us                                C135       8       8       1   .init       
+     del1                                      C13D       6       6       0   .init       
+     sel_data                                  C143       4       4       1   .init       
+     sel_inst                                  C147       4       4       3   .init       
+     outputByte                                C14B       C      12       5   .init       
+     setupPWM                                  C157      60      96       1   .init       
+     setClock                                  C1B7      15      21       1   .init       
+     cancelTick                                C1CC       1       1       0   .init       
+     tick                                      C1CD      11      17       1   .init       
+     addSecond                                 C1DE       E      14       1   .init       
+     addMinute                                 C1EC       E      14       0   .init       
+     addHour                                   C1FA       E      14       0   .init       
+     rollOverSecondsNormal                     C208       7       7       0   .init       
+     rollOverMinutesNormal                     C20F       7       7       0   .init       
+     rollOverHoursNormal                       C216       8       8       0   .init       
+     setupText                                 C21E      11      17       0   .init       
+     skipToMinutes                             C22F      29      41       4   .init       
+     chooseFormat                              C258      14      20       2   .init       
+     handle12HourFormat                        C26C       B      11       0   .init       
+     setAM                                     C277      1F      31       0   .init       
+     continue12AM                              C296       D      13       0   .init       
+     setPM                                     C2A3      1D      29       0   .init       
+     continue12PM                              C2C0       F      15       0   .init       
+     addHoursSet                               C2CF       E      14       1   .init       
+     rollOverHours                             C2DD       7       7       0   .init       
+     addMinutesSet                             C2E4       D      13       1   .init       
+     rollOverMinutes                           C2F1       7       7       0   .init       
+     addSecondsSet                             C2F8       D      13       1   .init       
+     rollOverSeconds                           C305       7       7       0   .init       
+     displayNewTime                            C30C       7       7       0   .init       
+     initButtonState                           C313      1F      31       0   .init       
+     evaluateButtons                           C332      14      20       0   .init       
+     continueEvalBT                            C346      2F      47       0   .init       
+     notInSetMode                              C375       1       1       0   .init       
+     handleBt1                                 C376       5       5       0   .init       
+     handleBt2                                 C37B       5       5       0   .init       
+     handleBt3                                 C380       5       5       0   .init       
+     handleBt4                                 C385       5       5       0   .init       
+     logicBT1                                  C38A      29      41       1   .init       
+     released1                                 C3B3      21      33       0   .init       
+     logicBT2                                  C3D4      29      41       1   .init       
+     released2                                 C3FD      17      23       0   .init       
+     continueEval                              C414       1       1       0   .init       
+     logicBT3                                  C415      29      41       1   .init       
+     released3                                 C43E      17      23       0   .init       
+     logicBT4                                  C455      29      41       1   .init       
+     released4                                 C47E      17      23       0   .init       
+     setupTimer                                C495      34      52       1   .init       
+     handlePWMITR                              C4C9       5       5       1   .init       
+     continueInterruptHandle                   C4CE       5       5       0   .init       
+     continueInterruptHandle2                  C4D3       5       5       0   .init       
+     continueInterruptHandle3                  C4D8       1       1       0   .init       
+     handleClockTick                           C4D9       D      13       0   .init       
+     swapNames                                 C4E6       7       7       0   .init       
+     displayName                               C4ED       7       7       0   .init       
+     concat2StringsString1LeftBoundedString2RightBoundedForNiceDisplayIGuess       C4F4       5       5       1   .init       
+     copySpaces                                C4F9      10      16       0   .init       
+     start                                     C509       3       3       0   .init       
+     moveFirstString                           C50C       E      14       0   .init       
+     startSecondString                         C51A       3       3       0   .init       
+     findEnd                                   C51D       9       9       0   .init       
+     copySecondString                          C526       7       7       0   .init       
+     cpyLoop                                   C52D       D      13       0   .init       
+     finish                                    C53A       1       1       0   .init       
+     displayTemperatureAndTime                 C53B      12      18       2   .init       
+     initADC                                   C54D      15      21       2   .init       
+     convertADC                                C562       5       5       1   .init       
+     wait1                                     C567      28      40       0   .init       
+     formatString                              C58F      1D      29       1   .init       
+     initThermo                                C5AC       4       4       0   .init       
+     updateThermo                              C5B0       D      13       0   .init       
+     init_intervals                            C5BD      49      73       1   .init       
+     validOne                                  C606       6       6       0   .init       
+     validZero                                 C60C       6       6       0   .init       
+     signalDecoderControl                      C612      1E      30       1   .init       
+     testFunction                              C630      1B      27       0   .init       
+     jmpDataBuffer                             C64B       4       4       0   .init       
+     evalWindow                                C64F      25      37       0   .init       
+     resetToDefault                            C674      25      37       1   .init       
+     checkForStopBit                           C699      24      36       0   .init       
+     returnFromStopBit                         C6BD       1       1       0   .init       
+     jmpResetInterval                          C6BE       4       4       0   .init       
+     returnFromDecoder                         C6C2      13      19       0   .init       
+     checkDataBuffer                           C6D5      11      17       1   .init       
+     count_loop                                C6E6       A      10       0   .init       
+     continueDataBufferCheck                   C6F0       C      12       0   .init       
+     finished_counting                         C6FC      1A      26       0   .init       
+     pollSignal                                C716      10      16       1   .init       
+     continue                                  C726       8       8       0   .init       
+     startIntervals                            C72E       E      14       0   .init       
+     resetInterval                             C73C       B      11       2   .init       
+     putBit                                    C747      1B      27       2   .init       
+     shift_loop                                C762       8       8       0   .init       
+     continuePutting                           C76A      13      19       0   .init       
+     invalidBit                                C77D       3       3       6   .init       
+     evalBits                                  C780      16      22       2   .init       
+     evalMinutes                               C796      81     129       1   .init       
+     parity_even_min                           C817       D      13       0   .init       
+     parity_odd_min                            C824       D      13       0   .init       
+     validBit                                  C831       A      10       0   .init       
+     evalHours                                 C83B      5C      92       1   .init       
+     parity_even_hours                         C897       D      13       0   .init       
+     parity_odd_hours                          C8A4       D      13       0   .init       
+     validBitH                                 C8B1       D      13       0   .init       
+     checkDateParity                           C8BE      F9     249       1   .init       
+     parity_even_date                          C9B7       B      11       0   .init       
+     partiy_odd_date                           C9C2       B      11       0   .init       
+     valid_bit_date                            C9CD       1       1       0   .init       
+     evalDays                                  C9CE       C      12       1   .init       
+     evalDayOfWeek                             C9DA       9       9       1   .init       
+     evalYear                                  C9E3       9       9       1   .init       
+     putCorrectDateAndTime                     C9EC       6       6       1   .init       
+     convertMinutes                            C9F2       D      13       1   .init       
+     cont4                                     C9FF       B      11       0   .init       
+     cont5                                     CA0A       B      11       0   .init       
+     cont6                                     CA15       B      11       0   .init       
+     cont7                                     CA20       C      12       0   .init       
+     cont1                                     CA2C       C      12       0   .init       
+     cont2                                     CA38       C      12       0   .init       
+     cont3                                     CA44       4       4       0   .init       
+     convertHours                              CA48       D      13       1   .init       
+     cont4H                                    CA55       B      11       0   .init       
+     cont5H                                    CA60       B      11       0   .init       
+     cont6H                                    CA6B       B      11       0   .init       
+     cont7H                                    CA76       B      11       0   .init       
+     cont8H                                    CA81       B      11       0   .init       
+     cont9H                                    CA8C       4       4       0   .init       
+     VAR00002                                  CA90       1       1       1   .const      
+     VAR00003                                  CA91       1       1       0   .const      
+     VAR00004                                  CA92       1       1       0   .const      
+     VAR00005                                  CA93       1       1       0   .const      
+     VAR00006                                  CA94       1       1       1   .const      
+     VAR00007                                  CA95       1       1       0   .const      
+     VAR00008                                  CA96       1       1       0   .const      
+     VAR00009                                  CA97       1       1       0   .const      
+     VAR00010                                  CA98       1       1       0   .const      
      VAR00001                                  FF8E       2       2       0   .text       
-     int25                                     FFCC       2       2       0   .text       
+     VAR00002                                  FFCA       2       2       0   .text       
 
 *********************************************************************************************
 UNUSED-OBJECTS SECTION
 ---------------------------------------------------------------------------------------------
+NOT USED VARIABLES
+PWM.asm.o:
+  MAGIC_NUMBER_1 MAGIC_NUMBER_2 MAGIC_NUMBER_PWMDTY1 
+eventHandler.asm.o:
+  FRAME_BUFFER 
 
 *********************************************************************************************
 COPYDOWN SECTION
@@ -687,9 +681,8 @@ COPYDOWN SECTION
 *********************************************************************************************
 OBJECT-DEPENDENCIES SECTION
 ---------------------------------------------------------------------------------------------
-Entry                     USES __SEG_END_SSTACK delay_10ms testFunction 
-                                initLED initLCD initNamechanger initADC setClock 
-                                initButtonState setupPWM setupTimer 
+Entry                     USES __SEG_END_SSTACK delay_10ms init_intervals 
+                                initLED initLCD initADC setClock setupPWM setupTimer 
 initLED                   USES DDRJ PTJ DDRB PORTB 
 setLED                    USES PORTB 
 getLED                    USES PORTB 
@@ -757,23 +750,9 @@ setupTimer                USES TIE TIOS TSCR1 TCTL1 TCTL2 TCTL3 TCTL4 TSCR2
 handlePWMITR              USES PIFP 
 continueInterruptHandle   USES PIFP 
 continueInterruptHandle2  USES PIFP 
-handleClockTick           USES PIFP tick updateThermo 
-                                displayTemperatureAndTime 
-swapNames                 USES PIFP changeName 
-displayName               USES PIFP setupNames 
-initNamechanger           USES FRAMECOUNT ACTIVE_NAME 
-setupNames                USES ACTIVE_NAME 
-handleName1               USES FRAMECOUNT 
-skipInc1                  USES FRAMECOUNT NAME1 FRAME_BUFFER 
-handleName2               USES FRAMECOUNT 
-skipInc2                  USES FRAMECOUNT NAME2 FRAME_BUFFER 
-fameLoop                  USES FRAMECOUNT FRAME_BUFFER displayNames 
-changeName                USES ACTIVE_NAME 
-changeToName1             USES ACTIVE_NAME FRAMECOUNT MAGIC_NUMBER_1 PWMPER2 
-                                MAGIC_NUMBER_PWMDTY1 PWMDTY2 PWME 
-changeToName2             USES ACTIVE_NAME FRAMECOUNT MAGIC_NUMBER_2 PWMPER2 
-                                MAGIC_NUMBER_PWMDTY2 PWMDTY2 PWME 
-displayNames              USES FRAME_BUFFER writeLine 
+handleClockTick           USES PIFP tick displayTemperatureAndTime 
+swapNames                 USES PIFP 
+displayName               USES PIFP 
 concat2StringsString1LeftBoundedString2RightBoundedForNiceDisplayIGuess USES 
                                 SECOND_STRING_ADR 
 copySpaces                USES LINE_BUFFER 
@@ -783,19 +762,23 @@ copySecondString          USES LINE_BUFFER
 cpyLoop                   USES SECOND_STRING_ADR 
 displayTemperatureAndTime USES OUTPUTSTRING temp 
                                 concat2StringsString1LeftBoundedString2RightBoundedForNiceDisplayIGuess LINE_BUFFER writeLine 
+initADC                   USES temp 
 wait1                     USES degree_string decToASCII temp formatString 
 initThermo                USES initADC 
 updateThermo              USES temp convertADC 
-init_intervals            USES CONF_STOP CONF_I0 CONF_I1 DATA_BUFFER 
+init_intervals            USES CONF_STOP CONF_I0 CONF_I1 DATA_BUFFER HIGHS 
+                                TOTAL_POLLS STOP_BIT_FOUND WAIT_FOR_DATA STREAM_POSITION 
+                                DATA_STREAM 
 validOne                  USES putBit 
 validZero                 USES putBit 
-signalDecoderControl      USES pollSignal STOP_BIT_FOUND WAIT_FOR_DATA 
+signalDecoderControl      USES MCFLG pollSignal STOP_BIT_FOUND WAIT_FOR_DATA 
                                 TOTAL_POLLS 
 testFunction              USES DATA_STREAM evalBits 
 jmpDataBuffer             USES checkDataBuffer 
 evalWindow                USES HIGHS CONF_I1 CONF_I0 CONF_STOP WAIT_FOR_DATA 
                                 evalBits 
-resetToDefault            USES STOP_BIT_FOUND resetInterval 
+resetToDefault            USES STOP_BIT_FOUND DATA_STREAM STREAM_POSITION 
+                                resetInterval 
 checkForStopBit           USES TOTAL_POLLS HIGHS CONF_STOP STOP_BIT_FOUND 
                                 WAIT_FOR_DATA DATA_BUFFER 
 jmpResetInterval          USES resetInterval 
@@ -808,9 +791,10 @@ continue                  USES TOTAL_POLLS
 startIntervals            USES HIGHS TOTAL_POLLS WAIT_FOR_DATA 
 resetInterval             USES HIGHS TOTAL_POLLS 
 putBit                    USES TEMP STREAM_POSITION DATA_STREAM 
+continuePutting           USES STREAM_POSITION 
 invalidBit                USES resetToDefault 
 evalBits                  USES checkDateParity evalMinutes evalHours evalDays 
-                                evalDayOfWeek evalYear 
+                                evalDayOfWeek evalYear putCorrectDateAndTime 
 evalMinutes               USES DATA_STREAM TEMP 
 parity_even_min           USES invalidBit 
 parity_odd_min            USES invalidBit 
@@ -825,6 +809,22 @@ partiy_odd_date           USES invalidBit
 evalDays                  USES DATA_STREAM VALID_DAYS 
 evalDayOfWeek             USES DATA_STREAM DAY_OF_WEEK_AND_MONTH 
 evalYear                  USES DATA_STREAM YEAR 
+putCorrectDateAndTime     USES convertMinutes convertHours 
+convertMinutes            USES VALID_MINUTES 
+cont4                     USES VALID_MINUTES 
+cont5                     USES VALID_MINUTES 
+cont6                     USES VALID_MINUTES 
+cont7                     USES VALID_MINUTES 
+cont1                     USES VALID_MINUTES 
+cont2                     USES VALID_MINUTES 
+cont3                     USES MINUTES 
+convertHours              USES VALID_HOURS 
+cont4H                    USES VALID_HOURS 
+cont5H                    USES VALID_HOURS 
+cont6H                    USES VALID_HOURS 
+cont7H                    USES VALID_HOURS 
+cont8H                    USES VALID_HOURS 
+cont9H                    USES HOURS 
 
 *********************************************************************************************
 DEPENDENCY TREE
@@ -837,22 +837,8 @@ DEPENDENCY TREE
     | 
     +- delay_10ms          
     |    
-    +- testFunction        
-    |  | 
-    |  +- evalBits            
-    |     | 
-    |     +- checkDateParity     
-    |     |    
-    |     +- evalMinutes         
-    |     |    
-    |     +- evalHours           
-    |     |    
-    |     +- evalDays            
-    |     |    
-    |     +- evalDayOfWeek       
-    |     |    
-    |     +- evalYear            
-    |          
+    +- init_intervals      
+    |    
     +- initLED             
     |    
     +- initLCD             
@@ -861,13 +847,9 @@ DEPENDENCY TREE
     |  |  
     |  +- sel_inst            
     |       
-    +- initNamechanger     
-    |    
     +- initADC             
     |    
     +- setClock            
-    |    
-    +- initButtonState     
     |    
     +- setupPWM            
     |    
@@ -879,14 +861,16 @@ DEPENDENCY TREE
       
  _ORG00002           
  | 
- +- evaluateButtons     
-      
+ +- signalDecoderControl
+    | 
+    +- pollSignal          
+         
 *********************************************************************************************
 STATISTIC SECTION
 ---------------------------------------------------------------------------------------------
 
 ExeFile:
 --------
-Number of blocks to be downloaded: 5
-Total size of all blocks to be downloaded: 2685
+Number of blocks to be downloaded: 4
+Total size of all blocks to be downloaded: 2719
 

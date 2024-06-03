@@ -36,16 +36,16 @@
     ;Jump to Clock Subroutine
     MOVB #$02,PIFP;Reset Interrupt Flag
     JSR tick;
-    JSR updateThermo;
+    ;JSR updateThermo;
     JSR displayTemperatureAndTime;
     BRA continueInterruptHandle;
 ;**************************************************************
   swapNames:
     MOVB #$20,PIFP;Reset Interrupt Flag
-    JSR changeName;
+    ;JSR changeName;
     BRA continueInterruptHandle2
 ;**************************************************************
   displayName:
     MOVB #$08,PIFP;Reset Interrupt Flag
-    JSR setupNames;
+    ;JSR setupNames;
     BRA continueInterruptHandle3;
