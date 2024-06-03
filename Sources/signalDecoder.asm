@@ -16,6 +16,9 @@ DATA_BUFFER: DC.W 1
 DATA_STREAM: DS.B 8;
 STREAM_POSITION: DC.B 1;
 
+VALID_MINUTES: DC.B 1;
+VALID_HOURS: DC.B 1
+
 TEMP: DC.B 1;
 
 ;Confidence Intervals
@@ -211,8 +214,204 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     STAA Y;
     BRA resetInterval;
     
+    invalidBit:
+    JSR resetToDefault;
+    
     ;TODO
     evalBits:
+    JSR evalMinutes;
+    JSR evalHours;
+    
+    
+    evalMinutes:
+    LDD DATA_BUFFER+2;
+    LSRD;
+    LSRD;
+    LSRD;
+    ;Here we start with BIT 20
+    ANDB #$01;
+    CMPB #$01;
+    BNE invalidBit;
+    ;Load Data again
+    LDD DATA_BUFFER+2;
+    LSRD;
+    LSRD;
+    LSRD;
+    LSRD;
+    ;Temp contains the 8 Minute Bits now
+    STAB TEMP;
+    ;Put 0 into Y,X and D
+    LDD #0;
+    XGDY;
+    LDD #0;
+    XGDX;
+    LDD #0;
+    
+    LDAA TEMP;
+    LDAB TEMP;
+    ;Isolate first bit and add to X; If X is even, 0 bit not set => even;
+    ;0
+    ANDB #$01;
+    ABX;
+    TAB;
+    LSRB;
+    ;1
+    ANDB #$01;
+    ABX;
+    LSRA;
+    TAB;
+    LSRB;
+    ;2
+    ANDB #$01;
+    ABX;
+    LSRA;
+    TAB;
+    LSRB;
+    ;3
+    ANDB #$01;
+    ABX;
+    LSRA;
+    TAB;
+    LSRB;
+    ;4
+    ANDB #$01;
+    ABX;
+    TAB;
+    LSRA;
+    LSRB;
+    ;5
+    ANDB #$01;
+    ABX;
+    TAB;
+    LSRB;
+    ;6
+    ANDB #$01;
+    ABX;
+    LSRA;
+    TAB;
+    LSRB;
+    ; Check if Parity Bit is even or ODD;
+    CMPB #$00;
+    BEQ parity_even_min;
+    BRA parity_odd_min;
+    
+    parity_even_min:
+    XGDX;
+    CMPB #$00;
+    BEQ validBit;
+    CMPB #$04;
+    BEQ validBit;
+    JSR invalidBit;
+    
+    parity_odd_min:
+    XGDX;
+    CMPB #$03;
+    BEQ validBit;
+    CMPB #$07;
+    BEQ validBit;
+    JSR invalidBit;
+    
+    
+    validBit:
+    LDD DATA_BUFFER+2;
+    LSRD;
+    LSRD;
+    LSRD;
+    LSRD;
+    STAB VALID_MINUTES;
+    
+    
+    evalHours:
+    ;Load Byte 25-40
+    LDD #0;
+    XGDX;
+    LDD DATA_BUFFER+3
+    LSRD;
+    LSRD;
+    LSRD;
+    LSRD;
+    ;Isolate the first 7 bits in B to get the Hours+Parity
+    ANDB #$7F;
+    TBA;
+    ;Isolate first bit and add to X; If X is even, 0 bit not set => even;
+    ;0
+    ANDB #$01;
+    ABX;
+    TAB;
+    LSRB;
+    ;1
+    ANDB #$01;
+    ABX;
+    LSRA;
+    TAB;
+    LSRB;
+    ;2
+    ANDB #$01;
+    ABX;
+    LSRA;
+    TAB;
+    LSRB;
+    ;3
+    ANDB #$01;
+    ABX;
+    LSRA;
+    TAB;
+    LSRB;
+    ;4
+    ANDB #$01;
+    ABX;
+    TAB;
+    LSRA;
+    LSRB;
+    ;5
+    ANDB #$01;
+    ABX;
+    TAB;
+    LSRB;
+    CMPB #$00;
+    BEQ parity_even_hours;
+    BRA parity_odd_hours;
+     
+    parity_even_hours:
+    XGDX;
+    CMPB #$00;
+    BEQ validBitH;
+    CMPB #$04;
+    BEQ validBitH;
+    JSR invalidBit;
+    
+    parity_odd_hours:
+    XGDX;
+    CMPB #$03;
+    BEQ validBitH;
+    CMPB #$07;
+    BEQ validBitH;
+    JSR invalidBit;
+    
+    
+    validBitH:
+    LDD DATA_BUFFER+3;
+    LSRD;
+    LSRD;
+    LSRD;
+    LSRD;
+    ANDB #$7F;
+    STAB VALID_HOURS;
+    RTS;
+    
+    
+    
+    
+    
+    
+    
+     
+    
+    
+    
+    
+    
+    
     
     
     
