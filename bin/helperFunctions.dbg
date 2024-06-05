@@ -10,13 +10,17 @@
 ;            (based on code provided by J. Friedrich, W. Zimmermann)
 ;   Modified: -
 ;
-   XREF OUTPUTSTRING,writeLine,temp;
-   XDEF displayTemperatureAndTime,LINE_BUFFER;
+   XREF OUTPUTSTRING,writeLine,temp,DATE_STRING,PTH,DAY_STRING;
+   XDEF displayTemperatureAndTime,LINE_BUFFER,displayTimeAndDate;
 ; export symbols
 .data: SECTION
  LINE_BUFFER: DS.B 17
  SECOND_STRING_ADR: DC.W 1
- DUMMY_TEMP: DS.B 5 
+ TIME_ZONE: DS.B 4
+ DUMMY_TEMP: DS.B 5
+ 
+  
+    
 .init: SECTION
   ;Left Bounded String in X, Right Bounded String in Y. Total Length of String 17;
   ;If Overlap of String, Right Bounded takes precedence
@@ -80,6 +84,43 @@
     LDX #LINE_BUFFER;
     JSR writeLine;
     RTS;
+    
+  displayTimeAndDate:
+  LDAB PTH;
+  ANDB #$04;
+  CMPB #$00;
+  BEQ displayAmerican;
+  ;DE
+  MOVW #$4445,TIME_ZONE;
+  ; :
+  MOVW #$3A00,TIME_ZONE+2;
+  displayString:
+  LDX #DAY_STRING;
+  LDY #DATE_STRING;
+  JSR concat2StringsString1LeftBoundedString2RightBoundedForNiceDisplayIGuess;
+  LDAB #0;
+  LDX #LINE_BUFFER;
+  JSR writeLine;
+  
+  LDX #TIME_ZONE;
+  LDY #OUTPUTSTRING;
+  JSR concat2StringsString1LeftBoundedString2RightBoundedForNiceDisplayIGuess;
+  LDAB #1;
+  LDX #LINE_BUFFER
+  JSR writeLine;
+  
+  RTS
+  
+  displayAmerican:
+  ;US
+  MOVW #$5553,TIME_ZONE;
+  MOVW #$3A00,TIME_ZONE+2;
+  BRA displayString;
+  
+  
+  
+  
+  
     
     
     

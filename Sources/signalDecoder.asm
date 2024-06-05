@@ -2,7 +2,7 @@
 
 
    XREF PTH,MINUTES,SECONDS,HOURS,MCFLG
-   XDEF signalDecoderControl,init_intervals,testFunction,signalDecoderControl
+   XDEF signalDecoderControl,init_intervals,testFunction,signalDecoderControl,DATE_STRING,DAY_STRING
 
 
 .data: SECTION
@@ -20,7 +20,14 @@ VALID_MINUTES: DC.B 1;
 VALID_HOURS: DC.B 1
 VALID_DAYS: DC.B 1
 DAY_OF_WEEK_AND_MONTH: DC.B 1
+
 YEAR: DC.B 1
+
+TIME_STRING: DS.B 11
+DATE_STRING: DS.B 11
+DAY_STRING:DS.B 5;
+
+
 
 TEMP: DC.B 1;
 
@@ -53,6 +60,16 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     MOVW #$0000,DATA_STREAM+2;
     MOVW #$0000,DATA_STREAM+4;
     MOVW #$0000,DATA_STREAM+6;
+    
+    MOVW #$3031,DATE_STRING;
+    MOVW #$2E30,DATE_STRING+2;
+    MOVW #$312E,DATE_STRING+4;
+    MOVW #$3230,DATE_STRING+6;
+    MOVW #$3234,DATE_STRING+8;
+    MOVB #$00,DATE_STRING+10;
+    MOVW #$4D4F,DAY_STRING;
+    MOVW #$4E3A,DAY_STRING+2;
+    MOVB #$00,DAY_STRING+4;
     RTS;
     
     validOne:
@@ -88,6 +105,7 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     MOVW #$1F0F,DATA_STREAM+2;
     MOVW #$102C,DATA_STREAM+4;
     MOVW #$0040,DATA_STREAM+6;
+    
     
     JSR evalBits;
     
@@ -777,7 +795,7 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     BNE cont3;
     ADDB #10;
     cont3:
-    STAB MINUTES;
+    STAB VALID_MINUTES;
     RTS;
     
     convertHours:
@@ -818,7 +836,7 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     BNE cont9H;
     ADDB #20;
     cont9H:
-    STAB HOURS;
+    STAB VALID_HOURS;
     RTS;
     
     
