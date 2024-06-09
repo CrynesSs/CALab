@@ -233,6 +233,9 @@ N2DD: DC.B "MODIMIDOFRSASO"
     BEQ february;
     
     continueAmericanJ:
+    LDAB AMERICAN_D;
+    DECB;
+    STAB AMERICAN_D;
     BRA continueAmerican;
     
     
