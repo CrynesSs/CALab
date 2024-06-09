@@ -12,9 +12,9 @@
 ;
 
 ; export symbols
-        XREF PIFH,TFLG1,PPSH,TCNT,PIEH,DDRH,PTH,PTH_PTH0,PERH;
+        XREF PIFH,TFLG1,PPSH,TCNT,PIEH,DDRH,PTH,PTH_PTH0,PERH,displayTimeAndDate,switchOutput,AMERICAN;
         XREF addSecondsSet,addMinutesSet,addHoursSet,toggleLED
-        XDEF setMode,initButtonState,evaluateButtons;
+        XDEF setMode,initButtonState,evaluateButtons,buttonHandleLab3;
         XREF TC0,TC1,TC2,TC3,TC4,TC5,TC6,TC7
 
 .data: SECTION
@@ -25,16 +25,30 @@
         
 .init: SECTION
   initButtonState:
-    MOVB #$00,setMode
-    MOVB #$00, setModeTimerStarted
+    ;MOVB #$00,setMode
+    ;MOVB #$00, setModeTimerStarted
     ;Enables Interrupts on Port H which is probably the buttons connections
-    MOVB #$00,DDRH
+    ;MOVB #$00,DDRH
         ;Port H Polarity Register,set active Edge to Rising
-    MOVB #$00,PPSH
+    ;MOVB #$00,PPSH
         ;Port H Interrupt Enable. Enable Interrupts for Port H  
     MOVB #$FF,PIEH 
     MOVB #$FF,PERH;
     RTS;
+  
+  buttonHandleLab3:
+  LDAB PTH;
+  ANDB #$04;
+  CMPB #$00;
+  BEQ handleButton3;
+  RTI;
+  handleButton3:
+  LDAB AMERICAN;
+  EORB #$01;
+  STAB AMERICAN;
+  RTI;
+  
+  
   
   evaluateButtons:
   ;PIFH_PIFH0 & PPSH_PPSH0 -> Button just pressed

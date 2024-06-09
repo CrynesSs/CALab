@@ -14,7 +14,7 @@
 ; export symbols
     XDEF handlePWMITR;
     XREF updateThermo;
-    XREF tick,PIFP,setupNames,changeName,displayTemperatureAndTime,writeLine,displayTimeAndDate;
+    XREF tick,PIFP,setupNames,changeName,displayTemperatureAndTime,writeLine,displayTimeAndDate,switchOutput;
     XREF FRAME_BUFFER,LINE_BUFFER;
     
     
@@ -43,6 +43,7 @@
   swapNames:
     MOVB #$20,PIFP;Reset Interrupt Flag
     ;JSR changeName;
+    ;JSR switchOutput;
     BRA continueInterruptHandle2
 ;**************************************************************
   displayName:

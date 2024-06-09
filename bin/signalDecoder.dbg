@@ -1,8 +1,8 @@
 
 
 
-   XREF PTH,MINUTES,SECONDS,HOURS,MCFLG
-   XDEF signalDecoderControl,init_intervals,testFunction,signalDecoderControl,DATE_STRING,DAY_STRING
+   XREF PTH,MINUTES,SECONDS,HOURS,MCFLG,Hour12Format,chooseFormat,decToASCII,AMERICAN
+   XDEF signalDecoderControl,init_intervals,testFunction,signalDecoderControl,DATE_STRING,DAY_STRING,VALID_DAYS,VALID_MONTH,VALID_YEAR,DAY_OF_WEEK
 
 
 .data: SECTION
@@ -19,13 +19,21 @@ STREAM_POSITION: DC.B 1;
 VALID_MINUTES: DC.B 1;
 VALID_HOURS: DC.B 1
 VALID_DAYS: DC.B 1
+VALID_MONTH: DC.B 1;
+VALID_YEAR: DC.B 1
+
+DAY_OF_WEEK: DC.B 1
 DAY_OF_WEEK_AND_MONTH: DC.B 1
-YEAR: DC.B 1
+
+ASCIIBuffer: DS.B 7
+
+TIME_STRING: DS.B 11
 DATE_STRING: DS.B 11
-DAY_STRING:DS.B 5;
+DAY_STRING: DS.B 5;
 
 
 
+LOOP: DC.B 1
 TEMP: DC.B 1;
 
 ;Confidence Intervals
@@ -34,7 +42,8 @@ CONF_I0: DS.B 2 ; [189,171] , [0xBD,0xAB]
 CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
 
 .const: SECTION
-  
+N2DE: DC.B "MONTUEWEDTHUFRISATSUN"
+N2DD: DC.B "MODIMIDOFRSASO"  
   
 
 
@@ -57,16 +66,8 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     MOVW #$0000,DATA_STREAM+2;
     MOVW #$0000,DATA_STREAM+4;
     MOVW #$0000,DATA_STREAM+6;
-    
-    MOVW #$3031,DATE_STRING;
-    MOVW #$2E30,DATE_STRING+2;
-    MOVW #$312E,DATE_STRING+4;
-    MOVW #$3230,DATE_STRING+6;
-    MOVW #$3234,DATE_STRING+8;
-    MOVB #$00,DATE_STRING+10;
-    MOVW #$4D4F,DAY_STRING;
-    MOVW #$4E3A,DAY_STRING+2;
-    MOVB #$00,DAY_STRING+4;
+    MOVB #00,SECONDS;
+    MOVB #$00,AMERICAN;
     RTS;
     
     validOne:
@@ -99,13 +100,13 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     
     testFunction:
     MOVW #$0000,DATA_STREAM;
-    MOVW #$1F0F,DATA_STREAM+2;
-    MOVW #$102C,DATA_STREAM+4;
-    MOVW #$0040,DATA_STREAM+6;
+    MOVW #$0F0E,DATA_STREAM+2;
+    MOVW #$0C2C,DATA_STREAM+4;
+    MOVW #$3860,DATA_STREAM+6;
     
     
     JSR evalBits;
-    
+    RTS;
     
     jmpDataBuffer:
     JSR checkDataBuffer;
@@ -270,7 +271,6 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     LDAB Y;
     ABA;
     STAA Y;
-    
     LDAB STREAM_POSITION;
     INCB;
     CMPB #60;
@@ -280,6 +280,9 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     
     invalidBit:
     JSR resetToDefault;
+    
+    
+    
     
     ;TODO
     evalBits:
@@ -299,7 +302,7 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     LSRD;
     LSRD;
     LSRD;
-    ;Here we start with BIT 20
+    ;Here we start with BIT 20, this needs to be 1;
     ANDB #$01;
     CMPB #$01;
     BNE invalidBit;
@@ -309,415 +312,141 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     LSRD;
     LSRD;
     LSRD;
-    ;Temp contains the 8 Minute Bits now
-    STAB TEMP;
-    ;Put 0 into Y,X and D
-    LDD #0;
+    ANDA #$00;
+    ANDB #$FE;
+    JSR countOnes;
     XGDY;
-    LDD #0;
-    XGDX;
-    LDD #0;
-    ;Minutes are put in TEMP
-    ;For Test Case F0 -> Expected 4 1's, parity 0;
-    LDAA TEMP;
-    LDAB TEMP;
-    ;Isolate first bit and add to X; If X is even, 0 bit not set => even;
-    ;0
-    ANDB #$80;
-    ROLB;
-    ROLB;
+    ;B now contains the number of ones;
     ANDB #$01;
-    ABX;
-    TAB;
-    LSLB;
-    ;1
-    ANDB #$80;
-    ROLB;
-    ROLB;
-    ANDB #$01;
-    ABX;
-    LSLA;
-    TAB;
-    LSLB;
-    ;2
-    ANDB #$80;
-    ROLB;
-    ROLB;
-    ANDB #$01;
-    ABX;
-    LSLA;
-    TAB;
-    LSLB;
-    ;3
-    ANDB #$80;
-    ROLB;
-    ROLB;
-    ANDB #$01;
-    ABX;
-    LSLA;
-    TAB;
-    LSLB;
-    ;4
-    ANDB #$80;
-    ROLB;
-    ROLB;
-    ANDB #$01;
-    ABX;
-    LSLA;
-    TAB;
-    LSLB;
-    ;5
-    ANDB #$80;
-    ROLB;
-    ROLB;
-    ANDB #$01;
-    ABX;
-    TAB;
-    LSLB;
-    ;6
-    ANDB #$80;
-    ROLB;
-    ROLB;
-    ANDB #$01;
-    ABX;
-    LSLA;
-    TAB;
-    ;PARITY BIT 35
-    LSLB;
-    ; Check if Parity Bit is even or ODD;
-    CMPB #$00;
-    BEQ parity_even_min;
-    BRA parity_odd_min;
-    
-    parity_even_min:
-    XGDX;
-    CMPB #$00;
-    BEQ validBit;
-    CMPB #$04;
-    BEQ validBit;
-    JSR invalidBit;
-    
-    parity_odd_min:
-    XGDX;
-    CMPB #$03;
-    BEQ validBit;
-    CMPB #$07;
-    BEQ validBit;
-    JSR invalidBit;
-    
-    
-    validBit:
+    STAB TEMP;
     LDD DATA_STREAM+2;
     LSRD;
     LSRD;
     LSRD;
     LSRD;
+    ;Minute Parity now in B
+    ANDB #$01;
+    EORB TEMP;
+    CMPB #$00;
+    BEQ validBitMinute;
+    JSR invalidBit;
+    
+    validBitMinute:
+    LDD DATA_STREAM+2;
+    LSRD;
+    LSRD;
+    LSRD;
+    LSRD;
+    ANDB #$FE;
     STAB VALID_MINUTES;
     
     
     evalHours:
-    ;Load Byte 25-40
-    LDD #0;
-    XGDX;
+    ;Load Byte 24-39
     LDD DATA_STREAM+3
     LSLD;
     LSLD;
     LSLD;
     LSLD;
-    ;Isolate the first 7 bits in B to get the Hours+Parity
-    ANDA #$FE;
+    LSLD;
+    ;Isolate the first 7 bits in A to get the Hours+Parity
+    ANDA #$FC;
     TAB;
-    ;Isolate first bit and add to X; If X is even, 0 bit not set => even;
-    ;Isolate first bit and add to X; If X is even, 0 bit not set => even;
-    ;0
-    ANDB #$80;
-    ROLB;
-    ROLB;
+    ANDA #$00;
+    JSR countOnes;
+    XGDY;
     ANDB #$01;
-    ABX;
-    TAB;
-    LSLB;
-    ;1
-    ANDB #$80;
-    ROLB;
-    ROLB;
+    STAB TEMP;
+    LDD DATA_STREAM+3;
+    LSRD;
+    LSRD;
+    LSRD;
+    LSRD;
     ANDB #$01;
-    ABX;
-    LSLA;
-    TAB;
-    LSLB;
-    ;2
-    ANDB #$80;
-    ROLB;
-    ROLB;
-    ANDB #$01;
-    ABX;
-    LSLA;
-    TAB;
-    LSLB;
-    ;3
-    ANDB #$80;
-    ROLB;
-    ROLB;
-    ANDB #$01;
-    ABX;
-    LSLA;
-    TAB;
-    LSLB;
-    ;4
-    ANDB #$80;
-    ROLB;
-    ROLB;
-    ANDB #$01;
-    ABX;
-    LSLA;
-    TAB;
-    LSLB;
-    ;5
-    ANDB #$80;
-    ROLB;
-    ROLB;
-    ANDB #$01;
-    ABX;
-    TAB;
-    LSLB;
-    
-    CMPB #$00;
-    BEQ parity_even_hours;
-    BRA parity_odd_hours;
-     
-    parity_even_hours:
-    XGDX;
-    CMPB #$00;
-    BEQ validBitH;
-    CMPB #$04;
-    BEQ validBitH;
+    EORB TEMP;
+    CMPB #0;
+    BEQ validBitHours;
     JSR invalidBit;
-    
-    parity_odd_hours:
-    XGDX;
-    CMPB #$03;
-    BEQ validBitH;
-    CMPB #$07;
-    BEQ validBitH;
-    JSR invalidBit;
-    
-    
-    validBitH:
+
+    validBitHours:
     LDD DATA_STREAM+3;
     LSLD;
     LSLD;
     LSLD;
     LSLD;
-    ANDA #$FE;
+    LSLD;
+    ANDA #$FC;
     STAA VALID_HOURS;
     RTS;
     
-    
+    ;Works as Expected
     checkDateParity:
-    LDD #0
-    XGDX;
-    ;Bit 36-47
+    ;L is the 1's counting register/
+    ;Temp is loop Variable
+    ;Load Bit 32-47
     LDD DATA_STREAM+4
-    LSLD;
-    LSLD;
-    LSLD;
-    LSLD;
-    STAA TEMP;
-    TBA;
-    ;Isolate first bit and add to X; If X is even, 0 bit not set => even;
-    ;0
-    ANDB #$01;
-    ABX;
-    TAB;
-    LSRB;
-    ;1
-    ANDB #$01;
-    ABX;
-    LSRA;
-    TAB;
-    LSRB;
-    ;2
-    ANDB #$01;
-    ABX;
-    LSRA;
-    TAB;
-    LSRB;
-    ;3
-    ANDB #$01;
-    ABX;
-    LSRA;
-    TAB;
-    LSRB;
-    ;4
-    ANDB #$01;
-    ABX;
-    LSRA;
-    TAB;
-    LSRB;
-    ;5
-    ANDB #$01;
-    ABX;
-    LSRA;
-    TAB;
-    LSRB;
-    ;6
-    ANDB #$01;
-    ABX;
-    LSRA;
-    TAB;
-    LSRB;
-    ;7
-    ANDB #$01;
-    ABX;
-    LSRA;
-    TAB;
-    LSRB;
-    ;Next bit
-    LDAB TEMP;
-    TBA;
-    ;0
-    ANDB #$01;
-    ABX;
-    TAB;
-    LSRB;
-    ;1
-    ANDB #$01;
-    ABX;
-    LSRA;
-    TAB;
-    LSRB;
-    ;2
-    ANDB #$01;
-    ABX;
-    LSRA;
-    TAB;
-    LSRB;
-    ;3
-    ANDB #$01;
-    ABX;
-    LSRA;
-    TAB;
-    LSRB;
-    ;4
-    ANDB #$01;
-    ABX;
-    LSRA;
-    TAB;
-    LSRB;
-    ;5
-    ANDB #$01;
-    ABX;
-    LSRA;
-    TAB;
-    LSRB;
-    ;6
-    ANDB #$01;
-    ABX;
-    LSRA;
-    TAB;
-    LSRB;
-    ;7
-    ANDB #$01;
-    ABX;
-    LSRA;
-    TAB;
-    LSRB;
-    ;Load bit 48-63
-    LDD DATA_STREAM+6
-    ;Isolate bit 47-58
-    ANDB #$E0;
+    ;Isolate Bit 36-47
+    ANDA #$0F;
+    JSR countOnes;
+    XGDY;
     STAB TEMP;
+    ;Bits 48-63
+    LDD DATA_STREAM+6;
+    ;Isolate Bit 48-57
+    ANDB #$C0;
+    JSR countOnes;
+    XGDY;
+    LDAA TEMP;
+    ABA;
     TAB;
-    ;Isolate first bit and add to X; If X is even, 0 bit not set => even;
-    ;0
-    ANDB #$01;
-    ABX;
-    TAB;
-    LSRB;
+    ; first bit of B indicates if we have a even or odd number of ones;
+    ANDB #01;
+    LDAA DATA_STREAM+7;
+    LSLA;
+    LSLA;
+    ANDA #$80;
+    ROLA;
+    ROLA;
+    ANDA #$01;
+    ;Now the Parity Bit 58 is in A0 and B0 indicates if we have even or odd. A0 and B0 should be the same Means we XOR;
+    STAA TEMP;
+    EORB TEMP;
+    CMPB #0;
+    BEQ validBit;
+    JSR invalidBit;
+    validBit:
+    RTS;
+    
+    countOnes:
+    MOVB #$0F,LOOP;
+    LDY #0;
+    count1sLoop:
+    TFR D,X;
     ;1
+    ;D and X now have the same bits in them;
     ANDB #$01;
-    ABX;
-    LSRA;
-    TAB;
-    LSRB;
-    ;2
-    ANDB #$01;
-    ABX;
-    LSRA;
-    TAB;
-    LSRB;
-    ;3
-    ANDB #$01;
-    ABX;
-    LSRA;
-    TAB;
-    LSRB;
-    ;4
-    ANDB #$01;
-    ABX;
-    LSRA;
-    TAB;
-    LSRB;
-    ;5
-    ANDB #$01;
-    ABX;
-    LSRA;
-    TAB;
-    LSRB;
-    ;6
-    ANDB #$01;
-    ABX;
-    LSRA;
-    TAB;
-    LSRB;
-    ;7
-    ANDB #$01;
-    ABX;
-    LSRA;
-    TAB;
-    LSRB;
-    ;Next bit
-    LDAB TEMP;
-    TBA;
-    ;0
-    ANDB #$80;
-    ROLB;
-    ROLB;
-    ANDB #$01;
-    ABX;
-    TAB;
-    LSLB;
-    ;1 PARITY BIT 58
-    ANDB #$80;
-    ROLB;
-    ROLB;
-    ANDB #$01;
-    CMPB #$00;
-    BEQ parity_even_date;
-    BRA partiy_odd_date;
-    
-    parity_even_date:
-    XGDX;
-    ANDB #$01;
-    CMPB #$00;
-    BEQ valid_bit_date;
-    JSR invalidBit;
-   
-    
-    
-    partiy_odd_date:
-    XGDX;
-    ANDB #$01;
-    CMPB #$01;
-    BEQ valid_bit_date;
-    JSR invalidBit;
-    
-    valid_bit_date:
-    RTS; 
+    ;If B is a one, it is added to Y. Otherwise ignored
+    ABY;
+    ;Transfer the original Bits into D;
+    TFR X,D;
+    ;Shift D Right by one
+    LSRD;
+    ;Transfer shifted Bits to X;
+    TFR D,X;
+    ;After this D and X contain the shifted Bits;
+    LDAB LOOP;
+    CMPB #0;
+    BEQ return;
+    DECB;
+    STAB LOOP;
+    TFR X,D;
+    BRA count1sLoop;
+    return:
+    RTS;
     
     evalDays:
     LDD DATA_STREAM+4;
+    LSLD;
     LSLD;
     LSLD;
     LSLD;
@@ -729,19 +458,25 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     LDD DATA_STREAM+5;
     LSLD;
     LSLD;
-    STAB DAY_OF_WEEK_AND_MONTH;
+    STAA DAY_OF_WEEK_AND_MONTH;
     RTS;
     
     evalYear:
     LDD DATA_STREAM+6;
     LSLD;
     LSLD;
-    STAB YEAR;
+    STAA VALID_YEAR;
     RTS;
     
     putCorrectDateAndTime:
     JSR convertMinutes;
     JSR convertHours;
+    JSR convertDays;
+    JSR convertDayOfWeek;
+    JSR convertMonth;
+    JSR convertYear;
+    JSR setupOutput;
+    RTS;
     
     
     convertMinutes:
@@ -792,7 +527,7 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     BNE cont3;
     ADDB #10;
     cont3:
-    STAB MINUTES;
+    STAB VALID_MINUTES;
     RTS;
     
     convertHours:
@@ -833,8 +568,231 @@ CONF_I1: DS.B 2 ; [169,151] , [0xA9,0x97]
     BNE cont9H;
     ADDB #20;
     cont9H:
-    STAB HOURS;
+    STAB VALID_HOURS;
     RTS;
+    
+    convertDays:
+    LDAA #0;
+    
+    LDAB VALID_DAYS;
+    ANDB #$80;
+    CMPB #$80;
+    BNE cont1d;
+    ADDA #1;
+    cont1d:
+    LDAB VALID_DAYS;
+    ANDB #$40;
+    CMPB #$40;
+    BNE cont2d;
+    ADDA #2;
+    cont2d:
+    LDAB VALID_DAYS;
+    ANDB #$20;
+    CMPB #$20;
+    BNE cont3d;
+    ADDA #4;
+    cont3d:
+    LDAB VALID_DAYS;
+    ANDB #$10;
+    CMPB #$10;
+    BNE cont4d;
+    ADDA #8
+    cont4d:
+    LDAB VALID_DAYS;
+    ANDB #$08;
+    CMPB #$08;
+    BNE cont5d;
+    ADDA #10;
+    cont5d:
+    LDAB VALID_DAYS;
+    ANDB #$04;
+    CMPB #$04;
+    BNE cont6d;
+    ADDA #20;
+    cont6d:
+    STAA VALID_DAYS;
+    RTS;
+    
+    convertDayOfWeek:
+    LDAA #0;
+    LDAB DAY_OF_WEEK_AND_MONTH;
+    ANDB #$80;
+    CMPB #$80;
+    BNE cont1dow;
+    ADDA #1;
+    cont1dow:
+    LDAB DAY_OF_WEEK_AND_MONTH;
+    ANDB #$40;
+    CMPB #$40;
+    BNE cont2dow;
+    ADDA #2;
+    cont2dow:
+    LDAB DAY_OF_WEEK_AND_MONTH;
+    ANDB #$20;
+    CMPB #$20;
+    BNE cont3dow;
+    ADDA #4;
+    cont3dow:
+    STAA DAY_OF_WEEK;
+    LDAB PTH;
+    ANDB #$04;
+    CMPB #$00;
+    BEQ displayAmerican;
+    ;Display European Time Format
+    TAB;
+    LDY #DAY_STRING;
+    LDX #N2DD;
+    DECB;
+    LSLB;
+    ABX;
+    MOVW X,Y;
+    INY;
+    INY;
+    MOVB #$3A,Y;
+    INY;
+    MOVB #$00,Y;
+    RTS;
+    
+    
+    displayAmerican:
+    LDX #N2DE;
+    LDY #DAY_STRING;
+    TAB;
+    LDAA #3;
+    MUL;
+    ABX;
+    MOVW X,Y;
+    INX;
+    INX;
+    INY;
+    INY;
+    MOVB X,Y;
+    INY;
+    MOVB #$3A,Y;
+    INY;
+    MOVB #$00,Y;
+    RTS
+    
+    convertMonth:
+    LDAA #0;
+    LDAB DAY_OF_WEEK_AND_MONTH;
+    ANDB #$10
+    CMPB #$10;
+    BNE cont1m;
+    ADDA #1;
+    cont1m:
+    LDAB DAY_OF_WEEK_AND_MONTH;
+    ANDB #$08
+    CMPB #$08;
+    BNE cont2m;
+    ADDA #2;
+    cont2m:
+    LDAB DAY_OF_WEEK_AND_MONTH;
+    ANDB #$04
+    CMPB #$04;
+    BNE cont3m;
+    ADDA #4;
+    cont3m:
+    LDAB DAY_OF_WEEK_AND_MONTH;
+    ANDB #$02
+    CMPB #$02;
+    BNE cont4m;
+    ADDA #8;
+    cont4m:
+    LDAB DAY_OF_WEEK_AND_MONTH;
+    ANDB #$01;
+    CMPB #$01;
+    BNE cont5m;
+    ADDA #10;
+    cont5m:
+    STAA VALID_MONTH;
+    RTS;
+    
+    convertYear:
+    LDAA #0;
+    
+    LDAB VALID_YEAR;
+    ANDB #$80;
+    CMPB #$80;
+    BNE cont1y;
+    ADDA #1;
+    cont1y:
+    
+    LDAB VALID_YEAR;
+    ANDB #$40;
+    CMPB #$40;
+    BNE cont2y;
+    ADDA #2;
+    cont2y:
+    
+    LDAB VALID_YEAR;
+    ANDB #$20;
+    CMPB #$20;
+    BNE cont3y;
+    ADDA #4;
+    cont3y:
+    
+    LDAB VALID_YEAR;
+    ANDB #$10;
+    CMPB #$10;
+    BNE cont4y;
+    ADDA #8;
+    cont4y:
+    
+    LDAB VALID_YEAR;
+    ANDB #$08;
+    CMPB #$08;
+    BNE cont5y;
+    ADDA #10;
+    cont5y:
+    
+    LDAB VALID_YEAR;
+    ANDB #$04;
+    CMPB #$04;
+    BNE cont6y;
+    ADDA #20;
+    cont6y:
+    
+    LDAB VALID_YEAR;
+    ANDB #$02;
+    CMPB #$02;
+    BNE cont7y;
+    ADDA #40;
+    cont7y:
+    
+    LDAB VALID_YEAR;
+    ANDB #$01;
+    CMPB #$01;
+    BNE cont8y;
+    ADDA #80;
+    cont8y:
+    STAA VALID_YEAR;
+    RTS;
+    
+    setupOutput:
+    LDAB VALID_MINUTES;
+    STAB MINUTES;
+    LDAB VALID_HOURS;
+    STAB HOURS;
+    MOVB #$00,SECONDS;
+    RTS
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     

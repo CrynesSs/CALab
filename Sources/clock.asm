@@ -13,9 +13,9 @@
 
 ; export symbols
     XREF decToASCII;
-    XDEF tick,setClock,addSecond,addMinute,addHour;
+    XDEF tick,setClock,addSecond,addMinute,addHour,chooseFormat;
     XDEF addSecondsSet,addMinutesSet,addHoursSet;
-    XDEF OUTPUTSTRING,MINUTES,SECONDS,HOURS;
+    XDEF OUTPUTSTRING,MINUTES,SECONDS,HOURS,Hour12Format;
     XREF PIFP,toggleLED,setMode,PTH,displayTemperatureAndTime;
   
         
@@ -104,12 +104,7 @@ ASCIIBuffer: DS.B 7
    MOVW ASCIIBuffer+4,OUTPUTSTRING+6
    ;Set Format Symbols     
    MOVB #$3A,OUTPUTSTRING+2; ":"
-   MOVB #$3A,OUTPUTSTRING+5;
-   
-   ;puld
-   ;pulx
-   ;puly
-   
+   MOVB #$3A,OUTPUTSTRING+5;  
    RTS;    
   chooseFormat:
     LDAB Hour12Format;

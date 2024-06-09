@@ -30,7 +30,7 @@
         XREF delay_10ms
         XREF handlePWMITR,setClock;
         XREF evaluateButtons;
-        XREF initNamechanger,initButtonState,setupTimer;
+        XREF initNamechanger,initButtonState,setupTimer,buttonHandleLab3;
         XREF initADC;
         XREF testFunction;
         
@@ -48,8 +48,9 @@
   
   ORG $FFCA
   DC.W signalDecoderControl;
-  ;ORG $FFCC
-  ;int25:  DC.W evaluateButtons;
+  
+  ORG $FFCC
+  int25:  DC.W buttonHandleLab3;
   
  
 
@@ -75,7 +76,8 @@ Entry:
         JSR initLCD;
         ;JSR initNamechanger;
         JSR initADC;
-        JSR setClock;
+        JSR testFunction;
+        ;JSR setClock;
         ;JSR initButtonState;
         JSR setupPWM;
         JSR setupTimer;
