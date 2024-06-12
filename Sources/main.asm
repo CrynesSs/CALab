@@ -77,7 +77,7 @@ Entry:
         JSR initLCD;
         ;JSR initNamechanger;
         ;JSR initADC;
-        JSR testFunction;
+        ;JSR testFunction;
         ;JSR setClock;
         ;JSR initButtonState;
         JSR setupPWM;

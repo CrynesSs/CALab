@@ -12880,16 +12880,12 @@ Entry:
         JSR initLED;
         JSR initLCD;
         ;JSR initNamechanger;
-        JSR initADC;
-        JSR testFunction;
+        ;JSR initADC;
+        ;JSR testFunction;
         ;JSR setClock;
         ;JSR initButtonState;
         JSR setupPWM;
         JSR setupTimer;
-        
-        
-        
-        
 
         BRA BUSY;
         

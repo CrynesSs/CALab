@@ -11,6 +11,7 @@ TOTAL_POLLS: DC.B 1
 ;0 if false 1 if true
 STOP_BIT_FOUND: DC.B 1
 WAIT_FOR_DATA: DC.B 1
+
 DATA_BUFFER: DC.W 1
 
 DATA_STREAM: DS.B 8;
@@ -35,7 +36,6 @@ DAY_STRING: DS.B 5;
 
 LOOP: DC.B 1
 TEMP: DC.B 1;
-TEMP_BIT: DC.B 1;
 
 ;Confidence Intervals
 CONF_STOP: DS.B 1 ; 191+ 0xBF
@@ -68,7 +68,6 @@ N2DD: DC.B "MODIMIDOFRSASO"
     MOVW #$BDAB,CONF_I0;
     ;[169,151]
     MOVW #$A997,CONF_I1;
-    
     MOVW #$0000,DATA_BUFFER;
     MOVB #$00,HIGHS;
     MOVB #$00,TOTAL_POLLS;
@@ -79,8 +78,17 @@ N2DD: DC.B "MODIMIDOFRSASO"
     MOVW #$0000,DATA_STREAM+2;
     MOVW #$0000,DATA_STREAM+4;
     MOVW #$0000,DATA_STREAM+6;
-    MOVB #00,SECONDS;
-    MOVB #$00,setMode
+    
+    ;Init Dummy Values
+    MOVB #13,HOURS;
+    MOVB #37,MINUTES;
+    MOVB #69,SECONDS;
+    
+    MOVB #13,VALID_DAYS;
+    MOVB #37,VALID_MONTH;
+    MOVB #69,VALID_YEAR;
+    MOVB #1,DAY_OF_WEEK;
+    MOVB #$00, setMode;
     RTS;
 
     

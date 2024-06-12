@@ -35,17 +35,17 @@ Entry point: 0xC000 (Entry)
 SECTION-ALLOCATION SECTION
 Section Name                    Size  Type     From       To       Segment
 ---------------------------------------------------------------------------------------------
-.init                           3329     R     0xC000     0xCD00   ROM_C000
-.data                            148   R/W     0x1000     0x1093   RAM
+.init                           3360     R     0xC000     0xCD1F   ROM_C000
+.data                            147   R/W     0x1000     0x1092   RAM
 main.asm__ORG00001                 2     R     0xFF8E     0xFF8F   .absSeg0
 main.asm__ORG00002                 2     R     0xFFCA     0xFFCB   .absSeg1
-.const                            44     R     0xCD01     0xCD2C   ROM_C000
-.stack                           256   R/W     0x1094     0x1193   RAM
+.const                            44     R     0xCD20     0xCD4B   ROM_C000
+.stack                           256   R/W     0x1093     0x1192   RAM
 .vectSeg2_vect                     2     R     0xFFFE     0xFFFF   .vectSeg2
 
 Summary of section sizes per section type:
-READ_ONLY (R):         D33 (dec:     3379)
-READ_WRITE (R/W):      194 (dec:      404)
+READ_ONLY (R):         D52 (dec:     3410)
+READ_WRITE (R/W):      193 (dec:      403)
 
 *********************************************************************************************
 VECTOR-ALLOCATION SECTION
@@ -59,14 +59,14 @@ OBJECT-ALLOCATION SECTION
 ---------------------------------------------------------------------------------------------
 MODULE:                 -- main.asm.o --
 - PROCEDURES:
-     Entry                                     C000      22      34       0   .init       
+     Entry                                     C000      1C      28       0   .init       
      main                                      C000       0       0       0   .init       
-     BUSY                                      C022       2       2       0   .init       
+     BUSY                                      C01C       2       2       0   .init       
 - VARIABLES:
      VAR00001                                  FF8E       2       2       0   .text       
      VAR00002                                  FFCA       2       2       0   .text       
 - LABELS:
-     __SEG_END_SSTACK                          1194       0       0       1               
+     __SEG_END_SSTACK                          1193       0       0       1               
      PTH_PTH0                                     0       0       0       0   .text       
      PORTB                                        1       0       0       5   .text       
      DDRB                                         3       0       0       1   .text       
@@ -124,103 +124,103 @@ MODULE:                 -- main.asm.o --
      DDRJ                                       26A       0       0       1   .text       
 MODULE:                 -- led.asm.o --
 - PROCEDURES:
-     initLED                                   C024      13      19       1   .init       
-     setLED                                    C037       4       4       0   .init       
-     getLED                                    C03B       4       4       0   .init       
-     toggleLED                                 C03F       7       7       4   .init       
+     initLED                                   C01E      13      19       1   .init       
+     setLED                                    C031       4       4       0   .init       
+     getLED                                    C035       4       4       0   .init       
+     toggleLED                                 C039       7       7       4   .init       
 - VARIABLES:
 MODULE:                 -- decToASCII.asm.o --
 - PROCEDURES:
-     decToASCII                                C046       8       8      20   .init       
-     startConversion                           C04E      45      69       0   .init       
-     flipSign                                  C093       D      13       0   .init       
+     decToASCII                                C040       8       8      20   .init       
+     startConversion                           C048      45      69       0   .init       
+     flipSign                                  C08D       D      13       0   .init       
 - VARIABLES:
 MODULE:                 -- lcd.asm.o --
 - PROCEDURES:
-     initLCD                                   C0A0      27      39       1   .init       
-     inext1                                    C0C7      18      24       0   .init       
-     inext2                                    C0DF       F      15       0   .init       
-     writeLine                                 C0EE       F      15       3   .init       
-     writeLine1                                C0FD       2       2       0   .init       
-     wDo                                       C0FF       8       8       0   .init       
-     next                                      C107       F      15       0   .init       
-     wEnd                                      C116       3       3       0   .init       
-     fill_w_spaces                             C119       C      12       0   .init       
-     delay_10ms                                C125       8       8       3   .init       
-     delay_5ms                                 C12D       8       8       2   .init       
-     delay_50us                                C135       8       8       1   .init       
-     del1                                      C13D       6       6       0   .init       
-     sel_data                                  C143       4       4       1   .init       
-     sel_inst                                  C147       4       4       3   .init       
-     outputByte                                C14B       C      12       5   .init       
+     initLCD                                   C09A      27      39       1   .init       
+     inext1                                    C0C1      18      24       0   .init       
+     inext2                                    C0D9       F      15       0   .init       
+     writeLine                                 C0E8       F      15       3   .init       
+     writeLine1                                C0F7       2       2       0   .init       
+     wDo                                       C0F9       8       8       0   .init       
+     next                                      C101       F      15       0   .init       
+     wEnd                                      C110       3       3       0   .init       
+     fill_w_spaces                             C113       C      12       0   .init       
+     delay_10ms                                C11F       8       8       3   .init       
+     delay_5ms                                 C127       8       8       2   .init       
+     delay_50us                                C12F       8       8       1   .init       
+     del1                                      C137       6       6       0   .init       
+     sel_data                                  C13D       4       4       1   .init       
+     sel_inst                                  C141       4       4       3   .init       
+     outputByte                                C145       C      12       5   .init       
 - VARIABLES:
      VAR00001                                  1000       1       1       2   .data       
      temp1                                     1001       1       1       0   .data       
-     VAR00002                                  CD01       1       1       1   .const      
-     VAR00003                                  CD02       1       1       0   .const      
-     VAR00004                                  CD03       1       1       0   .const      
-     VAR00005                                  CD04       1       1       0   .const      
-     VAR00006                                  CD05       1       1       1   .const      
-     VAR00007                                  CD06       1       1       0   .const      
-     VAR00008                                  CD07       1       1       0   .const      
-     VAR00009                                  CD08       1       1       0   .const      
-     VAR00010                                  CD09       1       1       0   .const      
+     VAR00002                                  CD20       1       1       1   .const      
+     VAR00003                                  CD21       1       1       0   .const      
+     VAR00004                                  CD22       1       1       0   .const      
+     VAR00005                                  CD23       1       1       0   .const      
+     VAR00006                                  CD24       1       1       1   .const      
+     VAR00007                                  CD25       1       1       0   .const      
+     VAR00008                                  CD26       1       1       0   .const      
+     VAR00009                                  CD27       1       1       0   .const      
+     VAR00010                                  CD28       1       1       0   .const      
 MODULE:                 -- PWM.asm.o --
 - PROCEDURES:
-     setupPWM                                  C157      60      96       1   .init       
+     setupPWM                                  C151      60      96       1   .init       
 - VARIABLES:
 MODULE:                 -- clock.asm.o --
 - PROCEDURES:
-     setClock                                  C1B7      15      21       0   .init       
-     cancelTick                                C1CC       1       1       0   .init       
-     tick                                      C1CD      11      17       1   .init       
-     addSecond                                 C1DE       E      14       1   .init       
-     addMinute                                 C1EC       E      14       0   .init       
-     addHour                                   C1FA       E      14       0   .init       
-     rollOverSecondsNormal                     C208       7       7       0   .init       
-     rollOverMinutesNormal                     C20F       7       7       0   .init       
-     rollOverHoursNormal                       C216       8       8       0   .init       
-     setupText                                 C21E      11      17       0   .init       
-     skipToMinutes                             C22F      29      41       4   .init       
-     chooseFormat                              C258      14      20       3   .init       
-     handle12HourFormat                        C26C       B      11       0   .init       
-     setAM                                     C277      1F      31       0   .init       
-     continue12AM                              C296       D      13       0   .init       
-     setPM                                     C2A3      1D      29       0   .init       
-     continue12PM                              C2C0       F      15       0   .init       
-     addHoursSet                               C2CF       E      14       1   .init       
-     rollOverHours                             C2DD       7       7       0   .init       
-     addMinutesSet                             C2E4       D      13       1   .init       
-     rollOverMinutes                           C2F1       7       7       0   .init       
-     addSecondsSet                             C2F8       D      13       1   .init       
-     rollOverSeconds                           C305       7       7       0   .init       
-     displayNewTime                            C30C       7       7       0   .init       
+     setClock                                  C1B1      15      21       0   .init       
+     cancelTick                                C1C6       1       1       0   .init       
+     tick                                      C1C7      11      17       1   .init       
+     addSecond                                 C1D8       E      14       1   .init       
+     addMinute                                 C1E6       E      14       0   .init       
+     addHour                                   C1F4       E      14       0   .init       
+     rollOverSecondsNormal                     C202       7       7       0   .init       
+     rollOverMinutesNormal                     C209       7       7       0   .init       
+     rollOverHoursNormal                       C210       8       8       0   .init       
+     setupText                                 C218      11      17       0   .init       
+     skipToMinutes                             C229      29      41       4   .init       
+     chooseFormat                              C252      14      20       3   .init       
+     handle12HourFormat                        C266       B      11       0   .init       
+     setAM                                     C271      1F      31       0   .init       
+     continue12AM                              C290       D      13       0   .init       
+     setPM                                     C29D      1D      29       0   .init       
+     continue12PM                              C2BA       F      15       0   .init       
+     addHoursSet                               C2C9       E      14       1   .init       
+     rollOverHours                             C2D7       7       7       0   .init       
+     addMinutesSet                             C2DE       D      13       1   .init       
+     rollOverMinutes                           C2EB       7       7       0   .init       
+     addSecondsSet                             C2F2       D      13       1   .init       
+     rollOverSeconds                           C2FF       7       7       0   .init       
+     displayNewTime                            C306       7       7       0   .init       
 - VARIABLES:
      SECONDS                                   1002       1       1      10   .data       
-     MINUTES                                   1003       1       1      10   .data       
-     HOURS                                     1004       1       1      15   .data       
+     MINUTES                                   1003       1       1      11   .data       
+     HOURS                                     1004       1       1      17   .data       
      Hour12Format                              1005       1       1       3   .data       
      OUTPUTSTRING                              1006       B      11      24   .data       
      ASCIIBuffer                               1011       7       7      12   .data       
 MODULE:                 -- buttons.asm.o --
 - PROCEDURES:
-     initButtonState                           C313       B      11       0   .init       
-     evaluateButtons                           C31E      14      20       0   .init       
-     continueEvalBT                            C332      2F      47       0   .init       
-     notInSetMode                              C361       1       1       0   .init       
-     handleBt1                                 C362       5       5       0   .init       
-     handleBt2                                 C367       5       5       0   .init       
-     handleBt3                                 C36C       5       5       0   .init       
-     handleBt4                                 C371       5       5       0   .init       
-     logicBT1                                  C376      29      41       1   .init       
-     released1                                 C39F      21      33       0   .init       
-     logicBT2                                  C3C0      29      41       1   .init       
-     released2                                 C3E9      17      23       0   .init       
-     continueEval                              C400       1       1       0   .init       
-     logicBT3                                  C401      29      41       1   .init       
-     released3                                 C42A      17      23       0   .init       
-     logicBT4                                  C441      29      41       1   .init       
-     released4                                 C46A      17      23       0   .init       
+     initButtonState                           C30D       B      11       0   .init       
+     evaluateButtons                           C318      14      20       0   .init       
+     continueEvalBT                            C32C      2F      47       0   .init       
+     notInSetMode                              C35B       1       1       0   .init       
+     handleBt1                                 C35C       5       5       0   .init       
+     handleBt2                                 C361       5       5       0   .init       
+     handleBt3                                 C366       5       5       0   .init       
+     handleBt4                                 C36B       5       5       0   .init       
+     logicBT1                                  C370      29      41       1   .init       
+     released1                                 C399      21      33       0   .init       
+     logicBT2                                  C3BA      29      41       1   .init       
+     released2                                 C3E3      17      23       0   .init       
+     continueEval                              C3FA       1       1       0   .init       
+     logicBT3                                  C3FB      29      41       1   .init       
+     released3                                 C424      17      23       0   .init       
+     logicBT4                                  C43B      29      41       1   .init       
+     released4                                 C464      17      23       0   .init       
 - VARIABLES:
      buttonPressedEval                         1018       1       1      13   .data       
      buttonReleasedEval                        1019       1       1      17   .data       
@@ -228,154 +228,154 @@ MODULE:                 -- buttons.asm.o --
      setModeTimerStarted                       101B       1       1       0   .data       
 MODULE:                 -- ECT.asm.o --
 - PROCEDURES:
-     setupTimer                                C481      34      52       1   .init       
+     setupTimer                                C47B      34      52       1   .init       
 - VARIABLES:
 MODULE:                 -- eventHandler.asm.o --
 - PROCEDURES:
-     handlePWMITR                              C4B5       5       5       1   .init       
-     continueInterruptHandle                   C4BA       5       5       0   .init       
-     continueInterruptHandle2                  C4BF       5       5       0   .init       
-     continueInterruptHandle3                  C4C4       1       1       0   .init       
-     handleClockTick                           C4C5       D      13       0   .init       
-     swapNames                                 C4D2       7       7       0   .init       
-     displayName                               C4D9       7       7       0   .init       
+     handlePWMITR                              C4AF       5       5       1   .init       
+     continueInterruptHandle                   C4B4       5       5       0   .init       
+     continueInterruptHandle2                  C4B9       5       5       0   .init       
+     continueInterruptHandle3                  C4BE       1       1       0   .init       
+     handleClockTick                           C4BF       D      13       0   .init       
+     swapNames                                 C4CC       7       7       0   .init       
+     displayName                               C4D3       7       7       0   .init       
 - VARIABLES:
 MODULE:                 -- helperFunctions.asm.o --
 - PROCEDURES:
-     concat2StringsString1LeftBoundedString2RightBoundedForNiceDisplayIGuess       C4E0       5       5       3   .init       
-     copySpaces                                C4E5      10      16       0   .init       
-     start                                     C4F5       3       3       0   .init       
-     moveFirstString                           C4F8       E      14       0   .init       
-     startSecondString                         C506       3       3       0   .init       
-     findEnd                                   C509       9       9       0   .init       
-     copySecondString                          C512       7       7       0   .init       
-     cpyLoop                                   C519       D      13       0   .init       
-     finish                                    C526       1       1       0   .init       
-     displayTemperatureAndTime                 C527      12      18       1   .init       
-     displayTimeAndDate                        C539      81     129       1   .init       
-     displayString                             C5BA      23      35       1   .init       
-     displayAmerican                           C5DD      41      65       0   .init       
-     continue123                               C61E      2D      45       0   .init       
-     noYearRollover                            C64B      30      48       0   .init       
-     continueAmericanJ                         C67B       2       2       0   .init       
-     decrementDay                              C67D       9       9       0   .init       
-     day31Month                                C686       9       9       0   .init       
-     day30Month                                C68F       9       9       0   .init       
-     february                                  C698      19      25       0   .init       
-     schaltjahr                                C6B1       9       9       0   .init       
-     continueAmerican                          C6BA       B      11       4   .init       
-     setAM                                     C6C5      1F      31       0   .init       
-     continue12AM                              C6E4       D      13       0   .init       
-     setPM                                     C6F1      1D      29       0   .init       
-     continue12PM                              C70E       F      15       0   .init       
-     skipToMinutes                             C71D      8E     142       4   .init       
+     concat2StringsString1LeftBoundedString2RightBoundedForNiceDisplayIGuess       C4DA       5       5       3   .init       
+     copySpaces                                C4DF      10      16       0   .init       
+     start                                     C4EF       3       3       0   .init       
+     moveFirstString                           C4F2       E      14       0   .init       
+     startSecondString                         C500       3       3       0   .init       
+     findEnd                                   C503       9       9       0   .init       
+     copySecondString                          C50C       7       7       0   .init       
+     cpyLoop                                   C513       D      13       0   .init       
+     finish                                    C520       1       1       0   .init       
+     displayTemperatureAndTime                 C521      12      18       1   .init       
+     displayTimeAndDate                        C533      81     129       1   .init       
+     displayString                             C5B4      23      35       1   .init       
+     displayAmerican                           C5D7      41      65       0   .init       
+     continue123                               C618      2C      44       0   .init       
+     noYearRollover                            C644      30      48       0   .init       
+     continueAmericanJ                         C674       A      10       0   .init       
+     decrementDay                              C67E       9       9       0   .init       
+     day31Month                                C687       9       9       0   .init       
+     day30Month                                C690       9       9       0   .init       
+     february                                  C699      19      25       0   .init       
+     schaltjahr                                C6B2       9       9       0   .init       
+     continueAmerican                          C6BB       B      11       4   .init       
+     setAM                                     C6C6      1F      31       0   .init       
+     continue12AM                              C6E5       D      13       0   .init       
+     setPM                                     C6F2      1D      29       0   .init       
+     continue12PM                              C70F       F      15       0   .init       
+     skipToMinutes                             C71E      8E     142       4   .init       
 - VARIABLES:
      LINE_BUFFER                               101C      11      17       6   .data       
      SECOND_STRING_ADR                         102D       2       2       3   .data       
      TIME_ZONE                                 102F       4       4       5   .data       
      DUMMY_TEMP                                1033       5       5       0   .data       
      ASCIIBuffer                               1038       8       8      22   .data       
-     AMERICAN_H                                1040       1       1       5   .data       
+     AMERICAN_H                                1040       1       1       7   .data       
      AMERICAN_D                                1041       1       1       8   .data       
      AMERICAN_M                                1042       1       1       3   .data       
      AMERICAN_Y                                1043       1       1       4   .data       
      AMERICAN_DAY_OF_WEEK                      1044       1       1       4   .data       
      LOOP                                      1045       1       1       0   .data       
-     N2DE                                      CD0A      15      21       1   .const      
-     N2DD                                      CD1F       E      14       1   .const      
+     N2DE                                      CD29      15      21       1   .const      
+     N2DD                                      CD3E       E      14       1   .const      
 MODULE:                 -- adc.asm.o --
 - PROCEDURES:
-     initADC                                   C7AB      15      21       2   .init       
-     convertADC                                C7C0       5       5       1   .init       
-     wait1                                     C7C5      28      40       0   .init       
-     formatString                              C7ED      1D      29       1   .init       
+     initADC                                   C7AC      15      21       1   .init       
+     convertADC                                C7C1       5       5       1   .init       
+     wait1                                     C7C6      28      40       0   .init       
+     formatString                              C7EE      1D      29       1   .init       
 - VARIABLES:
      degree_string                             1046       7       7       2   .data       
 MODULE:                 -- thermo.asm.o --
 - PROCEDURES:
-     initThermo                                C80A       4       4       0   .init       
-     updateThermo                              C80E       D      13       0   .init       
+     initThermo                                C80B       4       4       0   .init       
+     updateThermo                              C80F       D      13       0   .init       
 - VARIABLES:
      temp                                      104D       7       7       4   .data       
 MODULE:                 -- signalDecoder.asm.o --
 - PROCEDURES:
-     testFunction                              C81B      2D      45       1   .init       
-     init_intervals                            C848      53      83       1   .init       
-     signalDecoderControl                      C89B      22      34       1   .init       
-     evalWindow                                C8BD      25      37       0   .init       
-     validOne                                  C8E2       B      11       0   .init       
-     validZero                                 C8ED       B      11       0   .init       
-     resetToDefault                            C8F8      38      56       0   .init       
-     checkForStopBit                           C930       8       8       0   .init       
-     continueStopBitEval                       C938      1D      29       0   .init       
-     thresholdNotMet                           C955       B      11       0   .init       
-     checkDataBuffer                           C960      13      19       0   .init       
-     fillDataBuffer                            C973      13      19       0   .init       
-     startIntervals                            C986       E      14       0   .init       
-     pollSignal                                C994      10      16       1   .init       
-     continue                                  C9A4       8       8       0   .init       
-     putBit                                    C9AC       8       8       2   .init       
-     isValid                                   C9B4      16      22       0   .init       
-     shift_loop                                C9CA       8       8       0   .init       
-     continuePutting                           C9D2      17      23       0   .init       
-     returnFromEval                            C9E9      28      40       0   .init       
-     evalBits                                  CA11      29      41       0   .init       
-     invalidBit                                CA3A      12      18       1   .init       
-     checkMinuteParity                         CA4C      26      38       1   .init       
-     checkHourParity                           CA72      2B      43       1   .init       
-     checkDateParity                           CA9D      3B      59       1   .init       
-     validBit                                  CAD8       3       3       0   .init       
-     countOnes                                 CADB       8       8       5   .init       
-     count1sLoop                               CAE3      1A      26       0   .init       
-     return                                    CAFD       1       1       0   .init       
-     evalMinutes                               CAFE       E      14       1   .init       
-     evalHours                                 CB0C       E      14       1   .init       
-     evalDays                                  CB1A       D      13       1   .init       
-     evalDayOfWeek                             CB27       9       9       1   .init       
-     evalYear                                  CB30       9       9       1   .init       
-     putCorrectDateAndTime                     CB39      16      22       1   .init       
-     convertMinutes                            CB4F       D      13       1   .init       
-     cont4                                     CB5C       B      11       0   .init       
-     cont5                                     CB67       B      11       0   .init       
-     cont6                                     CB72       B      11       0   .init       
-     cont7                                     CB7D       B      11       0   .init       
-     cont1                                     CB88       B      11       0   .init       
-     cont2                                     CB93       B      11       0   .init       
-     cont3                                     CB9E       4       4       0   .init       
-     convertHours                              CBA2       D      13       1   .init       
-     cont4H                                    CBAF       B      11       0   .init       
-     cont5H                                    CBBA       B      11       0   .init       
-     cont6H                                    CBC5       B      11       0   .init       
-     cont7H                                    CBD0       B      11       0   .init       
-     cont8H                                    CBDB       B      11       0   .init       
-     cont9H                                    CBE6       4       4       0   .init       
-     convertDays                               CBEA       D      13       1   .init       
-     cont1d                                    CBF7       B      11       0   .init       
-     cont2d                                    CC02       B      11       0   .init       
-     cont3d                                    CC0D       B      11       0   .init       
-     cont4d                                    CC18       B      11       0   .init       
-     cont5d                                    CC23       B      11       0   .init       
-     cont6d                                    CC2E       4       4       0   .init       
-     convertDayOfWeek                          CC32       D      13       1   .init       
-     cont1dow                                  CC3F       B      11       0   .init       
-     cont2dow                                  CC4A       B      11       0   .init       
-     cont3dow                                  CC55       4       4       0   .init       
-     convertMonth                              CC59       D      13       1   .init       
-     cont1m                                    CC66       B      11       0   .init       
-     cont2m                                    CC71       B      11       0   .init       
-     cont3m                                    CC7C       B      11       0   .init       
-     cont4m                                    CC87       B      11       0   .init       
-     cont5m                                    CC92       4       4       0   .init       
-     convertYear                               CC96       D      13       1   .init       
-     cont1y                                    CCA3       B      11       0   .init       
-     cont2y                                    CCAE       B      11       0   .init       
-     cont3y                                    CCB9       B      11       0   .init       
-     cont4y                                    CCC4       B      11       0   .init       
-     cont5y                                    CCCF       B      11       0   .init       
-     cont6y                                    CCDA       B      11       0   .init       
-     cont7y                                    CCE5       B      11       0   .init       
-     cont8y                                    CCF0       4       4       0   .init       
-     setupOutput                               CCF4       D      13       1   .init       
+     testFunction                              C81C      2D      45       0   .init       
+     init_intervals                            C849      71     113       1   .init       
+     signalDecoderControl                      C8BA      22      34       1   .init       
+     evalWindow                                C8DC      25      37       0   .init       
+     validOne                                  C901       B      11       0   .init       
+     validZero                                 C90C       B      11       0   .init       
+     resetToDefault                            C917      38      56       0   .init       
+     checkForStopBit                           C94F       8       8       0   .init       
+     continueStopBitEval                       C957      1D      29       0   .init       
+     thresholdNotMet                           C974       B      11       0   .init       
+     checkDataBuffer                           C97F      13      19       0   .init       
+     fillDataBuffer                            C992      13      19       0   .init       
+     startIntervals                            C9A5       E      14       0   .init       
+     pollSignal                                C9B3      10      16       1   .init       
+     continue                                  C9C3       8       8       0   .init       
+     putBit                                    C9CB       8       8       2   .init       
+     isValid                                   C9D3      16      22       0   .init       
+     shift_loop                                C9E9       8       8       0   .init       
+     continuePutting                           C9F1      17      23       0   .init       
+     returnFromEval                            CA08      28      40       0   .init       
+     evalBits                                  CA30      29      41       0   .init       
+     invalidBit                                CA59      12      18       1   .init       
+     checkMinuteParity                         CA6B      26      38       1   .init       
+     checkHourParity                           CA91      2B      43       1   .init       
+     checkDateParity                           CABC      3B      59       1   .init       
+     validBit                                  CAF7       3       3       0   .init       
+     countOnes                                 CAFA       8       8       5   .init       
+     count1sLoop                               CB02      1A      26       0   .init       
+     return                                    CB1C       1       1       0   .init       
+     evalMinutes                               CB1D       E      14       1   .init       
+     evalHours                                 CB2B       E      14       1   .init       
+     evalDays                                  CB39       D      13       1   .init       
+     evalDayOfWeek                             CB46       9       9       1   .init       
+     evalYear                                  CB4F       9       9       1   .init       
+     putCorrectDateAndTime                     CB58      16      22       1   .init       
+     convertMinutes                            CB6E       D      13       1   .init       
+     cont4                                     CB7B       B      11       0   .init       
+     cont5                                     CB86       B      11       0   .init       
+     cont6                                     CB91       B      11       0   .init       
+     cont7                                     CB9C       B      11       0   .init       
+     cont1                                     CBA7       B      11       0   .init       
+     cont2                                     CBB2       B      11       0   .init       
+     cont3                                     CBBD       4       4       0   .init       
+     convertHours                              CBC1       D      13       1   .init       
+     cont4H                                    CBCE       B      11       0   .init       
+     cont5H                                    CBD9       B      11       0   .init       
+     cont6H                                    CBE4       B      11       0   .init       
+     cont7H                                    CBEF       B      11       0   .init       
+     cont8H                                    CBFA       B      11       0   .init       
+     cont9H                                    CC05       4       4       0   .init       
+     convertDays                               CC09       D      13       1   .init       
+     cont1d                                    CC16       B      11       0   .init       
+     cont2d                                    CC21       B      11       0   .init       
+     cont3d                                    CC2C       B      11       0   .init       
+     cont4d                                    CC37       B      11       0   .init       
+     cont5d                                    CC42       B      11       0   .init       
+     cont6d                                    CC4D       4       4       0   .init       
+     convertDayOfWeek                          CC51       D      13       1   .init       
+     cont1dow                                  CC5E       B      11       0   .init       
+     cont2dow                                  CC69       B      11       0   .init       
+     cont3dow                                  CC74       4       4       0   .init       
+     convertMonth                              CC78       D      13       1   .init       
+     cont1m                                    CC85       B      11       0   .init       
+     cont2m                                    CC90       B      11       0   .init       
+     cont3m                                    CC9B       B      11       0   .init       
+     cont4m                                    CCA6       B      11       0   .init       
+     cont5m                                    CCB1       4       4       0   .init       
+     convertYear                               CCB5       D      13       1   .init       
+     cont1y                                    CCC2       B      11       0   .init       
+     cont2y                                    CCCD       B      11       0   .init       
+     cont3y                                    CCD8       B      11       0   .init       
+     cont4y                                    CCE3       B      11       0   .init       
+     cont5y                                    CCEE       B      11       0   .init       
+     cont6y                                    CCF9       B      11       0   .init       
+     cont7y                                    CD04       B      11       0   .init       
+     cont8y                                    CD0F       4       4       0   .init       
+     setupOutput                               CD13       D      13       1   .init       
 - VARIABLES:
      HIGHS                                     1054       1       1      10   .data       
      TOTAL_POLLS                               1055       1       1      12   .data       
@@ -386,10 +386,10 @@ MODULE:                 -- signalDecoder.asm.o --
      STREAM_POSITION                           1062       1       1       7   .data       
      VALID_MINUTES                             1063       1       1      10   .data       
      VALID_HOURS                               1064       1       1       9   .data       
-     VALID_DAYS                                1065       1       1      12   .data       
-     VALID_MONTH                               1066       1       1       5   .data       
-     VALID_YEAR                                1067       1       1      13   .data       
-     DAY_OF_WEEK                               1068       1       1       4   .data       
+     VALID_DAYS                                1065       1       1      13   .data       
+     VALID_MONTH                               1066       1       1       6   .data       
+     VALID_YEAR                                1067       1       1      14   .data       
+     DAY_OF_WEEK                               1068       1       1       5   .data       
      DAY_OF_WEEK_AND_MONTH                     1069       1       1       9   .data       
      ASCIIBuffer                               106A       7       7       0   .data       
      TIME_STRING                               1071       B      11       0   .data       
@@ -397,16 +397,15 @@ MODULE:                 -- signalDecoder.asm.o --
      DAY_STRING                                1087       5       5       3   .data       
      LOOP                                      108C       1       1       3   .data       
      TEMP                                      108D       1       1       8   .data       
-     TEMP_BIT                                  108E       1       1       0   .data       
-     CONF_STOP                                 108F       1       1       3   .data       
-     CONF_I0                                   1090       2       2       3   .data       
-     CONF_I1                                   1092       2       2       3   .data       
+     CONF_STOP                                 108E       1       1       3   .data       
+     CONF_I0                                   108F       2       2       3   .data       
+     CONF_I1                                   1091       2       2       3   .data       
 
 *********************************************************************************************
 MODULE STATISTIC
   Name                                      Data   Code  Const
 ---------------------------------------------------------------------------------------------
-  main.asm.o                                   0     36      4
+  main.asm.o                                   0     30      4
   led.asm.o                                    0     34      0
   decToASCII.asm.o                             0     90      0
   lcd.asm.o                                    2    183      9
@@ -415,10 +414,10 @@ MODULE STATISTIC
   buttons.asm.o                                4    366      0
   ECT.asm.o                                    0     52      0
   eventHandler.asm.o                           0     43      0
-  helperFunctions.asm.o                       42    715     35
+  helperFunctions.asm.o                       42    722     35
   adc.asm.o                                    7     95      0
   thermo.asm.o                                 7     17      0
-  signalDecoder.asm.o                         64   1254      0
+  signalDecoder.asm.o                         63   1284      0
   other                                      256      2      0
 
 *********************************************************************************************
@@ -438,7 +437,7 @@ SECTION: ".data"
   TOTAL_POLLS STOP_BIT_FOUND WAIT_FOR_DATA DATA_BUFFER DATA_STREAM 
   STREAM_POSITION VALID_MINUTES VALID_HOURS VALID_DAYS VALID_MONTH VALID_YEAR 
   DAY_OF_WEEK DAY_OF_WEEK_AND_MONTH ASCIIBuffer TIME_STRING DATE_STRING 
-  DAY_STRING LOOP TEMP TEMP_BIT CONF_STOP CONF_I0 CONF_I1 
+  DAY_STRING LOOP TEMP CONF_STOP CONF_I0 CONF_I1 
 SECTION: ".init"
   main Entry BUSY initLED setLED getLED toggleLED decToASCII startConversion 
   flipSign initLCD inext1 inext2 writeLine writeLine1 wDo next wEnd 
@@ -537,8 +536,8 @@ OBJECT LIST SORTED BY ADDRESS
      VAR00001                                  1000       1       1       2   .data       
      temp1                                     1001       1       1       0   .data       
      SECONDS                                   1002       1       1      10   .data       
-     MINUTES                                   1003       1       1      10   .data       
-     HOURS                                     1004       1       1      15   .data       
+     MINUTES                                   1003       1       1      11   .data       
+     HOURS                                     1004       1       1      17   .data       
      Hour12Format                              1005       1       1       3   .data       
      OUTPUTSTRING                              1006       B      11      24   .data       
      ASCIIBuffer                               1011       7       7      12   .data       
@@ -551,7 +550,7 @@ OBJECT LIST SORTED BY ADDRESS
      TIME_ZONE                                 102F       4       4       5   .data       
      DUMMY_TEMP                                1033       5       5       0   .data       
      ASCIIBuffer                               1038       8       8      22   .data       
-     AMERICAN_H                                1040       1       1       5   .data       
+     AMERICAN_H                                1040       1       1       7   .data       
      AMERICAN_D                                1041       1       1       8   .data       
      AMERICAN_M                                1042       1       1       3   .data       
      AMERICAN_Y                                1043       1       1       4   .data       
@@ -568,10 +567,10 @@ OBJECT LIST SORTED BY ADDRESS
      STREAM_POSITION                           1062       1       1       7   .data       
      VALID_MINUTES                             1063       1       1      10   .data       
      VALID_HOURS                               1064       1       1       9   .data       
-     VALID_DAYS                                1065       1       1      12   .data       
-     VALID_MONTH                               1066       1       1       5   .data       
-     VALID_YEAR                                1067       1       1      13   .data       
-     DAY_OF_WEEK                               1068       1       1       4   .data       
+     VALID_DAYS                                1065       1       1      13   .data       
+     VALID_MONTH                               1066       1       1       6   .data       
+     VALID_YEAR                                1067       1       1      14   .data       
+     DAY_OF_WEEK                               1068       1       1       5   .data       
      DAY_OF_WEEK_AND_MONTH                     1069       1       1       9   .data       
      ASCIIBuffer                               106A       7       7       0   .data       
      TIME_STRING                               1071       B      11       0   .data       
@@ -579,207 +578,206 @@ OBJECT LIST SORTED BY ADDRESS
      DAY_STRING                                1087       5       5       3   .data       
      LOOP                                      108C       1       1       3   .data       
      TEMP                                      108D       1       1       8   .data       
-     TEMP_BIT                                  108E       1       1       0   .data       
-     CONF_STOP                                 108F       1       1       3   .data       
-     CONF_I0                                   1090       2       2       3   .data       
-     CONF_I1                                   1092       2       2       3   .data       
+     CONF_STOP                                 108E       1       1       3   .data       
+     CONF_I0                                   108F       2       2       3   .data       
+     CONF_I1                                   1091       2       2       3   .data       
      main                                      C000       0       0       0   .init       
-     Entry                                     C000      22      34       0   .init       
-     BUSY                                      C022       2       2       0   .init       
-     initLED                                   C024      13      19       1   .init       
-     setLED                                    C037       4       4       0   .init       
-     getLED                                    C03B       4       4       0   .init       
-     toggleLED                                 C03F       7       7       4   .init       
-     decToASCII                                C046       8       8      20   .init       
-     startConversion                           C04E      45      69       0   .init       
-     flipSign                                  C093       D      13       0   .init       
-     initLCD                                   C0A0      27      39       1   .init       
-     inext1                                    C0C7      18      24       0   .init       
-     inext2                                    C0DF       F      15       0   .init       
-     writeLine                                 C0EE       F      15       3   .init       
-     writeLine1                                C0FD       2       2       0   .init       
-     wDo                                       C0FF       8       8       0   .init       
-     next                                      C107       F      15       0   .init       
-     wEnd                                      C116       3       3       0   .init       
-     fill_w_spaces                             C119       C      12       0   .init       
-     delay_10ms                                C125       8       8       3   .init       
-     delay_5ms                                 C12D       8       8       2   .init       
-     delay_50us                                C135       8       8       1   .init       
-     del1                                      C13D       6       6       0   .init       
-     sel_data                                  C143       4       4       1   .init       
-     sel_inst                                  C147       4       4       3   .init       
-     outputByte                                C14B       C      12       5   .init       
-     setupPWM                                  C157      60      96       1   .init       
-     setClock                                  C1B7      15      21       0   .init       
-     cancelTick                                C1CC       1       1       0   .init       
-     tick                                      C1CD      11      17       1   .init       
-     addSecond                                 C1DE       E      14       1   .init       
-     addMinute                                 C1EC       E      14       0   .init       
-     addHour                                   C1FA       E      14       0   .init       
-     rollOverSecondsNormal                     C208       7       7       0   .init       
-     rollOverMinutesNormal                     C20F       7       7       0   .init       
-     rollOverHoursNormal                       C216       8       8       0   .init       
-     setupText                                 C21E      11      17       0   .init       
-     skipToMinutes                             C22F      29      41       4   .init       
-     chooseFormat                              C258      14      20       3   .init       
-     handle12HourFormat                        C26C       B      11       0   .init       
-     setAM                                     C277      1F      31       0   .init       
-     continue12AM                              C296       D      13       0   .init       
-     setPM                                     C2A3      1D      29       0   .init       
-     continue12PM                              C2C0       F      15       0   .init       
-     addHoursSet                               C2CF       E      14       1   .init       
-     rollOverHours                             C2DD       7       7       0   .init       
-     addMinutesSet                             C2E4       D      13       1   .init       
-     rollOverMinutes                           C2F1       7       7       0   .init       
-     addSecondsSet                             C2F8       D      13       1   .init       
-     rollOverSeconds                           C305       7       7       0   .init       
-     displayNewTime                            C30C       7       7       0   .init       
-     initButtonState                           C313       B      11       0   .init       
-     evaluateButtons                           C31E      14      20       0   .init       
-     continueEvalBT                            C332      2F      47       0   .init       
-     notInSetMode                              C361       1       1       0   .init       
-     handleBt1                                 C362       5       5       0   .init       
-     handleBt2                                 C367       5       5       0   .init       
-     handleBt3                                 C36C       5       5       0   .init       
-     handleBt4                                 C371       5       5       0   .init       
-     logicBT1                                  C376      29      41       1   .init       
-     released1                                 C39F      21      33       0   .init       
-     logicBT2                                  C3C0      29      41       1   .init       
-     released2                                 C3E9      17      23       0   .init       
-     continueEval                              C400       1       1       0   .init       
-     logicBT3                                  C401      29      41       1   .init       
-     released3                                 C42A      17      23       0   .init       
-     logicBT4                                  C441      29      41       1   .init       
-     released4                                 C46A      17      23       0   .init       
-     setupTimer                                C481      34      52       1   .init       
-     handlePWMITR                              C4B5       5       5       1   .init       
-     continueInterruptHandle                   C4BA       5       5       0   .init       
-     continueInterruptHandle2                  C4BF       5       5       0   .init       
-     continueInterruptHandle3                  C4C4       1       1       0   .init       
-     handleClockTick                           C4C5       D      13       0   .init       
-     swapNames                                 C4D2       7       7       0   .init       
-     displayName                               C4D9       7       7       0   .init       
-     concat2StringsString1LeftBoundedString2RightBoundedForNiceDisplayIGuess       C4E0       5       5       3   .init       
-     copySpaces                                C4E5      10      16       0   .init       
-     start                                     C4F5       3       3       0   .init       
-     moveFirstString                           C4F8       E      14       0   .init       
-     startSecondString                         C506       3       3       0   .init       
-     findEnd                                   C509       9       9       0   .init       
-     copySecondString                          C512       7       7       0   .init       
-     cpyLoop                                   C519       D      13       0   .init       
-     finish                                    C526       1       1       0   .init       
-     displayTemperatureAndTime                 C527      12      18       1   .init       
-     displayTimeAndDate                        C539      81     129       1   .init       
-     displayString                             C5BA      23      35       1   .init       
-     displayAmerican                           C5DD      41      65       0   .init       
-     continue123                               C61E      2D      45       0   .init       
-     noYearRollover                            C64B      30      48       0   .init       
-     continueAmericanJ                         C67B       2       2       0   .init       
-     decrementDay                              C67D       9       9       0   .init       
-     day31Month                                C686       9       9       0   .init       
-     day30Month                                C68F       9       9       0   .init       
-     february                                  C698      19      25       0   .init       
-     schaltjahr                                C6B1       9       9       0   .init       
-     continueAmerican                          C6BA       B      11       4   .init       
-     setAM                                     C6C5      1F      31       0   .init       
-     continue12AM                              C6E4       D      13       0   .init       
-     setPM                                     C6F1      1D      29       0   .init       
-     continue12PM                              C70E       F      15       0   .init       
-     skipToMinutes                             C71D      8E     142       4   .init       
-     initADC                                   C7AB      15      21       2   .init       
-     convertADC                                C7C0       5       5       1   .init       
-     wait1                                     C7C5      28      40       0   .init       
-     formatString                              C7ED      1D      29       1   .init       
-     initThermo                                C80A       4       4       0   .init       
-     updateThermo                              C80E       D      13       0   .init       
-     testFunction                              C81B      2D      45       1   .init       
-     init_intervals                            C848      53      83       1   .init       
-     signalDecoderControl                      C89B      22      34       1   .init       
-     evalWindow                                C8BD      25      37       0   .init       
-     validOne                                  C8E2       B      11       0   .init       
-     validZero                                 C8ED       B      11       0   .init       
-     resetToDefault                            C8F8      38      56       0   .init       
-     checkForStopBit                           C930       8       8       0   .init       
-     continueStopBitEval                       C938      1D      29       0   .init       
-     thresholdNotMet                           C955       B      11       0   .init       
-     checkDataBuffer                           C960      13      19       0   .init       
-     fillDataBuffer                            C973      13      19       0   .init       
-     startIntervals                            C986       E      14       0   .init       
-     pollSignal                                C994      10      16       1   .init       
-     continue                                  C9A4       8       8       0   .init       
-     putBit                                    C9AC       8       8       2   .init       
-     isValid                                   C9B4      16      22       0   .init       
-     shift_loop                                C9CA       8       8       0   .init       
-     continuePutting                           C9D2      17      23       0   .init       
-     returnFromEval                            C9E9      28      40       0   .init       
-     evalBits                                  CA11      29      41       0   .init       
-     invalidBit                                CA3A      12      18       1   .init       
-     checkMinuteParity                         CA4C      26      38       1   .init       
-     checkHourParity                           CA72      2B      43       1   .init       
-     checkDateParity                           CA9D      3B      59       1   .init       
-     validBit                                  CAD8       3       3       0   .init       
-     countOnes                                 CADB       8       8       5   .init       
-     count1sLoop                               CAE3      1A      26       0   .init       
-     return                                    CAFD       1       1       0   .init       
-     evalMinutes                               CAFE       E      14       1   .init       
-     evalHours                                 CB0C       E      14       1   .init       
-     evalDays                                  CB1A       D      13       1   .init       
-     evalDayOfWeek                             CB27       9       9       1   .init       
-     evalYear                                  CB30       9       9       1   .init       
-     putCorrectDateAndTime                     CB39      16      22       1   .init       
-     convertMinutes                            CB4F       D      13       1   .init       
-     cont4                                     CB5C       B      11       0   .init       
-     cont5                                     CB67       B      11       0   .init       
-     cont6                                     CB72       B      11       0   .init       
-     cont7                                     CB7D       B      11       0   .init       
-     cont1                                     CB88       B      11       0   .init       
-     cont2                                     CB93       B      11       0   .init       
-     cont3                                     CB9E       4       4       0   .init       
-     convertHours                              CBA2       D      13       1   .init       
-     cont4H                                    CBAF       B      11       0   .init       
-     cont5H                                    CBBA       B      11       0   .init       
-     cont6H                                    CBC5       B      11       0   .init       
-     cont7H                                    CBD0       B      11       0   .init       
-     cont8H                                    CBDB       B      11       0   .init       
-     cont9H                                    CBE6       4       4       0   .init       
-     convertDays                               CBEA       D      13       1   .init       
-     cont1d                                    CBF7       B      11       0   .init       
-     cont2d                                    CC02       B      11       0   .init       
-     cont3d                                    CC0D       B      11       0   .init       
-     cont4d                                    CC18       B      11       0   .init       
-     cont5d                                    CC23       B      11       0   .init       
-     cont6d                                    CC2E       4       4       0   .init       
-     convertDayOfWeek                          CC32       D      13       1   .init       
-     cont1dow                                  CC3F       B      11       0   .init       
-     cont2dow                                  CC4A       B      11       0   .init       
-     cont3dow                                  CC55       4       4       0   .init       
-     convertMonth                              CC59       D      13       1   .init       
-     cont1m                                    CC66       B      11       0   .init       
-     cont2m                                    CC71       B      11       0   .init       
-     cont3m                                    CC7C       B      11       0   .init       
-     cont4m                                    CC87       B      11       0   .init       
-     cont5m                                    CC92       4       4       0   .init       
-     convertYear                               CC96       D      13       1   .init       
-     cont1y                                    CCA3       B      11       0   .init       
-     cont2y                                    CCAE       B      11       0   .init       
-     cont3y                                    CCB9       B      11       0   .init       
-     cont4y                                    CCC4       B      11       0   .init       
-     cont5y                                    CCCF       B      11       0   .init       
-     cont6y                                    CCDA       B      11       0   .init       
-     cont7y                                    CCE5       B      11       0   .init       
-     cont8y                                    CCF0       4       4       0   .init       
-     setupOutput                               CCF4       D      13       1   .init       
-     VAR00002                                  CD01       1       1       1   .const      
-     VAR00003                                  CD02       1       1       0   .const      
-     VAR00004                                  CD03       1       1       0   .const      
-     VAR00005                                  CD04       1       1       0   .const      
-     VAR00006                                  CD05       1       1       1   .const      
-     VAR00007                                  CD06       1       1       0   .const      
-     VAR00008                                  CD07       1       1       0   .const      
-     VAR00009                                  CD08       1       1       0   .const      
-     VAR00010                                  CD09       1       1       0   .const      
-     N2DE                                      CD0A      15      21       1   .const      
-     N2DD                                      CD1F       E      14       1   .const      
+     Entry                                     C000      1C      28       0   .init       
+     BUSY                                      C01C       2       2       0   .init       
+     initLED                                   C01E      13      19       1   .init       
+     setLED                                    C031       4       4       0   .init       
+     getLED                                    C035       4       4       0   .init       
+     toggleLED                                 C039       7       7       4   .init       
+     decToASCII                                C040       8       8      20   .init       
+     startConversion                           C048      45      69       0   .init       
+     flipSign                                  C08D       D      13       0   .init       
+     initLCD                                   C09A      27      39       1   .init       
+     inext1                                    C0C1      18      24       0   .init       
+     inext2                                    C0D9       F      15       0   .init       
+     writeLine                                 C0E8       F      15       3   .init       
+     writeLine1                                C0F7       2       2       0   .init       
+     wDo                                       C0F9       8       8       0   .init       
+     next                                      C101       F      15       0   .init       
+     wEnd                                      C110       3       3       0   .init       
+     fill_w_spaces                             C113       C      12       0   .init       
+     delay_10ms                                C11F       8       8       3   .init       
+     delay_5ms                                 C127       8       8       2   .init       
+     delay_50us                                C12F       8       8       1   .init       
+     del1                                      C137       6       6       0   .init       
+     sel_data                                  C13D       4       4       1   .init       
+     sel_inst                                  C141       4       4       3   .init       
+     outputByte                                C145       C      12       5   .init       
+     setupPWM                                  C151      60      96       1   .init       
+     setClock                                  C1B1      15      21       0   .init       
+     cancelTick                                C1C6       1       1       0   .init       
+     tick                                      C1C7      11      17       1   .init       
+     addSecond                                 C1D8       E      14       1   .init       
+     addMinute                                 C1E6       E      14       0   .init       
+     addHour                                   C1F4       E      14       0   .init       
+     rollOverSecondsNormal                     C202       7       7       0   .init       
+     rollOverMinutesNormal                     C209       7       7       0   .init       
+     rollOverHoursNormal                       C210       8       8       0   .init       
+     setupText                                 C218      11      17       0   .init       
+     skipToMinutes                             C229      29      41       4   .init       
+     chooseFormat                              C252      14      20       3   .init       
+     handle12HourFormat                        C266       B      11       0   .init       
+     setAM                                     C271      1F      31       0   .init       
+     continue12AM                              C290       D      13       0   .init       
+     setPM                                     C29D      1D      29       0   .init       
+     continue12PM                              C2BA       F      15       0   .init       
+     addHoursSet                               C2C9       E      14       1   .init       
+     rollOverHours                             C2D7       7       7       0   .init       
+     addMinutesSet                             C2DE       D      13       1   .init       
+     rollOverMinutes                           C2EB       7       7       0   .init       
+     addSecondsSet                             C2F2       D      13       1   .init       
+     rollOverSeconds                           C2FF       7       7       0   .init       
+     displayNewTime                            C306       7       7       0   .init       
+     initButtonState                           C30D       B      11       0   .init       
+     evaluateButtons                           C318      14      20       0   .init       
+     continueEvalBT                            C32C      2F      47       0   .init       
+     notInSetMode                              C35B       1       1       0   .init       
+     handleBt1                                 C35C       5       5       0   .init       
+     handleBt2                                 C361       5       5       0   .init       
+     handleBt3                                 C366       5       5       0   .init       
+     handleBt4                                 C36B       5       5       0   .init       
+     logicBT1                                  C370      29      41       1   .init       
+     released1                                 C399      21      33       0   .init       
+     logicBT2                                  C3BA      29      41       1   .init       
+     released2                                 C3E3      17      23       0   .init       
+     continueEval                              C3FA       1       1       0   .init       
+     logicBT3                                  C3FB      29      41       1   .init       
+     released3                                 C424      17      23       0   .init       
+     logicBT4                                  C43B      29      41       1   .init       
+     released4                                 C464      17      23       0   .init       
+     setupTimer                                C47B      34      52       1   .init       
+     handlePWMITR                              C4AF       5       5       1   .init       
+     continueInterruptHandle                   C4B4       5       5       0   .init       
+     continueInterruptHandle2                  C4B9       5       5       0   .init       
+     continueInterruptHandle3                  C4BE       1       1       0   .init       
+     handleClockTick                           C4BF       D      13       0   .init       
+     swapNames                                 C4CC       7       7       0   .init       
+     displayName                               C4D3       7       7       0   .init       
+     concat2StringsString1LeftBoundedString2RightBoundedForNiceDisplayIGuess       C4DA       5       5       3   .init       
+     copySpaces                                C4DF      10      16       0   .init       
+     start                                     C4EF       3       3       0   .init       
+     moveFirstString                           C4F2       E      14       0   .init       
+     startSecondString                         C500       3       3       0   .init       
+     findEnd                                   C503       9       9       0   .init       
+     copySecondString                          C50C       7       7       0   .init       
+     cpyLoop                                   C513       D      13       0   .init       
+     finish                                    C520       1       1       0   .init       
+     displayTemperatureAndTime                 C521      12      18       1   .init       
+     displayTimeAndDate                        C533      81     129       1   .init       
+     displayString                             C5B4      23      35       1   .init       
+     displayAmerican                           C5D7      41      65       0   .init       
+     continue123                               C618      2C      44       0   .init       
+     noYearRollover                            C644      30      48       0   .init       
+     continueAmericanJ                         C674       A      10       0   .init       
+     decrementDay                              C67E       9       9       0   .init       
+     day31Month                                C687       9       9       0   .init       
+     day30Month                                C690       9       9       0   .init       
+     february                                  C699      19      25       0   .init       
+     schaltjahr                                C6B2       9       9       0   .init       
+     continueAmerican                          C6BB       B      11       4   .init       
+     setAM                                     C6C6      1F      31       0   .init       
+     continue12AM                              C6E5       D      13       0   .init       
+     setPM                                     C6F2      1D      29       0   .init       
+     continue12PM                              C70F       F      15       0   .init       
+     skipToMinutes                             C71E      8E     142       4   .init       
+     initADC                                   C7AC      15      21       1   .init       
+     convertADC                                C7C1       5       5       1   .init       
+     wait1                                     C7C6      28      40       0   .init       
+     formatString                              C7EE      1D      29       1   .init       
+     initThermo                                C80B       4       4       0   .init       
+     updateThermo                              C80F       D      13       0   .init       
+     testFunction                              C81C      2D      45       0   .init       
+     init_intervals                            C849      71     113       1   .init       
+     signalDecoderControl                      C8BA      22      34       1   .init       
+     evalWindow                                C8DC      25      37       0   .init       
+     validOne                                  C901       B      11       0   .init       
+     validZero                                 C90C       B      11       0   .init       
+     resetToDefault                            C917      38      56       0   .init       
+     checkForStopBit                           C94F       8       8       0   .init       
+     continueStopBitEval                       C957      1D      29       0   .init       
+     thresholdNotMet                           C974       B      11       0   .init       
+     checkDataBuffer                           C97F      13      19       0   .init       
+     fillDataBuffer                            C992      13      19       0   .init       
+     startIntervals                            C9A5       E      14       0   .init       
+     pollSignal                                C9B3      10      16       1   .init       
+     continue                                  C9C3       8       8       0   .init       
+     putBit                                    C9CB       8       8       2   .init       
+     isValid                                   C9D3      16      22       0   .init       
+     shift_loop                                C9E9       8       8       0   .init       
+     continuePutting                           C9F1      17      23       0   .init       
+     returnFromEval                            CA08      28      40       0   .init       
+     evalBits                                  CA30      29      41       0   .init       
+     invalidBit                                CA59      12      18       1   .init       
+     checkMinuteParity                         CA6B      26      38       1   .init       
+     checkHourParity                           CA91      2B      43       1   .init       
+     checkDateParity                           CABC      3B      59       1   .init       
+     validBit                                  CAF7       3       3       0   .init       
+     countOnes                                 CAFA       8       8       5   .init       
+     count1sLoop                               CB02      1A      26       0   .init       
+     return                                    CB1C       1       1       0   .init       
+     evalMinutes                               CB1D       E      14       1   .init       
+     evalHours                                 CB2B       E      14       1   .init       
+     evalDays                                  CB39       D      13       1   .init       
+     evalDayOfWeek                             CB46       9       9       1   .init       
+     evalYear                                  CB4F       9       9       1   .init       
+     putCorrectDateAndTime                     CB58      16      22       1   .init       
+     convertMinutes                            CB6E       D      13       1   .init       
+     cont4                                     CB7B       B      11       0   .init       
+     cont5                                     CB86       B      11       0   .init       
+     cont6                                     CB91       B      11       0   .init       
+     cont7                                     CB9C       B      11       0   .init       
+     cont1                                     CBA7       B      11       0   .init       
+     cont2                                     CBB2       B      11       0   .init       
+     cont3                                     CBBD       4       4       0   .init       
+     convertHours                              CBC1       D      13       1   .init       
+     cont4H                                    CBCE       B      11       0   .init       
+     cont5H                                    CBD9       B      11       0   .init       
+     cont6H                                    CBE4       B      11       0   .init       
+     cont7H                                    CBEF       B      11       0   .init       
+     cont8H                                    CBFA       B      11       0   .init       
+     cont9H                                    CC05       4       4       0   .init       
+     convertDays                               CC09       D      13       1   .init       
+     cont1d                                    CC16       B      11       0   .init       
+     cont2d                                    CC21       B      11       0   .init       
+     cont3d                                    CC2C       B      11       0   .init       
+     cont4d                                    CC37       B      11       0   .init       
+     cont5d                                    CC42       B      11       0   .init       
+     cont6d                                    CC4D       4       4       0   .init       
+     convertDayOfWeek                          CC51       D      13       1   .init       
+     cont1dow                                  CC5E       B      11       0   .init       
+     cont2dow                                  CC69       B      11       0   .init       
+     cont3dow                                  CC74       4       4       0   .init       
+     convertMonth                              CC78       D      13       1   .init       
+     cont1m                                    CC85       B      11       0   .init       
+     cont2m                                    CC90       B      11       0   .init       
+     cont3m                                    CC9B       B      11       0   .init       
+     cont4m                                    CCA6       B      11       0   .init       
+     cont5m                                    CCB1       4       4       0   .init       
+     convertYear                               CCB5       D      13       1   .init       
+     cont1y                                    CCC2       B      11       0   .init       
+     cont2y                                    CCCD       B      11       0   .init       
+     cont3y                                    CCD8       B      11       0   .init       
+     cont4y                                    CCE3       B      11       0   .init       
+     cont5y                                    CCEE       B      11       0   .init       
+     cont6y                                    CCF9       B      11       0   .init       
+     cont7y                                    CD04       B      11       0   .init       
+     cont8y                                    CD0F       4       4       0   .init       
+     setupOutput                               CD13       D      13       1   .init       
+     VAR00002                                  CD20       1       1       1   .const      
+     VAR00003                                  CD21       1       1       0   .const      
+     VAR00004                                  CD22       1       1       0   .const      
+     VAR00005                                  CD23       1       1       0   .const      
+     VAR00006                                  CD24       1       1       1   .const      
+     VAR00007                                  CD25       1       1       0   .const      
+     VAR00008                                  CD26       1       1       0   .const      
+     VAR00009                                  CD27       1       1       0   .const      
+     VAR00010                                  CD28       1       1       0   .const      
+     N2DE                                      CD29      15      21       1   .const      
+     N2DD                                      CD3E       E      14       1   .const      
      VAR00001                                  FF8E       2       2       0   .text       
      VAR00002                                  FFCA       2       2       0   .text       
 
@@ -802,8 +800,7 @@ COPYDOWN SECTION
 OBJECT-DEPENDENCIES SECTION
 ---------------------------------------------------------------------------------------------
 Entry                     USES __SEG_END_SSTACK delay_10ms init_intervals 
-                                initLED initLCD initADC testFunction setupPWM 
-                                setupTimer 
+                                initLED initLCD setupPWM setupTimer 
 initLED                   USES DDRJ PTJ DDRB PORTB 
 setLED                    USES PORTB 
 getLED                    USES PORTB 
@@ -894,6 +891,7 @@ displayAmerican           USES TIME_ZONE HOURS AMERICAN_H VALID_DAYS
 continue123               USES HOURS AMERICAN_H VALID_DAYS VALID_MONTH 
                                 VALID_YEAR AMERICAN_Y AMERICAN_M AMERICAN_D 
 noYearRollover            USES VALID_MONTH 
+continueAmericanJ         USES HOURS AMERICAN_H 
 decrementDay              USES VALID_DAYS AMERICAN_D 
 day31Month                USES AMERICAN_D continueAmerican 
 day30Month                USES AMERICAN_D continueAmerican 
@@ -919,7 +917,8 @@ testFunction              USES DATA_STREAM STOP_BIT_FOUND WAIT_FOR_DATA HIGHS
                                 TOTAL_POLLS 
 init_intervals            USES CONF_STOP CONF_I0 CONF_I1 DATA_BUFFER HIGHS 
                                 TOTAL_POLLS STOP_BIT_FOUND WAIT_FOR_DATA STREAM_POSITION 
-                                DATA_STREAM SECONDS setMode 
+                                DATA_STREAM HOURS MINUTES SECONDS VALID_DAYS VALID_MONTH 
+                                VALID_YEAR DAY_OF_WEEK setMode 
 signalDecoderControl      USES MCFLG pollSignal STOP_BIT_FOUND WAIT_FOR_DATA 
                                 TOTAL_POLLS 
 evalWindow                USES HIGHS CONF_I1 CONF_I0 CONF_STOP WAIT_FOR_DATA 
@@ -1020,10 +1019,6 @@ DEPENDENCY TREE
     |  |  
     |  +- sel_inst            
     |       
-    +- initADC             
-    |    
-    +- testFunction        
-    |    
     +- setupPWM            
     |    
     +- setupTimer          
@@ -1044,6 +1039,6 @@ STATISTIC SECTION
 
 ExeFile:
 --------
-Number of blocks to be downloaded: 5
-Total size of all blocks to be downloaded: 3379
+Number of blocks to be downloaded: 4
+Total size of all blocks to be downloaded: 3410
 

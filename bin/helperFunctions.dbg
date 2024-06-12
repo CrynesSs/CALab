@@ -184,9 +184,8 @@ N2DD: DC.B "MODIMIDOFRSASO"
   
   continue123:
   LDAA #24;
-    SUBA HOURS;
-    TAB;
-    ANDA #$00;
+  SUBA HOURS;
+  STAB AMERICAN_H;
     STAB AMERICAN_H;
     LDAB VALID_DAYS;
     CMPB #1;
@@ -231,7 +230,12 @@ N2DD: DC.B "MODIMIDOFRSASO"
     BEQ february;
     
     continueAmericanJ:
+    LDAB HOURS;
+    SUBB #6;
+    STAB AMERICAN_H;
     BRA continueAmerican;
+    
+    
     decrementDay:
     LDAB VALID_DAYS
     DECB;
