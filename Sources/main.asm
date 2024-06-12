@@ -49,8 +49,9 @@
   ORG $FFCA
   DC.W signalDecoderControl;
   
-  ORG $FFCC
-  int25:  DC.W buttonHandleLab3;
+  ;Interrupt Vector for Port H
+  ;ORG $FFCC
+  ;int25:  DC.W buttonHandleLab3;
   
  
 
@@ -75,16 +76,12 @@ Entry:
         JSR initLED;
         JSR initLCD;
         ;JSR initNamechanger;
-        JSR initADC;
+        ;JSR initADC;
         JSR testFunction;
         ;JSR setClock;
         ;JSR initButtonState;
         JSR setupPWM;
         JSR setupTimer;
-        
-        
-        
-        
 
         BRA BUSY;
         

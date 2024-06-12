@@ -12,9 +12,9 @@
 ;
 
 ; export symbols
-        XREF PIFH,TFLG1,PPSH,TCNT,PIEH,DDRH,PTH,PTH_PTH0,PERH,displayTimeAndDate,switchOutput,AMERICAN;
+        XREF PIFH,TFLG1,PPSH,TCNT,PIEH,DDRH,PTH,PTH_PTH0,PERH,displayTimeAndDate,switchOutput;
         XREF addSecondsSet,addMinutesSet,addHoursSet,toggleLED
-        XDEF setMode,initButtonState,evaluateButtons,buttonHandleLab3;
+        XDEF setMode,initButtonState,evaluateButtons;
         XREF TC0,TC1,TC2,TC3,TC4,TC5,TC6,TC7
 
 .data: SECTION
@@ -35,21 +35,6 @@
     MOVB #$FF,PIEH 
     MOVB #$FF,PERH;
     RTS;
-  
-  buttonHandleLab3:
-  LDAB PTH;
-  ANDB #$04;
-  CMPB #$00;
-  BEQ handleButton3;
-  RTI;
-  handleButton3:
-  LDAB AMERICAN;
-  EORB #$01;
-  STAB AMERICAN;
-  RTI;
-  
-  
-  
   evaluateButtons:
   ;PIFH_PIFH0 & PPSH_PPSH0 -> Button just pressed
   ;PIFH_PIFH0 & !PPSH_PPSH0 -> Button just released

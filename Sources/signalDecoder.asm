@@ -1,9 +1,9 @@
 
 
 
-   XREF PTH,MINUTES,SECONDS,HOURS,MCFLG,Hour12Format,chooseFormat,decToASCII,AMERICAN
+   XREF PTH,MINUTES,SECONDS,HOURS,MCFLG,Hour12Format,chooseFormat,decToASCII,toggleLED
    XDEF signalDecoderControl,init_intervals,testFunction,signalDecoderControl,DATE_STRING,DAY_STRING,VALID_DAYS,VALID_MONTH,VALID_YEAR,DAY_OF_WEEK
-
+   XREF setMode;
 
 .data: SECTION
 HIGHS: DC.B 1
@@ -35,6 +35,7 @@ DAY_STRING: DS.B 5;
 
 LOOP: DC.B 1
 TEMP: DC.B 1;
+TEMP_BIT: DC.B 1;
 
 ;Confidence Intervals
 CONF_STOP: DS.B 1 ; 191+ 0xBF
@@ -48,6 +49,18 @@ N2DD: DC.B "MODIMIDOFRSASO"
 
 
 .init: SECTION
+
+    testFunction:
+    MOVW #$0000,DATA_STREAM;
+    MOVW #$0F0E,DATA_STREAM+2;
+    MOVW #$082C,DATA_STREAM+4;
+    MOVW #$3840,DATA_STREAM+6;
+    MOVB #$01,STOP_BIT_FOUND;
+    MOVB #$00,WAIT_FOR_DATA;
+    MOVB #195,HIGHS;
+    MOVB #199,TOTAL_POLLS;
+    RTS;
+    
     init_intervals:
     ;191
     MOVB #$BF,CONF_STOP;
@@ -67,18 +80,10 @@ N2DD: DC.B "MODIMIDOFRSASO"
     MOVW #$0000,DATA_STREAM+4;
     MOVW #$0000,DATA_STREAM+6;
     MOVB #00,SECONDS;
-    MOVB #$00,AMERICAN;
+    MOVB #$00,setMode
     RTS;
+
     
-    validOne:
-    LDAB #$01;
-    JSR putBit;
-    RTI;
-    
-    validZero:
-    LDAB #$00;
-    JSR putBit;
-    RTI;
     
     signalDecoderControl:
     MOVB #$80,MCFLG;
@@ -87,30 +92,16 @@ N2DD: DC.B "MODIMIDOFRSASO"
     
     LDAB STOP_BIT_FOUND;
     CMPB #$00;
-    BEQ checkForStopBit;
-    
+    LBEQ checkForStopBit;
     LDAB WAIT_FOR_DATA;
     CMPB #$01;
-    BEQ jmpDataBuffer;
-    
+    LBEQ checkDataBuffer;
+    ;If 200 Polls happened we need to eval the Window
     LDAB TOTAL_POLLS;
     CMPB #200;
     BEQ evalWindow;
     RTI;
     
-    testFunction:
-    MOVW #$0000,DATA_STREAM;
-    MOVW #$0F0E,DATA_STREAM+2;
-    MOVW #$0C2C,DATA_STREAM+4;
-    MOVW #$3860,DATA_STREAM+6;
-    
-    
-    JSR evalBits;
-    RTS;
-    
-    jmpDataBuffer:
-    JSR checkDataBuffer;
-    RTI;
     
     
     evalWindow:
@@ -128,83 +119,78 @@ N2DD: DC.B "MODIMIDOFRSASO"
     BLO resetToDefault;
     ;Valid Stop Bit here
     MOVB #$01,WAIT_FOR_DATA;  
-    JSR evalBits;
+    LBRA evalBits;
+    
+    
+    validOne:
+    LDAB #$80;
+    JSR toggleLED;
+    LDAB #$01;
+    JSR putBit;
     RTI;
     
+    validZero:
+    LDAB #$40;
+    JSR toggleLED;
+    LDAB #$00;
+    JSR putBit;
+    RTI;
+    
+    
+
     resetToDefault:
+    ;We got an invalidBit, so we need to also refind our STOP_BIT
     MOVB #$00,STOP_BIT_FOUND;
+    MOVB #$00,WAIT_FOR_DATA;
+    ;Reset the Data Stream Bytes
     MOVW #$0000,DATA_STREAM;
     MOVW #$0000,DATA_STREAM+2;
     MOVW #$0000,DATA_STREAM+4;
     MOVW #$0000,DATA_STREAM+6;
+    ;Reset the Data Stream Position
     MOVB #$00,STREAM_POSITION;
-    
-    JSR resetInterval;
+    ;Clear the Data Buffer
+    MOVW #$0000,DATA_BUFFER;
+    ;Reset the Eval Window
+    MOVB #$00,HIGHS;
+    MOVB #$00,TOTAL_POLLS;
+    RTI;
 
     checkForStopBit:
     LDAB TOTAL_POLLS;
     CMPB #200;
     ;Return if the total number of polls is less than 200;
-    BNE returnFromStopBit;
+    BHS continueStopBitEval;
+    RTI;
+    continueStopBitEval:
     LDAB HIGHS;
     CMPB CONF_STOP;
     ;Throw away the interval if the confidence threshhold is not met
-    BLO jmpResetInterval;
+    BLO thresholdNotMet;
     MOVB #$01,STOP_BIT_FOUND;
     MOVB #$01,WAIT_FOR_DATA;
     MOVB #$00,TOTAL_POLLS;
     MOVW #$0000,DATA_BUFFER;
-    returnFromStopBit:
+    thresholdNotMet:
+    MOVB #$00,HIGHS;
+    MOVB #$00,TOTAL_POLLS;
     RTI;
-    
-    jmpResetInterval:
-    JSR resetInterval;
-    RTI;
-    
-    ;Responsible for filling the Data Buffer
-    returnFromDecoder:
-    LDD DATA_BUFFER;
-    LSLD;
-    XGDX;
-    LDAB PTH;
-    ANDB #$01;
-    ABX;
-    XGDX;
-    STD DATA_BUFFER;
-    RTS;
+ 
 
     checkDataBuffer:
     LDAB TOTAL_POLLS;
     CMPB #16;
-    BLO returnFromDecoder;
-    ;Count of 1s in Y
-    LDD #$0000;
-    XGDY;
-    ;Copy of original DATA_BUFFER in X
+    BLO fillDataBuffer;
+    ;Load Data buffer and count Ones of it
     LDD DATA_BUFFER;
-    XGDX;
-    ;Loop that counts all the 1's in the Data Buffer
-    count_loop:
-    LDD DATA_BUFFER;
-    ANDB #01
-    CMPB #$00;
-    BEQ continueDataBufferCheck;
-    ;Increase Count by 1
-    INY;
-    continueDataBufferCheck:
-    XGDX;
-    LSRD;
-    CPD #$0000;
-    BEQ finished_counting;
-    TFR D,X;
-    BRA count_loop;
-    ;Number of Highs from Data Buffer.
-    finished_counting:
+    JSR countOnes;
+    ;Count of Highs is now in B
     XGDY;
     ;If we get 12/16 lows, we can assume, that a Data Bit has started.
-    CPD #5;
+    CMPB #5;
     BLO startIntervals;
-    ;Push out one Bit to the left and continue looking;
+    ;Responsible for filling the Data Buffer
+    fillDataBuffer:
     LDD DATA_BUFFER;
     LSLD;
     XGDX;
@@ -213,7 +199,13 @@ N2DD: DC.B "MODIMIDOFRSASO"
     ABX;
     XGDX;
     STD DATA_BUFFER;
-    RTS;
+    RTI;
+    ;Start getting Bits from Signal
+    startIntervals:
+    STAB HIGHS;
+    MOVB #$10,TOTAL_POLLS;
+    MOVB #$00,WAIT_FOR_DATA;
+    RTI;
     
     pollSignal:
     ;Load the PTH Register to get the bit we are interested in
@@ -232,83 +224,126 @@ N2DD: DC.B "MODIMIDOFRSASO"
     INCB;
     STAB TOTAL_POLLS;
     RTS;
-    
-    
-    startIntervals:
-    STAB HIGHS;
-    MOVB #$10,TOTAL_POLLS;
-    MOVB #$00,WAIT_FOR_DATA;
-    RTS;
-    
-    
-    resetInterval:
-    MOVB #$00,HIGHS;
-    MOVB #$00,TOTAL_POLLS;
-    RTS; 
-    
-    
-    
+
+    ;Puts a Bit into the right Position in a Data Stream. 
+    ;Inputs:  B0 -> The bit to put
+    ;         
     putBit:
-    STAB TEMP; 
-    LDD #8;
-    XGDX;
-    LDAA #0;
+    ;Check the Stream Position. If it is higher than 58, it is invalid as 59 is the stop bit.
+    LDAB STREAM_POSITION;
+    INCB;
+    CMPB #59;
+    BLO isValid;
+    ;Here the Stream Count is invalid;
+    ;Maybe do sth here idk?idc
+    isValid:
+    ;Put #8 into the X Register, so we can find the correct Byte and Byte Position
+    MOVW #$0008,X; 
+    ;Store the Bit to write in Y
+    ;We need to swap the Bit to A, as the Y register loads left to right into B
+    EXG A,B;
+    XGDY;
+    ;Put Stream Position and IDIV to get the result
+    LDAA #0
     LDAB STREAM_POSITION;
     IDIV;
-    LDY #DATA_STREAM
-    XGDX;
-    ABY;
-    XGDX;
-    LDAA TEMP;
+    ;Remainder is now in D. This is the Byte Position. Result in X. That is the Position in the Byte we need to write.
+    ; So in Short we now have A=irrelevant,B=Position inside the Byte,X=The Byte Index in the Array,Y=The Value to write.
+    ;Put the Bit at the correct Position.
+    LDAA #7;
+    SBA;
+    ;Write Value in B
+    TFR Y,B;
+    ;Shift the one over n times where n is stored in A.
     shift_loop:
     CMPB #$00;
     BEQ continuePutting;
-    LSLA;
-    DECB;
+    LSLB;
+    DECA;
     BRA shift_loop;
-    
+    ;When we arrive at this Point:
+    ;Register A=0,B=Bit to put at the correct position,Y=irrelevant,X=Byte Position in Stream
     continuePutting:
-    LDAB Y;
+    ;Load the Data Stream Address
+    LDY #DATA_STREAM
+    ;Get the Position in Stream from X;
+    XGDX;
+    ;Add the offset to Y so we get the correct Byte Out.
+    ABY;
+    ;Get the correct Bit Back into B
+    XGDX;
+    ;Load the Byte we want to write to into A
+    LDAA Y;
+    ;Add B to A. This is fine, as the Stream defaults to only contain 0's
     ABA;
-    STAA Y;
+    ;Save the Byte
+    STAB Y;
+    ;Increase the Stream Position by 1;
     LDAB STREAM_POSITION;
     INCB;
-    CMPB #60;
-    BHI invalidBit;
-    STAB STREAM_POSITION;:
-    BRA resetInterval;
-    
-    invalidBit:
-    JSR resetToDefault;
+    STAB STREAM_POSITION;
+    RTS;
     
     
+    ;*************************************************************************
+    ;Eval Functions
+    ;*************************************************************************
+    ;Returns from the Eval. evalBits is called with a Branch, so we can RTI here.
+    returnFromEval:
+    MOVW #$0000,DATA_STREAM;
+    MOVW #$0000,DATA_STREAM+2;
+    MOVW #$0000,DATA_STREAM+4;
+    MOVW #$0000,DATA_STREAM+6;
+    MOVB #$00,STREAM_POSITION;
+    MOVB #$00,HIGHS;
+    MOVB #$00,TOTAL_POLLS;
+    RTI;
     
-    
-    ;TODO
     evalBits:
+    ;Check the Date Parity;
     JSR checkDateParity;
+    CMPB #$01;
+    BEQ returnFromEval;
+    ;Checks the Minute Parity
+    JSR checkMinuteParity;
+    CMPB #$01;
+    BEQ returnFromEval;
+    ;Put Correct Hours;
+    JSR checkHourParity;
+    CMPB #$01;
+    BEQ returnFromEval;
+    ;All Parities completed successfully. Now set the Values
     JSR evalMinutes;
     JSR evalHours;
     JSR evalDays;
     JSR evalDayOfWeek
     JSR evalYear;
     JSR putCorrectDateAndTime;
+    BRA returnFromEval;
+    
+    
+    ;Sets the "Flag" bit to 01 and returns
+    invalidBit:
+    LDAB #$01;
     RTS;
     
-    
-    
-    evalMinutes:
+    ;Checks if bit 20 is set correctly;
+    checkBit20:
     LDD DATA_STREAM+2;
     LSRD;
     LSRD;
     LSRD;
     ;Here we start with BIT 20, this needs to be 1;
-    ANDB #$01;
-    CMPB #$01;
-    BNE invalidBit;
+    ANDA #$01;
+    CMPA #$00;
+    BEQ invalidBit;
+    LDAB #$00;
+    RTS;
+    
+    ;Checks the Minute Parity
+    checkMinuteParity:
     ;Load Data again
     LDD DATA_STREAM+2;
-    LSRD;
     LSRD;
     LSRD;
     LSRD;
@@ -323,25 +358,15 @@ N2DD: DC.B "MODIMIDOFRSASO"
     LSRD;
     LSRD;
     LSRD;
-    LSRD;
     ;Minute Parity now in B
     ANDB #$01;
     EORB TEMP;
     CMPB #$00;
-    BEQ validBitMinute;
-    JSR invalidBit;
+    BNE invalidBit;
+    LDAB #$00;
+    RTS;
     
-    validBitMinute:
-    LDD DATA_STREAM+2;
-    LSRD;
-    LSRD;
-    LSRD;
-    LSRD;
-    ANDB #$FE;
-    STAB VALID_MINUTES;
-    
-    
-    evalHours:
+    checkHourParity:
     ;Load Byte 24-39
     LDD DATA_STREAM+3
     LSLD;
@@ -365,20 +390,10 @@ N2DD: DC.B "MODIMIDOFRSASO"
     ANDB #$01;
     EORB TEMP;
     CMPB #0;
-    BEQ validBitHours;
-    JSR invalidBit;
-
-    validBitHours:
-    LDD DATA_STREAM+3;
-    LSLD;
-    LSLD;
-    LSLD;
-    LSLD;
-    LSLD;
-    ANDA #$FC;
-    STAA VALID_HOURS;
+    BNE invalidBit;
+    LDAB #$00;
     RTS;
-    
+
     ;Works as Expected
     checkDateParity:
     ;L is the 1's counting register/
@@ -414,9 +429,14 @@ N2DD: DC.B "MODIMIDOFRSASO"
     CMPB #0;
     BEQ validBit;
     JSR invalidBit;
+    LDAB #$01;
+    RTS;
     validBit:
+    LDAB #$00;
     RTS;
     
+    ;Counts the number of ones in 2 Bytes/1Word
+    ;Inputs: D->Word to analyze
     countOnes:
     MOVB #$0F,LOOP;
     LDY #0;
@@ -444,6 +464,32 @@ N2DD: DC.B "MODIMIDOFRSASO"
     return:
     RTS;
     
+    
+    ;****************************************************************
+    ;Functions that store Data in correct Variables from Stream;
+    ;****************************************************************
+    evalMinutes:
+    LDD DATA_STREAM+2;
+    LSRD;
+    LSRD;
+    LSRD;
+    ANDB #$FE;
+    STAB VALID_MINUTES;
+    LDAB #$00;
+    RTS;
+    
+    evalHours:
+    LDD DATA_STREAM+3;
+    LSLD;
+    LSLD;
+    LSLD;
+    LSLD;
+    LSLD;
+    ANDA #$FC;
+    STAA VALID_HOURS;
+    RTS;
+    
+    
     evalDays:
     LDD DATA_STREAM+4;
     LSLD;
@@ -467,6 +513,10 @@ N2DD: DC.B "MODIMIDOFRSASO"
     LSLD;
     STAA VALID_YEAR;
     RTS;
+    
+    ;****************************************************************
+    ;Functions that convert Data from Bits to correct Values
+    ;****************************************************************
     
     putCorrectDateAndTime:
     JSR convertMinutes;
@@ -504,26 +554,22 @@ N2DD: DC.B "MODIMIDOFRSASO"
     CMPA #$10;
     BNE cont7;
     ADDB #8;
-    cont7:     
-    ;After this first 4 Bits in A are now final 4 bits in B;
-    LDAA VALID_MINUTES;
-    LSRA;
-    ANDA #$01;
-    CMPA #$01;
+    cont7: 
+    LDAA VALID_MINUTES;    
+    ANDA #$02;
+    CMPA #$02;
     BNE cont1;
     ADDB #40;
     cont1:
     LDAA VALID_MINUTES;
-    LSRA;
-    ANDA #$02;
-    CMPA #$02;
+    ANDA #$04;
+    CMPA #$04;
     BNE cont2;
     ADDB #20;
     cont2:
     LDAA VALID_MINUTES;
-    LSRA;
-    ANDA #$04;
-    CMPA #$04;
+    ANDA #$08;
+    CMPA #$08;
     BNE cont3;
     ADDB #10;
     cont3:
@@ -634,47 +680,11 @@ N2DD: DC.B "MODIMIDOFRSASO"
     ADDA #4;
     cont3dow:
     STAA DAY_OF_WEEK;
-    LDAB PTH;
-    ANDB #$04;
-    CMPB #$00;
-    BEQ displayAmerican;
-    ;Display European Time Format
-    TAB;
-    LDY #DAY_STRING;
-    LDX #N2DD;
-    DECB;
-    LSLB;
-    ABX;
-    MOVW X,Y;
-    INY;
-    INY;
-    MOVB #$3A,Y;
-    INY;
-    MOVB #$00,Y;
     RTS;
-    
-    
-    displayAmerican:
-    LDX #N2DE;
-    LDY #DAY_STRING;
-    TAB;
-    LDAA #3;
-    MUL;
-    ABX;
-    MOVW X,Y;
-    INX;
-    INX;
-    INY;
-    INY;
-    MOVB X,Y;
-    INY;
-    MOVB #$3A,Y;
-    INY;
-    MOVB #$00,Y;
-    RTS
-    
+
     convertMonth:
     LDAA #0;
+    
     LDAB DAY_OF_WEEK_AND_MONTH;
     ANDB #$10
     CMPB #$10;
@@ -774,7 +784,6 @@ N2DD: DC.B "MODIMIDOFRSASO"
     STAB MINUTES;
     LDAB VALID_HOURS;
     STAB HOURS;
-    MOVB #$00,SECONDS;
     RTS
     
     

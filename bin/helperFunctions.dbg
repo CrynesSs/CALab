@@ -12,7 +12,7 @@
 ;
    XREF OUTPUTSTRING,writeLine,temp,DATE_STRING,PTH,DAY_STRING,MINUTES,HOURS,VALID_DAYS,VALID_YEAR,VALID_MONTH,SECONDS,DAY_OF_WEEK;
    XREF decToASCII,chooseFormat,Hour12Format
-   XDEF displayTemperatureAndTime,LINE_BUFFER,displayTimeAndDate,AMERICAN;
+   XDEF displayTemperatureAndTime,LINE_BUFFER,displayTimeAndDate;
 ; export symbols
 .data: SECTION
  LINE_BUFFER: DS.B 17
@@ -20,12 +20,12 @@
  TIME_ZONE: DS.B 4
  DUMMY_TEMP: DS.B 5
  ASCIIBuffer: DS.B 8
- AMERICAN: DC.B 1
  AMERICAN_H: DC.B 1
  AMERICAN_D: DC.B 1
  AMERICAN_M: DC.B 1
  AMERICAN_Y: DC.B 1
  AMERICAN_DAY_OF_WEEK: DC.B 1
+ LOOP: DC.B 1
   
 .const: SECTION
 N2DE: DC.B "MONTUEWEDTHUFRISATSUN"
@@ -98,7 +98,7 @@ N2DD: DC.B "MODIMIDOFRSASO"
   LDAB PTH;
   ANDB #$04;
   CMPB #$00;
-  BEQ displayAmericanJ;
+  LBEQ displayAmerican;
   ;DE
   MOVW #$4445,TIME_ZONE;
   MOVW #$3A00,TIME_ZONE+2;
@@ -140,8 +140,6 @@ N2DD: DC.B "MODIMIDOFRSASO"
     INY;
     MOVB #$00,Y;
   BRA displayString
-  displayAmericanJ:
-  BRA displayAmerican;
     
   displayString:
   LDX #DAY_STRING;
@@ -192,7 +190,7 @@ N2DD: DC.B "MODIMIDOFRSASO"
     STAB AMERICAN_H;
     LDAB VALID_DAYS;
     CMPB #1;
-    BHI continueAmericanJ;
+    BHI decrementDay;;
     ;Decrement Month
     LDAB VALID_MONTH;
     CMPB #1;
@@ -233,11 +231,12 @@ N2DD: DC.B "MODIMIDOFRSASO"
     BEQ february;
     
     continueAmericanJ:
-    LDAB AMERICAN_D;
-    DECB;
-    STAB AMERICAN_D;
     BRA continueAmerican;
-    
+    decrementDay:
+    LDAB VALID_DAYS
+    DECB;
+    STAB AMERICAN_D
+    BRA continueAmerican
     
     day31Month:
     LDAB #31;
@@ -343,6 +342,7 @@ N2DD: DC.B "MODIMIDOFRSASO"
     MOVB #$00,DATE_STRING+10
     
     LDAB AMERICAN_DAY_OF_WEEK;
+    DECB;
     LDX #N2DE;
     LDY #DAY_STRING;
     LDAA #3;
