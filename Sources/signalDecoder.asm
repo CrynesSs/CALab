@@ -332,6 +332,8 @@ N2DD: DC.B "MODIMIDOFRSASO"
     LDAB STREAM_POSITION;
     INCB;
     STAB STREAM_POSITION;
+    MOVB #$00,HIGHS;
+    MOVB #$00,TOTAL_POLLS;
     RTS;  
 ;*************************************************************************
 ;Eval Functions
