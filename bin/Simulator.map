@@ -35,16 +35,16 @@ Entry point: 0xC000 (Entry)
 SECTION-ALLOCATION SECTION
 Section Name                    Size  Type     From       To       Segment
 ---------------------------------------------------------------------------------------------
-.init                           3360     R     0xC000     0xCD1F   ROM_C000
+.init                           3358     R     0xC000     0xCD1D   ROM_C000
 .data                            147   R/W     0x1000     0x1092   RAM
 main.asm__ORG00001                 2     R     0xFF8E     0xFF8F   .absSeg0
 main.asm__ORG00002                 2     R     0xFFCA     0xFFCB   .absSeg1
-.const                            44     R     0xCD20     0xCD4B   ROM_C000
+.const                            44     R     0xCD1E     0xCD49   ROM_C000
 .stack                           256   R/W     0x1093     0x1192   RAM
 .vectSeg2_vect                     2     R     0xFFFE     0xFFFF   .vectSeg2
 
 Summary of section sizes per section type:
-READ_ONLY (R):         D52 (dec:     3410)
+READ_ONLY (R):         D50 (dec:     3408)
 READ_WRITE (R/W):      193 (dec:      403)
 
 *********************************************************************************************
@@ -156,15 +156,15 @@ MODULE:                 -- lcd.asm.o --
 - VARIABLES:
      VAR00001                                  1000       1       1       2   .data       
      temp1                                     1001       1       1       0   .data       
-     VAR00002                                  CD20       1       1       1   .const      
-     VAR00003                                  CD21       1       1       0   .const      
-     VAR00004                                  CD22       1       1       0   .const      
-     VAR00005                                  CD23       1       1       0   .const      
-     VAR00006                                  CD24       1       1       1   .const      
-     VAR00007                                  CD25       1       1       0   .const      
-     VAR00008                                  CD26       1       1       0   .const      
-     VAR00009                                  CD27       1       1       0   .const      
-     VAR00010                                  CD28       1       1       0   .const      
+     VAR00002                                  CD1E       1       1       1   .const      
+     VAR00003                                  CD1F       1       1       0   .const      
+     VAR00004                                  CD20       1       1       0   .const      
+     VAR00005                                  CD21       1       1       0   .const      
+     VAR00006                                  CD22       1       1       1   .const      
+     VAR00007                                  CD23       1       1       0   .const      
+     VAR00008                                  CD24       1       1       0   .const      
+     VAR00009                                  CD25       1       1       0   .const      
+     VAR00010                                  CD26       1       1       0   .const      
 MODULE:                 -- PWM.asm.o --
 - PROCEDURES:
      setupPWM                                  C151      60      96       1   .init       
@@ -281,8 +281,8 @@ MODULE:                 -- helperFunctions.asm.o --
      AMERICAN_Y                                1043       1       1       4   .data       
      AMERICAN_DAY_OF_WEEK                      1044       1       1       4   .data       
      LOOP                                      1045       1       1       0   .data       
-     N2DE                                      CD29      15      21       1   .const      
-     N2DD                                      CD3E       E      14       1   .const      
+     N2DE                                      CD27      15      21       1   .const      
+     N2DD                                      CD3C       E      14       1   .const      
 MODULE:                 -- adc.asm.o --
 - PROCEDURES:
      initADC                                   C7AC      15      21       1   .init       
@@ -320,62 +320,62 @@ MODULE:                 -- signalDecoder.asm.o --
      continuePutting                           C9F1      17      23       0   .init       
      returnFromEval                            CA08      28      40       0   .init       
      evalBits                                  CA30      29      41       0   .init       
-     invalidBit                                CA59      12      18       1   .init       
+     invalidBit                                CA59      12      18       0   .init       
      checkMinuteParity                         CA6B      26      38       1   .init       
      checkHourParity                           CA91      2B      43       1   .init       
-     checkDateParity                           CABC      3B      59       1   .init       
-     validBit                                  CAF7       3       3       0   .init       
-     countOnes                                 CAFA       8       8       5   .init       
-     count1sLoop                               CB02      1A      26       0   .init       
-     return                                    CB1C       1       1       0   .init       
-     evalMinutes                               CB1D       E      14       1   .init       
-     evalHours                                 CB2B       E      14       1   .init       
-     evalDays                                  CB39       D      13       1   .init       
-     evalDayOfWeek                             CB46       9       9       1   .init       
-     evalYear                                  CB4F       9       9       1   .init       
-     putCorrectDateAndTime                     CB58      16      22       1   .init       
-     convertMinutes                            CB6E       D      13       1   .init       
-     cont4                                     CB7B       B      11       0   .init       
-     cont5                                     CB86       B      11       0   .init       
-     cont6                                     CB91       B      11       0   .init       
-     cont7                                     CB9C       B      11       0   .init       
-     cont1                                     CBA7       B      11       0   .init       
-     cont2                                     CBB2       B      11       0   .init       
-     cont3                                     CBBD       4       4       0   .init       
-     convertHours                              CBC1       D      13       1   .init       
-     cont4H                                    CBCE       B      11       0   .init       
-     cont5H                                    CBD9       B      11       0   .init       
-     cont6H                                    CBE4       B      11       0   .init       
-     cont7H                                    CBEF       B      11       0   .init       
-     cont8H                                    CBFA       B      11       0   .init       
-     cont9H                                    CC05       4       4       0   .init       
-     convertDays                               CC09       D      13       1   .init       
-     cont1d                                    CC16       B      11       0   .init       
-     cont2d                                    CC21       B      11       0   .init       
-     cont3d                                    CC2C       B      11       0   .init       
-     cont4d                                    CC37       B      11       0   .init       
-     cont5d                                    CC42       B      11       0   .init       
-     cont6d                                    CC4D       4       4       0   .init       
-     convertDayOfWeek                          CC51       D      13       1   .init       
-     cont1dow                                  CC5E       B      11       0   .init       
-     cont2dow                                  CC69       B      11       0   .init       
-     cont3dow                                  CC74       4       4       0   .init       
-     convertMonth                              CC78       D      13       1   .init       
-     cont1m                                    CC85       B      11       0   .init       
-     cont2m                                    CC90       B      11       0   .init       
-     cont3m                                    CC9B       B      11       0   .init       
-     cont4m                                    CCA6       B      11       0   .init       
-     cont5m                                    CCB1       4       4       0   .init       
-     convertYear                               CCB5       D      13       1   .init       
-     cont1y                                    CCC2       B      11       0   .init       
-     cont2y                                    CCCD       B      11       0   .init       
-     cont3y                                    CCD8       B      11       0   .init       
-     cont4y                                    CCE3       B      11       0   .init       
-     cont5y                                    CCEE       B      11       0   .init       
-     cont6y                                    CCF9       B      11       0   .init       
-     cont7y                                    CD04       B      11       0   .init       
-     cont8y                                    CD0F       4       4       0   .init       
-     setupOutput                               CD13       D      13       1   .init       
+     checkDateParity                           CABC      39      57       1   .init       
+     validBit                                  CAF5       3       3       0   .init       
+     countOnes                                 CAF8       8       8       5   .init       
+     count1sLoop                               CB00      1A      26       0   .init       
+     return                                    CB1A       1       1       0   .init       
+     evalMinutes                               CB1B       E      14       1   .init       
+     evalHours                                 CB29       E      14       1   .init       
+     evalDays                                  CB37       D      13       1   .init       
+     evalDayOfWeek                             CB44       9       9       1   .init       
+     evalYear                                  CB4D       9       9       1   .init       
+     putCorrectDateAndTime                     CB56      16      22       1   .init       
+     convertMinutes                            CB6C       D      13       1   .init       
+     cont1                                     CB79       B      11       0   .init       
+     cont2                                     CB84       B      11       0   .init       
+     cont3                                     CB8F       B      11       0   .init       
+     cont4                                     CB9A       B      11       0   .init       
+     cont5                                     CBA5       B      11       0   .init       
+     cont6                                     CBB0       B      11       0   .init       
+     cont7                                     CBBB       4       4       0   .init       
+     convertHours                              CBBF       D      13       1   .init       
+     cont1H                                    CBCC       B      11       0   .init       
+     cont2H                                    CBD7       B      11       0   .init       
+     cont3H                                    CBE2       B      11       0   .init       
+     cont4H                                    CBED       B      11       0   .init       
+     cont5H                                    CBF8       B      11       0   .init       
+     cont6H                                    CC03       4       4       0   .init       
+     convertDays                               CC07       D      13       1   .init       
+     cont1d                                    CC14       B      11       0   .init       
+     cont2d                                    CC1F       B      11       0   .init       
+     cont3d                                    CC2A       B      11       0   .init       
+     cont4d                                    CC35       B      11       0   .init       
+     cont5d                                    CC40       B      11       0   .init       
+     cont6d                                    CC4B       4       4       0   .init       
+     convertDayOfWeek                          CC4F       D      13       1   .init       
+     cont1dow                                  CC5C       B      11       0   .init       
+     cont2dow                                  CC67       B      11       0   .init       
+     cont3dow                                  CC72       4       4       0   .init       
+     convertMonth                              CC76       D      13       1   .init       
+     cont1m                                    CC83       B      11       0   .init       
+     cont2m                                    CC8E       B      11       0   .init       
+     cont3m                                    CC99       B      11       0   .init       
+     cont4m                                    CCA4       B      11       0   .init       
+     cont5m                                    CCAF       4       4       0   .init       
+     convertYear                               CCB3       D      13       1   .init       
+     cont1y                                    CCC0       B      11       0   .init       
+     cont2y                                    CCCB       B      11       0   .init       
+     cont3y                                    CCD6       B      11       0   .init       
+     cont4y                                    CCE1       B      11       0   .init       
+     cont5y                                    CCEC       B      11       0   .init       
+     cont6y                                    CCF7       B      11       0   .init       
+     cont7y                                    CD02       B      11       0   .init       
+     cont8y                                    CD0D       4       4       0   .init       
+     setupOutput                               CD11       D      13       1   .init       
 - VARIABLES:
      HIGHS                                     1054       1       1      10   .data       
      TOTAL_POLLS                               1055       1       1      12   .data       
@@ -417,7 +417,7 @@ MODULE STATISTIC
   helperFunctions.asm.o                       42    722     35
   adc.asm.o                                    7     95      0
   thermo.asm.o                                 7     17      0
-  signalDecoder.asm.o                         63   1284      0
+  signalDecoder.asm.o                         63   1282      0
   other                                      256      2      0
 
 *********************************************************************************************
@@ -464,9 +464,9 @@ SECTION: ".init"
   startIntervals pollSignal continue putBit isValid shift_loop continuePutting 
   returnFromEval evalBits invalidBit checkMinuteParity checkHourParity 
   checkDateParity validBit countOnes count1sLoop return evalMinutes evalHours 
-  evalDays evalDayOfWeek evalYear putCorrectDateAndTime convertMinutes cont4 
-  cont5 cont6 cont7 cont1 cont2 cont3 convertHours cont4H cont5H cont6H cont7H 
-  cont8H cont9H convertDays cont1d cont2d cont3d cont4d cont5d cont6d 
+  evalDays evalDayOfWeek evalYear putCorrectDateAndTime convertMinutes cont1 
+  cont2 cont3 cont4 cont5 cont6 cont7 convertHours cont1H cont2H cont3H cont4H 
+  cont5H cont6H convertDays cont1d cont2d cont3d cont4d cont5d cont6d 
   convertDayOfWeek cont1dow cont2dow cont3dow convertMonth cont1m cont2m cont3m 
   cont4m cont5m convertYear cont1y cont2y cont3y cont4y cont5y cont6y cont7y 
   cont8y setupOutput 
@@ -711,73 +711,73 @@ OBJECT LIST SORTED BY ADDRESS
      continuePutting                           C9F1      17      23       0   .init       
      returnFromEval                            CA08      28      40       0   .init       
      evalBits                                  CA30      29      41       0   .init       
-     invalidBit                                CA59      12      18       1   .init       
+     invalidBit                                CA59      12      18       0   .init       
      checkMinuteParity                         CA6B      26      38       1   .init       
      checkHourParity                           CA91      2B      43       1   .init       
-     checkDateParity                           CABC      3B      59       1   .init       
-     validBit                                  CAF7       3       3       0   .init       
-     countOnes                                 CAFA       8       8       5   .init       
-     count1sLoop                               CB02      1A      26       0   .init       
-     return                                    CB1C       1       1       0   .init       
-     evalMinutes                               CB1D       E      14       1   .init       
-     evalHours                                 CB2B       E      14       1   .init       
-     evalDays                                  CB39       D      13       1   .init       
-     evalDayOfWeek                             CB46       9       9       1   .init       
-     evalYear                                  CB4F       9       9       1   .init       
-     putCorrectDateAndTime                     CB58      16      22       1   .init       
-     convertMinutes                            CB6E       D      13       1   .init       
-     cont4                                     CB7B       B      11       0   .init       
-     cont5                                     CB86       B      11       0   .init       
-     cont6                                     CB91       B      11       0   .init       
-     cont7                                     CB9C       B      11       0   .init       
-     cont1                                     CBA7       B      11       0   .init       
-     cont2                                     CBB2       B      11       0   .init       
-     cont3                                     CBBD       4       4       0   .init       
-     convertHours                              CBC1       D      13       1   .init       
-     cont4H                                    CBCE       B      11       0   .init       
-     cont5H                                    CBD9       B      11       0   .init       
-     cont6H                                    CBE4       B      11       0   .init       
-     cont7H                                    CBEF       B      11       0   .init       
-     cont8H                                    CBFA       B      11       0   .init       
-     cont9H                                    CC05       4       4       0   .init       
-     convertDays                               CC09       D      13       1   .init       
-     cont1d                                    CC16       B      11       0   .init       
-     cont2d                                    CC21       B      11       0   .init       
-     cont3d                                    CC2C       B      11       0   .init       
-     cont4d                                    CC37       B      11       0   .init       
-     cont5d                                    CC42       B      11       0   .init       
-     cont6d                                    CC4D       4       4       0   .init       
-     convertDayOfWeek                          CC51       D      13       1   .init       
-     cont1dow                                  CC5E       B      11       0   .init       
-     cont2dow                                  CC69       B      11       0   .init       
-     cont3dow                                  CC74       4       4       0   .init       
-     convertMonth                              CC78       D      13       1   .init       
-     cont1m                                    CC85       B      11       0   .init       
-     cont2m                                    CC90       B      11       0   .init       
-     cont3m                                    CC9B       B      11       0   .init       
-     cont4m                                    CCA6       B      11       0   .init       
-     cont5m                                    CCB1       4       4       0   .init       
-     convertYear                               CCB5       D      13       1   .init       
-     cont1y                                    CCC2       B      11       0   .init       
-     cont2y                                    CCCD       B      11       0   .init       
-     cont3y                                    CCD8       B      11       0   .init       
-     cont4y                                    CCE3       B      11       0   .init       
-     cont5y                                    CCEE       B      11       0   .init       
-     cont6y                                    CCF9       B      11       0   .init       
-     cont7y                                    CD04       B      11       0   .init       
-     cont8y                                    CD0F       4       4       0   .init       
-     setupOutput                               CD13       D      13       1   .init       
-     VAR00002                                  CD20       1       1       1   .const      
-     VAR00003                                  CD21       1       1       0   .const      
-     VAR00004                                  CD22       1       1       0   .const      
-     VAR00005                                  CD23       1       1       0   .const      
-     VAR00006                                  CD24       1       1       1   .const      
-     VAR00007                                  CD25       1       1       0   .const      
-     VAR00008                                  CD26       1       1       0   .const      
-     VAR00009                                  CD27       1       1       0   .const      
-     VAR00010                                  CD28       1       1       0   .const      
-     N2DE                                      CD29      15      21       1   .const      
-     N2DD                                      CD3E       E      14       1   .const      
+     checkDateParity                           CABC      39      57       1   .init       
+     validBit                                  CAF5       3       3       0   .init       
+     countOnes                                 CAF8       8       8       5   .init       
+     count1sLoop                               CB00      1A      26       0   .init       
+     return                                    CB1A       1       1       0   .init       
+     evalMinutes                               CB1B       E      14       1   .init       
+     evalHours                                 CB29       E      14       1   .init       
+     evalDays                                  CB37       D      13       1   .init       
+     evalDayOfWeek                             CB44       9       9       1   .init       
+     evalYear                                  CB4D       9       9       1   .init       
+     putCorrectDateAndTime                     CB56      16      22       1   .init       
+     convertMinutes                            CB6C       D      13       1   .init       
+     cont1                                     CB79       B      11       0   .init       
+     cont2                                     CB84       B      11       0   .init       
+     cont3                                     CB8F       B      11       0   .init       
+     cont4                                     CB9A       B      11       0   .init       
+     cont5                                     CBA5       B      11       0   .init       
+     cont6                                     CBB0       B      11       0   .init       
+     cont7                                     CBBB       4       4       0   .init       
+     convertHours                              CBBF       D      13       1   .init       
+     cont1H                                    CBCC       B      11       0   .init       
+     cont2H                                    CBD7       B      11       0   .init       
+     cont3H                                    CBE2       B      11       0   .init       
+     cont4H                                    CBED       B      11       0   .init       
+     cont5H                                    CBF8       B      11       0   .init       
+     cont6H                                    CC03       4       4       0   .init       
+     convertDays                               CC07       D      13       1   .init       
+     cont1d                                    CC14       B      11       0   .init       
+     cont2d                                    CC1F       B      11       0   .init       
+     cont3d                                    CC2A       B      11       0   .init       
+     cont4d                                    CC35       B      11       0   .init       
+     cont5d                                    CC40       B      11       0   .init       
+     cont6d                                    CC4B       4       4       0   .init       
+     convertDayOfWeek                          CC4F       D      13       1   .init       
+     cont1dow                                  CC5C       B      11       0   .init       
+     cont2dow                                  CC67       B      11       0   .init       
+     cont3dow                                  CC72       4       4       0   .init       
+     convertMonth                              CC76       D      13       1   .init       
+     cont1m                                    CC83       B      11       0   .init       
+     cont2m                                    CC8E       B      11       0   .init       
+     cont3m                                    CC99       B      11       0   .init       
+     cont4m                                    CCA4       B      11       0   .init       
+     cont5m                                    CCAF       4       4       0   .init       
+     convertYear                               CCB3       D      13       1   .init       
+     cont1y                                    CCC0       B      11       0   .init       
+     cont2y                                    CCCB       B      11       0   .init       
+     cont3y                                    CCD6       B      11       0   .init       
+     cont4y                                    CCE1       B      11       0   .init       
+     cont5y                                    CCEC       B      11       0   .init       
+     cont6y                                    CCF7       B      11       0   .init       
+     cont7y                                    CD02       B      11       0   .init       
+     cont8y                                    CD0D       4       4       0   .init       
+     setupOutput                               CD11       D      13       1   .init       
+     VAR00002                                  CD1E       1       1       1   .const      
+     VAR00003                                  CD1F       1       1       0   .const      
+     VAR00004                                  CD20       1       1       0   .const      
+     VAR00005                                  CD21       1       1       0   .const      
+     VAR00006                                  CD22       1       1       1   .const      
+     VAR00007                                  CD23       1       1       0   .const      
+     VAR00008                                  CD24       1       1       0   .const      
+     VAR00009                                  CD25       1       1       0   .const      
+     VAR00010                                  CD26       1       1       0   .const      
+     N2DE                                      CD27      15      21       1   .const      
+     N2DD                                      CD3C       E      14       1   .const      
      VAR00001                                  FF8E       2       2       0   .text       
      VAR00002                                  FFCA       2       2       0   .text       
 
@@ -945,7 +945,7 @@ evalBits                  USES checkDateParity checkMinuteParity
 invalidBit                USES DATA_STREAM 
 checkMinuteParity         USES DATA_STREAM countOnes TEMP 
 checkHourParity           USES DATA_STREAM countOnes TEMP 
-checkDateParity           USES DATA_STREAM countOnes TEMP invalidBit 
+checkDateParity           USES DATA_STREAM countOnes TEMP 
 countOnes                 USES LOOP 
 count1sLoop               USES LOOP 
 evalMinutes               USES DATA_STREAM VALID_MINUTES 
@@ -956,20 +956,20 @@ evalYear                  USES DATA_STREAM VALID_YEAR
 putCorrectDateAndTime     USES convertMinutes convertHours convertDays 
                                 convertDayOfWeek convertMonth convertYear setupOutput 
 convertMinutes            USES VALID_MINUTES 
+cont1                     USES VALID_MINUTES 
+cont2                     USES VALID_MINUTES 
+cont3                     USES VALID_MINUTES 
 cont4                     USES VALID_MINUTES 
 cont5                     USES VALID_MINUTES 
 cont6                     USES VALID_MINUTES 
 cont7                     USES VALID_MINUTES 
-cont1                     USES VALID_MINUTES 
-cont2                     USES VALID_MINUTES 
-cont3                     USES VALID_MINUTES 
 convertHours              USES VALID_HOURS 
+cont1H                    USES VALID_HOURS 
+cont2H                    USES VALID_HOURS 
+cont3H                    USES VALID_HOURS 
 cont4H                    USES VALID_HOURS 
 cont5H                    USES VALID_HOURS 
 cont6H                    USES VALID_HOURS 
-cont7H                    USES VALID_HOURS 
-cont8H                    USES VALID_HOURS 
-cont9H                    USES VALID_HOURS 
 convertDays               USES VALID_DAYS 
 cont1d                    USES VALID_DAYS 
 cont2d                    USES VALID_DAYS 
@@ -1039,6 +1039,6 @@ STATISTIC SECTION
 
 ExeFile:
 --------
-Number of blocks to be downloaded: 4
-Total size of all blocks to be downloaded: 3410
+Number of blocks to be downloaded: 5
+Total size of all blocks to be downloaded: 3408
 

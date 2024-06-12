@@ -29,6 +29,7 @@ H2A: DC.B "0123456789ABCDEF"
 ; Parameter: 
 ;     d - (Word) - The hexadmical number to convert
 ;     x - (Word) - Address of the copy destination
+;**************************************************************
 hexToASCII:
    STD WORD;
    ; 0x in the first 2 characters of the Result String
