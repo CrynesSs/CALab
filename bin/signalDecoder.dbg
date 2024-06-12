@@ -325,7 +325,7 @@ N2DD: DC.B "MODIMIDOFRSASO"
     ;Add B to A. This is fine, as the Stream defaults to only contain 0's
     ABA;
     ;Save the Byte
-    STAB Y;
+    STAA Y;
     ;Increase the Stream Position by 1;
     LDAB STREAM_POSITION;
     INCB;
