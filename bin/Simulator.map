@@ -314,8 +314,8 @@ MODULE:                 -- signalDecoder.asm.o --
      startIntervals                            C9A5       E      14       0   .init       
      pollSignal                                C9B3      10      16       1   .init       
      continue                                  C9C3       8       8       0   .init       
-     putBit                                    C9CB       8       8       2   .init       
-     isValid                                   C9D3      16      22       0   .init       
+     putBit                                    C9CB      11      17       2   .init       
+     isValid                                   C9DC       D      13       0   .init       
      shift_loop                                C9E9       8       8       0   .init       
      continuePutting                           C9F1      17      23       0   .init       
      returnFromEval                            CA08      28      40       0   .init       
@@ -705,8 +705,8 @@ OBJECT LIST SORTED BY ADDRESS
      startIntervals                            C9A5       E      14       0   .init       
      pollSignal                                C9B3      10      16       1   .init       
      continue                                  C9C3       8       8       0   .init       
-     putBit                                    C9CB       8       8       2   .init       
-     isValid                                   C9D3      16      22       0   .init       
+     putBit                                    C9CB      11      17       2   .init       
+     isValid                                   C9DC       D      13       0   .init       
      shift_loop                                C9E9       8       8       0   .init       
      continuePutting                           C9F1      17      23       0   .init       
      returnFromEval                            CA08      28      40       0   .init       

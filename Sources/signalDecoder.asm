@@ -111,7 +111,6 @@ N2DD: DC.B "MODIMIDOFRSASO"
     MOVB #$80,MCFLG;
     ;If the Number of Total Polls is less than 200, we need to continue polling. 
     JSR pollSignal;
-    
     LDAB STOP_BIT_FOUND;
     CMPB #$00;
     LBEQ checkForStopBit;
@@ -280,6 +279,10 @@ N2DD: DC.B "MODIMIDOFRSASO"
     ; Return: -  
     ;**************************************************************       
     putBit:
+    EXG A,B;
+    XGDY;
+    LDD #8;
+    XGDX;
     ;Check the Stream Position. If it is higher than 58, it is invalid as 59 is the stop bit.
     LDAB STREAM_POSITION;
     INCB;
@@ -288,14 +291,10 @@ N2DD: DC.B "MODIMIDOFRSASO"
     ;Here the Stream Count is invalid;
     ;Maybe do sth here idk?idc
     isValid:
-    ;Put #8 into the X Register, so we can find the correct Byte and Byte Position
-    MOVW #$0008,X; 
     ;Store the Bit to write in Y
     ;We need to swap the Bit to A, as the Y register loads left to right into B
-    EXG A,B;
-    XGDY;
     ;Put Stream Position and IDIV to get the result
-    LDAA #0
+    LDAA #0;
     LDAB STREAM_POSITION;
     IDIV;
     ;Remainder is now in D. This is the Byte Position. Result in X. That is the Position in the Byte we need to write.
