@@ -279,13 +279,11 @@ N2DD: DC.B "MODIMIDOFRSASO"
     ; Return: -  
     ;**************************************************************       
     putBit:
-    EXG A,B;
     XGDY;
     LDD #8;
     XGDX;
     ;Check the Stream Position. If it is higher than 58, it is invalid as 59 is the stop bit.
     LDAB STREAM_POSITION;
-    INCB;
     CMPB #59;
     BLO isValid;
     ;Here the Stream Count is invalid;
@@ -306,7 +304,7 @@ N2DD: DC.B "MODIMIDOFRSASO"
     TFR Y,B;
     ;Shift the one over n times where n is stored in A.
     shift_loop:
-    CMPB #$00;
+    CMPA #$00;
     BEQ continuePutting;
     LSLB;
     DECA;
@@ -351,6 +349,7 @@ N2DD: DC.B "MODIMIDOFRSASO"
     MOVB #$00,STREAM_POSITION;
     MOVB #$00,HIGHS;
     MOVB #$00,TOTAL_POLLS;
+    MOVB #$01,WAIT_FOR_DATA;
     RTI;
     ;**************************************************************
     ; Evaluates the Data Bits in the Stream
